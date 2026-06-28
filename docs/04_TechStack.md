@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.0.0
-> **Implements:** LOCK-02 (Browser-First), LOCK-04 (Modular), LOCK-06 (Database Optional), LOCK-09 (AI Discipline)
+> **Revision:** 1.1.0
+> **Implements:** LOCK-02 (Browser-First), LOCK-04 (Modular), LOCK-06 (Database Optional), LOCK-09 (AI Discipline); EC-08 (Security by Default), EC-12 (Enterprise Readiness)
 
 ---
 
@@ -222,7 +222,7 @@ Code that runs in Edge Runtime (auth middleware, page rendering) MUST avoid Node
 For browser-side tools (LOCK-02), prefer native Web APIs (Canvas, Web Crypto, File System Access) over libraries. Use libraries only when native APIs are insufficient (e.g., pdf-lib for PDF manipulation).
 
 ### P6 — Upgrade Path Documented
-Every external service dependency MUST have a documented upgrade path. "We'll figure it out when we hit the limit" is not acceptable.
+Every external service dependency MUST have a documented upgrade path. "We'll figure it out when we hit the limit" is not acceptable. *Implements EC-12 (Enterprise Readiness).*
 
 ## 5. Technology Stack (Detailed)
 
@@ -500,13 +500,14 @@ The architecture allows swapping individual stack components without restructuri
 ## 12. Dependencies
 
 ### 12.1 Document Dependencies
-- Depends on `00_Project_Charter` §3 — LOCKs that mandate technology choices.
+- Depends on `00_Project_Charter` §3, §4 — LOCKs and ECs that mandate technology choices.
 - Depends on `02_SAD` — architectural decisions (AD-01 through AD-06) that this stack implements.
 - Depends on `03_DDD` — bounded contexts that own schemas (Drizzle schemas per context).
 - `05_ProjectStructure` — folder layout that hosts these technologies.
-- `07_CodingStandards` — coding rules enforced via ESLint configured here.
-- `13_DatabaseDesign` — Drizzle schema definitions per context.
-- `21_DeploymentGuide` — Vercel deployment configuration.
+- `06_ArchitectureDecisionRecords` — records AD-01 through AD-11 as ADRs.
+- `08_CodingStandards` — coding rules enforced via ESLint configured here.
+- `14_DatabaseDesign` — Drizzle schema definitions per context.
+- `22_DeploymentGuide` — Vercel deployment configuration.
 
 ### 12.2 External Dependencies
 - All technologies listed in §5.
@@ -523,19 +524,21 @@ The architecture allows swapping individual stack components without restructuri
 | Revision | Date | Author | Change |
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial Tech Stack. Defined Next.js 15+, TypeScript strict, Supabase, Drizzle, shadcn/ui, Tailwind, Zod, RHF, Zustand, Vercel, pnpm. Documented browser-first libraries, dependency policy, free-tier analysis. |
+| 1.1.0 | 2026-06-28 | Chief Architect | Linked stack choices to EC-08 (Security by Default) and EC-12 (Enterprise Readiness). Added explicit upgrade path documentation principle. Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords`. |
 
 ## 14. Cross References
 
-- `00_Project_Charter` §3 — LOCKs implemented by this stack.
+- `00_Project_Charter` §3, §4 — LOCKs and ECs implemented by this stack.
 - `02_SAD` §3 — Architectural decisions this stack operationalizes.
 - `03_DDD` §5 — Bounded contexts whose schemas use Drizzle.
 - `05_ProjectStructure` — Folder layout for these technologies.
-- `06_FolderStructure` — Granular file conventions.
-- `07_CodingStandards` — Coding rules enforced via ESLint here.
-- `09_DesignSystem` — Design tokens implemented via Tailwind.
-- `10_FBRD` — Tool manifest schema validated via Zod.
-- `11_ACD` — Reusable components built on shadcn/ui.
-- `13_DatabaseDesign` — Drizzle schemas per context.
-- `14_APIConvention` — API routes implemented via Next.js API handlers.
-- `21_DeploymentGuide` — Vercel deployment configuration.
-- `22_AI_Guideline` — Constrains AI's modification of this stack (LOCK-09).
+- `06_ArchitectureDecisionRecords` — Permanent record of all tech stack ADs.
+- `07_FolderStructure` — Granular file conventions.
+- `08_CodingStandards` — Coding rules enforced via ESLint here.
+- `10_DesignSystem` — Design tokens implemented via Tailwind.
+- `11_FBRD` — Tool manifest schema validated via Zod.
+- `12_ACD` — Reusable components built on shadcn/ui.
+- `14_DatabaseDesign` — Drizzle schemas per context.
+- `15_APIConvention` — API routes implemented via Next.js API handlers.
+- `22_DeploymentGuide` — Vercel deployment configuration.
+- `23_AI_Guideline` — Constrains AI's modification of this stack (LOCK-09, EC-11).

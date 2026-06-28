@@ -3,17 +3,17 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect (acting PM)
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.1.0
+> **Revision:** 1.2.0
 
 ---
 
 ## 1. Purpose
 
-This Business Requirements Document translates the mission, vision, and Architectural Locks established in `00_Project_Charter` into concrete business requirements for **[PROJECT_NAME]** — a **browser-first productivity ecosystem that enables users to solve everyday digital tasks without installing software and without requiring an account.** This document defines who the product serves, what value it delivers, how success is measured, and how it sustains itself financially while remaining free-tier-first.
+This Business Requirements Document translates the mission, vision, Architectural Locks (§3 of `00_Project_Charter`), and Engineering Constitution articles (§4 of `00_Project_Charter`) into concrete business requirements for **[PROJECT_NAME]** — a **browser-first productivity ecosystem that enables users to solve everyday digital tasks without installing software and without requiring an account.** This document defines who the product serves, what value it delivers, how success is measured, and how it sustains itself financially while remaining free-tier-first.
 
-Every feature in the backlog (`25_Backlog`) must trace back to a business requirement in this document. Features that cannot trace back are out of scope until the BRD is amended. This traceability rule prevents scope creep — the single most common failure mode for productivity-tool platforms, where the temptation to "just add one more tool" is constant.
+Every feature in the backlog (`26_Backlog`) must trace back to a business requirement in this document. Features that cannot trace back are out of scope until the BRD is amended. This traceability rule prevents scope creep — the single most common failure mode for productivity-tool platforms, where the temptation to "just add one more tool" is constant.
 
-The BRD is intentionally separate from the SAD (`02_SAD`). Business requirements drive architecture; architecture never drives business requirements. When the two conflict, business wins, and architecture is refactored to support it. The single exception is the Architectural Locks in `00_Project_Charter` §3 — those locks have priority over both business and architecture, because they encode the platform's permanent identity (LOCK-01) and the constraints that make the identity sustainable (LOCK-02 through LOCK-12).
+The BRD is intentionally separate from the SAD (`02_SAD`). Business requirements drive architecture; architecture never drives business requirements. When the two conflict, business wins, and architecture is refactored to support it. The single exception is the Architectural Locks and Engineering Constitution in `00_Project_Charter` §3 and §4 — those governance layers have priority over both business and architecture, because they encode the platform's permanent identity (LOCK-01) and the constraints that make the identity sustainable (LOCK-02 through LOCK-12, EC-01 through EC-12).
 
 ## 2. Scope
 
@@ -71,18 +71,19 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 ### 3.3 Non-Quantitative Goals
 
 1. **Brand trust.** Users must perceive [PROJECT_NAME] as fast, private, and reliable. No dark patterns. No surprise paywalls mid-workflow.
-2. **Tool quality > tool quantity.** A great tool is worth more than five mediocre ones. Each tool must meet the quality bar in `06_UDS` and `15_SEOSpecification` before launch.
+2. **Tool quality > tool quantity.** A great tool is worth more than five mediocre ones. Each tool must meet the quality bar in `13_UDS` and `16_SEOSpecification` before launch.
 3. **Privacy by default.** Browser-side processing is a feature, not a cost-saving measure. We market it.
 
 ## 4. Standards
 
 ### 4.1 Monetization Standards
 
-- **Never block core tool completion behind paywall.** A user must always be able to complete the primary workflow for free. This is a direct implementation of LOCK-07 (guest-first UX).
+- **Never block core tool completion behind paywall.** A user must always be able to complete the primary workflow for free. This is a direct implementation of LOCK-07 (guest-first UX) and supports EC-05 (progressive enhancement).
 - **Paywall only value-adds**: download in batch, save to cloud, AI features, remove ads, higher file size limits.
 - **Ads are non-intrusive**: max 1 ad per tool page, never inside the workflow area, never auto-playing audio/video.
 - **Premium pricing is transparent**: pricing page public, no hidden tiers, cancel-anytime.
 - **Browser-first processing is a marketing claim, not a cost-saving measure.** Every browser-first tool must visibly communicate to the user that their files stay on their device. This builds trust and differentiates from competitors (LOCK-02).
+- **Security by default (EC-08).** Payment flows use Stripe-hosted checkout; we never see or store raw card numbers. All payment webhooks validated against Stripe signatures.
 
 ### 4.2 Onboarding Standards (LOCK-07)
 
@@ -100,10 +101,10 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 
 ### 4.4 Privacy & Data Standards
 
-- Uploaded files for browser-side tools never leave the user's device. This is a marketing claim, a technical commitment, and an architectural lock (LOCK-02). Any tool that violates this rule must be clearly labeled as server-side and require explicit user consent.
+- Uploaded files for browser-side tools never leave the user's device. This is a marketing claim, a technical commitment, and an architectural lock (LOCK-02). Any tool that violates this rule must be clearly labeled as server-side and require explicit user consent (EC-08 security by default).
 - Server-side tools (AI utilities, OCR) clearly disclose that files are processed server-side and deleted within 1 hour.
 - GDPR/CCPA compliant from Phase 1: cookie consent, data export, account deletion.
-- **Database optional (LOCK-06):** Core tool processing must not depend on database availability. If the database is down, tools still work — only account features (history, favorites) degrade gracefully.
+- **Database optional (LOCK-06, EC-05 progressive enhancement):** Core tool processing must not depend on database availability. If the database is down, tools still work — only account features (history, favorites) degrade gracefully.
 
 ## 5. Examples
 
@@ -143,8 +144,10 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 ## 6. Best Practices
 
 ### 6.1 Acquisition
-- **SEO is the primary channel through Phase 2.** Every tool is a landing page; every category is a hub page; every article interlinks with tools. See `15_SEOSpecification`.
+- **SEO is the primary channel through Phase 2.** Every tool is a landing page; every category is a hub page; every article interlinks with tools. See `16_SEOSpecification`.
 - **Programmatic SEO where sensible.** Common patterns (e.g., "convert X to Y") generate landing pages from a template. Beware: thin content penalty risk — every generated page must have unique value-add content.
+- **Accessibility as SEO (EC-06).** WCAG AA compliance is also a search ranking factor; accessible pages rank higher.
+- **Performance as SEO (EC-07).** Core Web Vitals are ranking signals; the performance budget is also an SEO budget.
 - **No paid acquisition until CAC < LTV is provable.** Phase 3 at the earliest.
 
 ### 6.2 Retention
@@ -194,21 +197,21 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 
 ### 8.1 Business Dependencies
 
-- **Search engine indexing.** Organic traffic depends on Google/Bing indexing. A single manual action penalty could set the project back 6 months. Mitigation: clean SEO per `15_SEOSpecification`, no black-hat tactics.
+- **Search engine indexing.** Organic traffic depends on Google/Bing indexing. A single manual action penalty could set the project back 6 months. Mitigation: clean SEO per `16_SEOSpecification`, no black-hat tactics.
 - **Free tier stability.** Vercel and Supabase free tier changes could force early monetization. Mitigation: monitor usage monthly; upgrade to paid tier before hitting limits.
 - **Ad network approval.** Carbon/EthicalAds require minimum traffic (typically 10k MAU). Mitigation: Phase 1 runs ad-free; ads activate in Phase 2.
 
 ### 8.2 Document Dependencies
 
 - This BRD depends on `00_Project_Charter` for mission and scope.
-- `24_Roadmap` operationalizes the phase goals defined here.
-- `25_Backlog` lists the specific tools that satisfy the Phase 1 tool count.
-- `15_SEOSpecification` operationalizes the SEO acquisition strategy in §6.1.
-- `18_AdminSpecification` defines the admin tooling required to operate the content layer in §4.3.
+- `25_Roadmap` operationalizes the phase goals defined here.
+- `26_Backlog` lists the specific tools that satisfy the Phase 1 tool count.
+- `16_SEOSpecification` operationalizes the SEO acquisition strategy in §6.1.
+- `19_AdminSpecification` defines the admin tooling required to operate the content layer in §4.3.
 
 ### 8.3 Assumptions
 
-- Organic search remains a viable acquisition channel through Phase 4. If AI-generated search results reduce organic traffic by >40%, the acquisition strategy must pivot (contingency plan to be documented in `24_Roadmap` v2).
+- Organic search remains a viable acquisition channel through Phase 4. If AI-generated search results reduce organic traffic by >40%, the acquisition strategy must pivot (contingency plan to be documented in `25_Roadmap` v2).
 - Free tier limits of Vercel + Supabase remain generous enough to support Phase 1 (10k MAU).
 - At least one team member can write editorial-quality English content for SEO.
 
@@ -218,17 +221,21 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial BRD. |
 | 1.1.0 | 2026-06-28 | Chief Architect | Integrated the 12 Architectural Locks from `00_Project_Charter` §3. Strengthened browser-first as a marketing commitment (LOCK-02). Elevated guest-first UX and database-optional philosophy to lock-referenced standards. Updated cross-references to reflect doc renumbering. |
+| 1.2.0 | 2026-06-28 | Chief Architect | Integrated the 12 Engineering Constitution articles from `00_Project_Charter` §4. Linked monetization to EC-05 (progressive enhancement) and EC-08 (security by default). Added accessibility and performance as SEO factors (EC-06, EC-07). Renumbered all cross-references to reflect insertion of `06_ArchitectureDecisionRecords` (docs 06-25 shifted to 07-26). |
 
 ## 10. Cross References
 
-- `00_Project_Charter` — Source of mission, vision, scope, and the 12 Architectural Locks (§3). Locks have priority over this document.
-- `02_SAD` — Architecture that supports the technical business commitments (browser-first, free-tier, database-optional).
-- `04_TechStack` — Operationalizes LOCK-02 (browser-first technology choices).
-- `10_FBRD` — Tool feature template; every tool must trace to a business requirement here.
-- `15_SEOSpecification` — Implements the SEO acquisition strategy in §6.1 and LOCK-08.
-- `16_UserFlow` — Implements the onboarding standards in §4.2 and LOCK-07.
-- `17_RBAC` — Implements admin/editor role separation in §2.3 and LOCK-11.
-- `18_AdminSpecification` — Operates the content layer in §4.3 and implements LOCK-11.
-- `22_AI_Guideline` — Constrains AI usage to align with §4.3 content standards and LOCK-09.
-- `24_Roadmap` — Phase plan operationalizing §3.1.
-- `25_Backlog` — Phase 1 tool list satisfying §3.1 (30 tools).
+- `00_Project_Charter` — Source of mission, vision, scope, the 12 Architectural Locks (§3), and the 12 Engineering Constitution articles (§4). Locks and ECs have priority over this document.
+- `02_SAD` — Architecture that supports the technical business commitments (browser-first, free-tier, database-optional, progressive enhancement).
+- `04_TechStack` — Operationalizes LOCK-02 (browser-first technology choices) and EC-12 (enterprise readiness).
+- `06_ArchitectureDecisionRecords` — Permanent history of architectural decisions affecting business capabilities.
+- `11_FBRD` — Tool feature template; every tool must trace to a business requirement here.
+- `16_SEOSpecification` — Implements the SEO acquisition strategy in §6.1 and LOCK-08.
+- `17_UserFlow` — Implements the onboarding standards in §4.2 and LOCK-07, EC-05.
+- `18_RBAC` — Implements admin/editor role separation in §2.3 and LOCK-11, EC-08.
+- `19_AdminSpecification` — Operates the content layer in §4.3 and implements LOCK-11.
+- `21_TestingStrategy` — Implements EC-09 (testing philosophy), including accessibility and performance testing.
+- `22_DeploymentGuide` — Implements EC-07 (performance monitoring), EC-08 (security headers), EC-12 (enterprise migration).
+- `23_AI_Guideline` — Constrains AI usage to align with §4.3 content standards and LOCK-09, EC-11.
+- `25_Roadmap` — Phase plan operationalizing §3.1.
+- `26_Backlog` — Phase 1 tool list satisfying §3.1 (30 tools).

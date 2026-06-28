@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.0.0
-> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional)
+> **Revision:** 1.1.0
+> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-02 (One Source of Truth)
 
 ---
 
@@ -56,7 +56,7 @@ This document is the authoritative source for: what counts as a Tool, what count
 - ✅ Teams can specialize by context in Phase 3+.
 - ⚠️ Cross-context features require explicit integration (domain events, published interfaces).
 
-**Implements:** LOCK-04 (Modular Architecture at the conceptual level).
+**Implements:** LOCK-04 (Modular Architecture at the conceptual level), EC-02 (One Source of Truth — each concept lives in exactly one context).
 
 ### AD-02 — Tools Context is the Core Domain
 
@@ -171,7 +171,7 @@ Platform Ops Context publishes:
 ## 4. Design Principles
 
 ### P1 — One Concept, One Context
-Every domain concept belongs to exactly one bounded context. "User" exists in Identity; Billing has "Customer" (a role played by a User); Analytics has "Actor" (an anonymous or identified event source). This prevents the "god table" anti-pattern.
+Every domain concept belongs to exactly one bounded context. "User" exists in Identity; Billing has "Customer" (a role played by a User); Analytics has "Actor" (an anonymous or identified event source). This prevents the "god table" anti-pattern. *Implements EC-02 (One Source of Truth).*
 
 ### P2 — Contexts Don't Share Tables
 Each context owns its own database tables (or Supabase schema). Cross-context data access is via published API or domain event, never via direct table join. This enforces context boundaries at the data layer.
@@ -498,14 +498,15 @@ If a context grows too large (e.g., Identity grows to include team management, o
 ## 12. Dependencies
 
 ### 12.1 Document Dependencies
-- Depends on `00_Project_Charter` §3 (Architectural Locks) — LOCK-04, LOCK-05, LOCK-06 shape context boundaries.
+- Depends on `00_Project_Charter` §3 (Architectural Locks) and §4 (Engineering Constitution) — LOCK-04, LOCK-05, LOCK-06 shape context boundaries; EC-02 enforces one source of truth.
 - Depends on `02_SAD` — physical architecture that hosts the bounded contexts.
 - `05_ProjectStructure` — maps bounded contexts to folder structure.
-- `10_FBRD` — defines ToolManifest aggregate (Tools Context root).
-- `13_DatabaseDesign` — implements each context's schema.
-- `14_APIConvention` — defines how contexts expose published APIs.
-- `17_RBAC` — defines Role aggregate in Identity Context.
-- `18_AdminSpecification` — operates Platform Ops Context.
+- `06_ArchitectureDecisionRecords` — records AD-01 through AD-05 as ADRs.
+- `11_FBRD` — defines ToolManifest aggregate (Tools Context root).
+- `14_DatabaseDesign` — implements each context's schema.
+- `15_APIConvention` — defines how contexts expose published APIs.
+- `18_RBAC` — defines Role aggregate in Identity Context.
+- `19_AdminSpecification` — operates Platform Ops Context.
 
 ### 12.2 External Dependencies
 - Supabase Postgres — provides schema isolation per context.
@@ -520,19 +521,22 @@ If a context grows too large (e.g., Identity grows to include team management, o
 | Revision | Date | Author | Change |
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial DDD. Defined 6 bounded contexts, ubiquitous language glossary, context map, aggregate consistency rules. |
+| 1.1.0 | 2026-06-28 | Chief Architect | Linked bounded context design to EC-02 (One Source of Truth). Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords` (docs 06-25 shifted to 07-26). |
 
 ## 14. Cross References
 
-- `00_Project_Charter` §3 — Source of LOCKs implemented by this document.
+- `00_Project_Charter` §3, §4 — Source of LOCKs and ECs implemented by this document.
 - `02_SAD` — Physical architecture hosting the bounded contexts.
 - `04_TechStack` — Technologies used to implement domain events and ACLs.
 - `05_ProjectStructure` — Folder layout mapping to bounded contexts.
-- `10_FBRD` — ToolManifest aggregate (Tools Context root).
-- `11_ACD` — Tool Engine component (implementation of Tools Context aggregate).
-- `13_DatabaseDesign` — Schema per context.
-- `14_APIConvention` — Published APIs between contexts.
-- `15_SEOSpecification` — How Content Context supports SEO.
-- `16_UserFlow` — How user journeys cross context boundaries.
-- `17_RBAC` — Role aggregate in Identity Context.
-- `18_AdminSpecification` — Platform Ops Context operation.
-- `22_AI_Guideline` — Constrains AI's modification of domain model (LOCK-09).
+- `06_ArchitectureDecisionRecords` — Permanent record of DDD architectural decisions.
+- `07_FolderStructure` — Granular file conventions per context.
+- `11_FBRD` — ToolManifest aggregate (Tools Context root).
+- `12_ACD` — Tool Engine component (implementation of Tools Context aggregate).
+- `14_DatabaseDesign` — Schema per context.
+- `15_APIConvention` — Published APIs between contexts.
+- `16_SEOSpecification` — How Content Context supports SEO.
+- `17_UserFlow` — How user journeys cross context boundaries.
+- `18_RBAC` — Role aggregate in Identity Context.
+- `19_AdminSpecification` — Platform Ops Context operation.
+- `23_AI_Guideline` — Constrains AI's modification of domain model (LOCK-09, EC-11).

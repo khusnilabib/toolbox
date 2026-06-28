@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.0.0
-> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional)
+> **Revision:** 1.1.0
+> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-03 (Component Reuse First), EC-04 (Tool Template Standard)
 
 ---
 
@@ -64,7 +64,7 @@ src/
 - ✅ Boundary enforcement is structural (folder-per-context) + tooling (ESLint).
 - ⚠️ Some shared utilities needed across contexts; mitigated by `/shared` and `/packages`.
 
-**Implements:** LOCK-04 (Modular Architecture).
+**Implements:** LOCK-04 (Modular Architecture), EC-03 (Component Reuse First — shared code lives in `/packages` and `/src/shared`).
 
 ### AD-02 — Layered Folders Within Each Context
 
@@ -127,7 +127,7 @@ src/tools/image/image-resize/
 - ✅ Plugin-ready (LOCK-05): a third-party tool follows the same structure.
 - ⚠️ Many small folders; mitigated by clear naming and IDE support.
 
-**Implements:** LOCK-04, LOCK-05, LOCK-03 (Tool Engine stages map to files).
+**Implements:** LOCK-04, LOCK-05, LOCK-03 (Tool Engine stages map to files), EC-04 (Tool Template Standard — every tool has identical structure).
 
 ### AD-04 — Tool Registry Pattern (Build-Time Codegen)
 
@@ -262,7 +262,7 @@ Tools that need to persist data (e.g., history) do so via published interfaces (
 - ✅ If DB is down, tools still work (server actions fail gracefully).
 - ⚠️ Slightly more indirection for persistence; justified by LOCK-06.
 
-**Implements:** LOCK-06 (Database Optional).
+**Implements:** LOCK-06 (Database Optional), EC-05 (Progressive Enhancement — structural enforcement of graceful degradation).
 
 ## 4. Design Principles
 
@@ -672,16 +672,17 @@ Generated files ARE committed to the repo. Reasons:
 ## 13. Dependencies
 
 ### 13.1 Document Dependencies
-- Depends on `00_Project_Charter` §3 — LOCKs enforced via this structure.
+- Depends on `00_Project_Charter` §3, §4 — LOCKs and ECs enforced via this structure.
 - Depends on `02_SAD` — layer definitions and Tool Engine contract.
 - Depends on `03_DDD` — bounded context boundaries.
 - Depends on `04_TechStack` — pnpm workspaces, ESLint, Next.js App Router.
-- `06_FolderStructure` — granular file conventions within this layout.
-- `07_CodingStandards` — coding rules enforced in this structure.
-- `10_FBRD` — ToolManifest schema referenced by registry.
-- `11_ACD` — components referenced in `@packages/ui`.
-- `18_AdminSpecification` — admin layout under `(admin)/` route group.
-- `21_DeploymentGuide` — build pipeline runs codegen.
+- `07_FolderStructure` — granular file conventions within this layout.
+- `08_CodingStandards` — coding rules enforced in this structure.
+- `06_ArchitectureDecisionRecords` — records AD-01 through AD-07 as ADRs.
+- `11_FBRD` — ToolManifest schema referenced by registry.
+- `12_ACD` — components referenced in `@packages/ui`.
+- `19_AdminSpecification` — admin layout under `(admin)/` route group.
+- `22_DeploymentGuide` — build pipeline runs codegen.
 
 ### 13.2 External Dependencies
 - Next.js App Router (file-based routing).
@@ -698,22 +699,24 @@ Generated files ARE committed to the repo. Reasons:
 | Revision | Date | Author | Change |
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial Project Structure. Defined feature-based top-level layout, layered folders per context, tool module anatomy, registry pattern (build-time codegen), shared code split (`/packages` + `/src/shared`), boundary enforcement strategy. |
+| 1.1.0 | 2026-06-28 | Chief Architect | Linked structure to EC-03 (Component Reuse First) and EC-04 (Tool Template Standard). Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords`. |
 
 ## 15. Cross References
 
-- `00_Project_Charter` §3 — LOCKs implemented by this structure.
+- `00_Project_Charter` §3, §4 — LOCKs and ECs implemented by this structure.
 - `02_SAD` §3 AD-01 — Layered architecture mapped to folders here.
 - `03_DDD` §5 — Bounded contexts mapped to top-level directories here.
 - `04_TechStack` AD-11 — pnpm workspaces enable this monorepo.
-- `06_FolderStructure` — Granular file naming within this structure.
-- `07_CodingStandards` — Coding rules enforced via ESLint configured here.
-- `08_NamingConvention` — Naming rules applied to files in this structure.
-- `10_FBRD` — ToolManifest schema (the file this structure centers on).
-- `11_ACD` — Reusable components in `@packages/ui`.
-- `13_DatabaseDesign` — Drizzle migrations under `drizzle/[context]/`.
-- `14_APIConvention` — API routes under `src/app/api/`.
-- `15_SEOSpecification` — SEO output derived from generated registry.
-- `18_AdminSpecification` — Admin routes under `src/app/(admin)/`.
-- `19_DevelopmentGuideline` — Development workflow within this structure.
-- `21_DeploymentGuide` — Build pipeline including registry codegen.
-- `22_AI_Guideline` — AI must follow this structure (LOCK-09).
+- `06_ArchitectureDecisionRecords` — Permanent record of project structure ADs.
+- `07_FolderStructure` — Granular file naming within this structure.
+- `08_CodingStandards` — Coding rules enforced via ESLint configured here.
+- `09_NamingConvention` — Naming rules applied to files in this structure.
+- `11_FBRD` — ToolManifest schema (the file this structure centers on).
+- `12_ACD` — Reusable components in `@packages/ui`.
+- `14_DatabaseDesign` — Drizzle migrations under `drizzle/[context]/`.
+- `15_APIConvention` — API routes under `src/app/api/`.
+- `16_SEOSpecification` — SEO output derived from generated registry.
+- `19_AdminSpecification` — Admin routes under `src/app/(admin)/`.
+- `20_DevelopmentGuideline` — Development workflow within this structure.
+- `22_DeploymentGuide` — Build pipeline including registry codegen.
+- `23_AI_Guideline` — AI must follow this structure (LOCK-09, EC-11).
