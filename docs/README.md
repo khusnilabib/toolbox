@@ -9,22 +9,23 @@
 
 ## Governance Layers (Priority Order)
 
-The project is governed by **four layers**, each with distinct authority. When conflicts arise, higher layers override lower layers.
+The project is governed by **five layers**, each with distinct authority. When conflicts arise, higher layers override lower layers.
 
 | Priority | Layer | Document | What It Defines |
 |----------|-------|----------|-----------------|
 | 1 (highest) | **Architectural Locks** | `00_Project_Charter` §3 | What the platform IS (identity, philosophy, permanent rules). 12 locks. |
 | 2 | **Engineering Constitution** | `00_Project_Charter` §4 | HOW engineering is DONE (process discipline, quality gates). 12 articles. |
 | 3 | **Product Constitution** | `00_Project_Charter` §5 | HOW every tool BEHAVES as a product (one problem per tool, product contracts, quality gates). 10 articles. |
-| 4 | **Technical Documents** | `06`–`28` | How the locks, constitutions, and ECs are implemented in code. |
+| 4 | **Data & Growth Architecture** | `00_Project_Charter` §6 | HOW the platform GROWS (analytics, SEO, search, content, feature flags, audit, API evolution, marketplace readiness). 10 articles. |
+| 5 | **Technical Documents** | `06`–`31` | How the locks, constitutions, ECs, PCs, and DGAs are implemented in code. |
 
-Amending Layers 1, 2, or 3 requires a charter revision. Layer 4 documents are amended through normal PR review. **Product decisions are architectural decisions** — the Product Constitution has the same binding authority as the Architectural Locks and Engineering Constitution.
+Amending Layers 1–4 requires a charter revision. Layer 5 documents are amended through normal PR review. **Data & growth decisions are architectural decisions** — the DGA has the same binding authority as the Architectural Locks, Engineering Constitution, and Product Constitution.
 
 ---
 
 ## Architectural Locks (Permanent Rules)
 
-Twelve decisions are **locked** as permanent project rules. They define the platform's permanent identity and constraints. See `00_Project_Charter` §3 for the full binding text.
+Twelve decisions are **locked** as permanent project rules. See `00_Project_Charter` §3.
 
 | # | Lock | One-Line Summary |
 |---|------|------------------|
@@ -43,7 +44,7 @@ Twelve decisions are **locked** as permanent project rules. They define the plat
 
 ## Engineering Constitution (Mandatory Engineering Rules)
 
-Twelve articles define mandatory engineering discipline. They supersede implementation preferences. See `00_Project_Charter` §4 for the full binding text.
+Twelve articles. See `00_Project_Charter` §4.
 
 | # | Article | One-Line Summary |
 |---|---------|------------------|
@@ -62,7 +63,7 @@ Twelve articles define mandatory engineering discipline. They supersede implemen
 
 ## Product Constitution (Mandatory Product Rules)
 
-Ten articles define how every tool behaves as a product. They are binding on every tool, present and future. See `00_Project_Charter` §5 and `11_ProductConstitution` for the full binding text.
+Ten articles. See `00_Project_Charter` §5 and `11_ProductConstitution`.
 
 | # | Article | One-Line Summary |
 |---|---------|------------------|
@@ -77,22 +78,39 @@ Ten articles define how every tool behaves as a product. They are binding on eve
 | PC-09 | **Feature Discoverability** | Every tool helps users discover more tools (related, workflows, categories, search, recent, popular). |
 | PC-10 | **Product Scalability** | Every new tool requires minimal engineering effort. Manifest generates nav, SEO, sitemap, search, admin, analytics. |
 
+## Data & Growth Architecture (Mandatory Growth Rules)
+
+Ten articles define how the platform grows sustainably. See `00_Project_Charter` §6.
+
+| # | Article | One-Line Summary |
+|---|---------|------------------|
+| DGA-01 | **Database as a Product Service** | DB is a product capability, not just persistence. Only long-term-value data is persisted; temp results stay browser-local. |
+| DGA-02 | **Event-Driven Analytics** | Every important action produces a standardized analytics event. Vendor-neutral; providers are adapters; event schema is canonical. |
+| DGA-03 | **SEO Metadata as Structured Data** | SEO originates from structured metadata (Tool Manifest). No hardcoded SEO values in pages. |
+| DGA-04 | **Search Architecture** | Search supports instant, category, related, popular, recent, synonyms, fuzzy, tags. Indexes generated from Tool Manifest. |
+| DGA-05 | **Content Architecture** | Documentation, Help, Blog, Tutorials, Tool Pages are separate content types. CMS integration never affects Tool Engine. |
+| DGA-06 | **Feature Flags** | Every major feature deployable independently. Beta, A/B, regional, gradual, internal testing. First-class platform capability. |
+| DGA-07 | **Auditability** | Every admin action is auditable (tool published/deprecated, SEO updated, role changed, settings modified). Audit logs are immutable. |
+| DGA-08 | **API Evolution** | Public APIs are versioned. Deprecation follows documented policy. Backward compatibility preferred. Breaking changes require ADRs. |
+| DGA-09 | **Growth Metrics** | Every tool contributes to ecosystem metrics (popularity, conversion, completion, registration, search success, return visits, avg processing time). Generated from standardized events. |
+| DGA-10 | **Future Marketplace Readiness** | Architecture anticipates community tools, verified publishers, marketplace, ratings, reviews, collections. DB & manifest design avoid blocking these. |
+
 ---
 
 ## How to Use This Repository
 
-1. **New developers**: Start with `00_Project_Charter` (especially §3 Architectural Locks, §4 Engineering Constitution, §5 Product Constitution), then read `04_TechStack`, `05_ProjectStructure`, `06_ArchitectureDecisionRecords`, and `12_ToolManifestSpecification`. You should be able to run the project locally within 2 hours.
-2. **Product / business stakeholders**: Start with `00_Project_Charter` → `01_BRD` → `11_ProductConstitution` → `27_Roadmap`.
+1. **New developers**: Start with `00_Project_Charter` (§3 Locks, §4 ECs, §5 PCs, §6 DGAs), then read `04_TechStack`, `05_ProjectStructure`, `06_ArchitectureDecisionRecords`, `12_ToolManifestSpecification`. You should be able to run the project locally within 2 hours.
+2. **Product / business stakeholders**: Start with `00_Project_Charter` → `01_BRD` → `11_ProductConstitution` → `30_Roadmap`.
 3. **Tool authors**: Start with `11_ProductConstitution` → `12_ToolManifestSpecification` → `13_FBRD` → `07_FolderStructure` §Tool Folder Template.
-4. **Architects / tech leads**: Read all documents in order. Pay special attention to `02_SAD`, `03_DDD`, `06_ArchitectureDecisionRecords`, `14_DatabaseDesign`, `15_APIConvention`.
-5. **Before making any architectural or product decision**: Search `06_ArchitectureDecisionRecords` for prior decisions. If your decision contradicts an existing ADR, LOCK, EC, or PC, you must either amend the governing document (with justification) or follow the existing rule.
+4. **Architects / tech leads**: Read all documents in order. Pay special attention to `02_SAD`, `03_DDD`, `06_ArchitectureDecisionRecords`, `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture`, `19_DatabaseDesign`, `20_APIConvention`.
+5. **Before making any architectural, product, or growth decision**: Search `06_ArchitectureDecisionRecords` for prior decisions. If your decision contradicts an existing ADR, LOCK, EC, PC, or DGA, you must either amend the governing document (with justification) or follow the existing rule.
 
 ## Document Index
 
 ### Foundation
 | # | Document | Purpose |
 |---|----------|---------|
-| 00 | [Project Charter](./00_Project_Charter.md) | Mission, scope, **12 Architectural Locks** (§3), **12 Engineering Constitution articles** (§4), **10 Product Constitution articles** (§5). |
+| 00 | [Project Charter](./00_Project_Charter.md) | Mission, scope, **12 Architectural Locks** (§3), **12 Engineering Constitution articles** (§4), **10 Product Constitution articles** (§5), **10 Data & Growth Architecture articles** (§6). |
 | 01 | [Business Requirements (BRD)](./01_BRD.md) | Business goals, target market, KPIs, monetization. |
 
 ### Architecture Core (tightly coupled)
@@ -125,34 +143,41 @@ Ten articles define how every tool behaves as a product. They are binding on eve
 | 14 | [Architecture Component (ACD)](./14_ACD.md) | Reusable components, modules, and their contracts. |
 | 15 | [UI/UX Design Specification (UDS)](./15_UDS.md) | User flows, interaction patterns, accessibility. |
 
+### Data & Growth Architecture
+| # | Document | Purpose |
+|---|----------|---------|
+| 16 | [Event Schema Specification](./16_EventSchemaSpecification.md) | Canonical analytics event schema; vendor-neutral. Implements DGA-02, PC-07. |
+| 17 | [Analytics Architecture](./17_AnalyticsArchitecture.md) | Analytics provider adapters, event pipeline, growth metrics. Implements DGA-02, DGA-09. |
+| 18 | [Search Architecture](./18_SearchArchitecture.md) | Search index generation, instant/category/related/fuzzy search. Implements DGA-04. |
+
 ### Data, API, SEO, Auth
 | # | Document | Purpose |
 |---|----------|---------|
-| 16 | [Database Design](./16_DatabaseDesign.md) | Schema, indexes, migrations, multi-tenancy. |
-| 17 | [API Convention](./17_APIConvention.md) | REST/RPC conventions, versioning, error format. |
-| 18 | [SEO Specification](./18_SEOSpecification.md) | Per-tool SEO: metadata, structured data, sitemaps. |
-| 19 | [User Flow](./19_UserFlow.md) | Guest → registered → premium journeys. |
-| 20 | [RBAC](./20_RBAC.md) | Roles, permissions, enforcement points. |
+| 19 | [Database Design](./19_DatabaseDesign.md) | Schema per bounded context, RLS, migrations, multi-tenancy. Implements DGA-01, DGA-10. |
+| 20 | [API Convention](./20_APIConvention.md) | REST conventions, versioning, error format, deprecation policy. Implements DGA-08. |
+| 21 | [SEO Specification](./21_SEOSpecification.md) | Per-tool SEO from manifest; structured data, sitemaps. Implements DGA-03, LOCK-08. |
+| 22 | [User Flow](./22_UserFlow.md) | Guest → registered → premium journeys. Implements LOCK-07, PC-06. |
+| 23 | [RBAC](./23_RBAC.md) | Roles, permissions, enforcement points. Implements LOCK-11, EC-08, DGA-07. |
 
 ### Admin & Process
 | # | Document | Purpose |
 |---|----------|---------|
-| 21 | [Admin Specification](./21_AdminSpecification.md) | `/admin` modules, screens, workflows. |
-| 22 | [Development Guideline](./22_DevelopmentGuideline.md) | Branching, PRs, CI, code review, definition of done. |
-| 23 | [Testing Strategy](./23_TestingStrategy.md) | Unit / integration / E2E / visual / load testing. |
+| 24 | [Admin Specification](./24_AdminSpecification.md) | `/admin` modules, screens, workflows. Implements LOCK-11, DGA-06, DGA-07. |
+| 25 | [Development Guideline](./25_DevelopmentGuideline.md) | Branching, PRs, CI, code review, definition of done. |
+| 26 | [Testing Strategy](./26_TestingStrategy.md) | Unit / integration / E2E / visual / load testing. |
 
 ### Ops & AI
 | # | Document | Purpose |
 |---|----------|---------|
-| 24 | [Deployment Guide](./24_DeploymentGuide.md) | Environments, env vars, rollback, observability. |
-| 25 | [AI Guideline](./25_AI_Guideline.md) | Where AI is used, model choices, prompt management. |
-| 26 | [ZAI Context](./26_ZAI_Context.md) | AI-assistant context, memory, agent conventions. |
+| 27 | [Deployment Guide](./27_DeploymentGuide.md) | Environments, env vars, rollback, observability. |
+| 28 | [AI Guideline](./28_AI_Guideline.md) | Where AI is used, model choices, prompt management. |
+| 29 | [ZAI Context](./29_ZAI_Context.md) | AI-assistant context, memory, agent conventions. |
 
 ### Planning
 | # | Document | Purpose |
 |---|----------|---------|
-| 27 | [Roadmap](./27_Roadmap.md) | Phase 1 → Phase 4 milestones and success criteria. |
-| 28 | [Backlog](./28_Backlog.md) | Prioritized list of tools and features per phase. |
+| 30 | [Roadmap](./30_Roadmap.md) | Phase 1 → Phase 4 milestones and success criteria. |
+| 31 | [Backlog](./31_Backlog.md) | Prioritized list of tools and features per phase. |
 
 ## Document Template
 
@@ -179,12 +204,14 @@ Documents in the Architecture Core group (`02_SAD`, `03_DDD`, `04_TechStack`, `0
 2. **Architectural Locks override everything.** The 12 locks in `00_Project_Charter` §3 have priority over every other document. Amending a lock requires a charter revision.
 3. **Engineering Constitution is mandatory.** The 12 articles in `00_Project_Charter` §4 supersede implementation preferences. Violations block PR merge.
 4. **Product Constitution is mandatory.** The 10 articles in `00_Project_Charter` §5 govern every tool's product behavior. Violations block tool promotion to Stable (PC-04).
-5. **Charter precedence.** If any document conflicts with `00_Project_Charter`, the charter wins.
-6. **ADR append-only.** Architectural decisions are recorded in `06_ArchitectureDecisionRecords` and never modified; supersessions are recorded as new ADRs that reference the superseded one.
-7. **Tool Manifest is canonical.** The schema in `12_ToolManifestSpecification` is the single source of truth for every tool. Registry, Admin, Search, SEO, Analytics all derive from it.
-8. **Revision history mandatory.** Every change must bump the revision and record what changed and why.
-9. **Cross-references must be live.** Broken links are P1 bugs.
-10. **No orphan decisions.** Any architectural or product decision must cite the doc, lock, EC, or PC it follows or amends.
+5. **Data & Growth Architecture is mandatory.** The 10 articles in `00_Project_Charter` §6 govern analytics, SEO, search, content, feature flags, audit, API evolution, and marketplace readiness. Violations block growth-affecting features.
+6. **Charter precedence.** If any document conflicts with `00_Project_Charter`, the charter wins.
+7. **ADR append-only.** Architectural decisions are recorded in `06_ArchitectureDecisionRecords` and never modified; supersessions are recorded as new ADRs that reference the superseded one.
+8. **Tool Manifest is canonical.** The schema in `12_ToolManifestSpecification` is the single source of truth for every tool. Registry, Admin, Search, SEO, Analytics all derive from it.
+9. **Event schema is canonical.** The event schema in `16_EventSchemaSpecification` is the single source of truth for all analytics events. Providers are adapters (DGA-02).
+10. **Revision history mandatory.** Every change must bump the revision and record what changed and why.
+11. **Cross-references must be live.** Broken links are P1 bugs.
+12. **No orphan decisions.** Any architectural, product, or growth decision must cite the doc, lock, EC, PC, or DGA it follows or amends.
 
 ## Status Legend
 
@@ -194,3 +221,4 @@ Documents in the Architecture Core group (`02_SAD`, `03_DDD`, `04_TechStack`, `0
 - 🔒 **Locked** — Architectural Lock; cannot be changed without charter amendment.
 - ⚙️ **Constitutional** — Engineering Constitution article; mandatory engineering rule.
 - 📋 **Product** — Product Constitution article; mandatory product rule.
+- 📈 **Growth** — Data & Growth Architecture article; mandatory growth rule.

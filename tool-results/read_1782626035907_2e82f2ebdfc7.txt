@@ -3,8 +3,8 @@
      3→> **Status:** 🟢 Approved
      4→> **Document Owner:** Chief Architect
      5→> **Last Updated:** 2026-06-28
-     6→> **Revision:** 1.1.0
-     7→> **Implements:** LOCK-02 (Browser-First), LOCK-04 (Modular), LOCK-06 (Database Optional), LOCK-09 (AI Discipline); EC-08 (Security by Default), EC-12 (Enterprise Readiness)
+     6→> **Revision:** 1.2.0
+     7→> **Implements:** LOCK-02 (Browser-First), LOCK-04 (Modular), LOCK-06 (Database Optional), LOCK-09 (AI Discipline); EC-08 (Security by Default), EC-12 (Enterprise Readiness); PC-10 (Product Scalability via metadata-first dependencies)
      8→
      9→---
     10→
@@ -29,10 +29,10 @@
     29→
     30→### 2.2 Out of Scope
     31→
-    32→- Specific code patterns and conventions → `07_CodingStandards`.
-    33→- Folder and file organization → `05_ProjectStructure`, `06_FolderStructure`.
-    34→- Deployment pipeline configuration → `21_DeploymentGuide`.
-    35→- Specific tool implementations (e.g., which image processing library a particular tool uses) → `10_FBRD` per-tool specs; this doc lists approved libraries.
+    32→- Specific code patterns and conventions → `08_CodingStandards`.
+    33→- Folder and file organization → `05_ProjectStructure`, `07_FolderStructure`.
+    34→- Deployment pipeline configuration → `24_DeploymentGuide`.
+    35→- Specific tool implementations (e.g., which image processing library a particular tool uses) → `13_FBRD` per-tool specs; this doc lists approved libraries.
     36→
     37→## 3. Architectural Decisions
     38→
@@ -115,8 +115,8 @@
    115→
    116→**Consequences.**
    117→- ✅ No version lock-in; components live in our codebase.
-   118→- ✅ Built on Radix UI (accessibility-first, WCAG compliant — supports `12_UDS`).
-   119→- ✅ Tailwind-based (aligns with `09_DesignSystem` token approach).
+   118→- ✅ Built on Radix UI (accessibility-first, WCAG compliant — supports `14_UDS`).
+   119→- ✅ Tailwind-based (aligns with `10_DesignSystem` token approach).
    120→- ✅ Tree-shakeable — only used components are bundled.
    121→- ⚠️ Updates require manual re-sync; mitigated by CLI tool.
    122→
@@ -466,7 +466,7 @@
    466→- Read the upgrade guide before starting.
    467→- Create a dedicated branch; run full test suite.
    468→- Manually test: every tool landing page, every tool workflow, admin panel, auth flows.
-   469→- Document any breaking changes in `19_DevelopmentGuideline`.
+   469→- Document any breaking changes in `21_DevelopmentGuideline`.
    470→
    471→### 10.4 When a Library Becomes Unmaintained
    472→- Add to "deprecated" list in this doc.
@@ -506,8 +506,8 @@
    506→- `05_ProjectStructure` — folder layout that hosts these technologies.
    507→- `06_ArchitectureDecisionRecords` — records AD-01 through AD-11 as ADRs.
    508→- `08_CodingStandards` — coding rules enforced via ESLint configured here.
-   509→- `14_DatabaseDesign` — Drizzle schema definitions per context.
-   510→- `22_DeploymentGuide` — Vercel deployment configuration.
+   509→- `16_DatabaseDesign` — Drizzle schema definitions per context.
+   510→- `24_DeploymentGuide` — Vercel deployment configuration.
    511→
    512→### 12.2 External Dependencies
    513→- All technologies listed in §5.
@@ -525,21 +525,24 @@
    525→|----------|------|--------|--------|
    526→| 1.0.0 | 2026-06-28 | Chief Architect | Initial Tech Stack. Defined Next.js 15+, TypeScript strict, Supabase, Drizzle, shadcn/ui, Tailwind, Zod, RHF, Zustand, Vercel, pnpm. Documented browser-first libraries, dependency policy, free-tier analysis. |
    527→| 1.1.0 | 2026-06-28 | Chief Architect | Linked stack choices to EC-08 (Security by Default) and EC-12 (Enterprise Readiness). Added explicit upgrade path documentation principle. Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords`. |
-   528→
-   529→## 14. Cross References
-   530→
-   531→- `00_Project_Charter` §3, §4 — LOCKs and ECs implemented by this stack.
-   532→- `02_SAD` §3 — Architectural decisions this stack operationalizes.
-   533→- `03_DDD` §5 — Bounded contexts whose schemas use Drizzle.
-   534→- `05_ProjectStructure` — Folder layout for these technologies.
-   535→- `06_ArchitectureDecisionRecords` — Permanent record of all tech stack ADs.
-   536→- `07_FolderStructure` — Granular file conventions.
-   537→- `08_CodingStandards` — Coding rules enforced via ESLint here.
-   538→- `10_DesignSystem` — Design tokens implemented via Tailwind.
-   539→- `11_FBRD` — Tool manifest schema validated via Zod.
-   540→- `12_ACD` — Reusable components built on shadcn/ui.
-   541→- `14_DatabaseDesign` — Drizzle schemas per context.
-   542→- `15_APIConvention` — API routes implemented via Next.js API handlers.
-   543→- `22_DeploymentGuide` — Vercel deployment configuration.
-   544→- `23_AI_Guideline` — Constrains AI's modification of this stack (LOCK-09, EC-11).
-   545→
+   528→| 1.2.0 | 2026-06-28 | Chief Architect | Linked tech stack to PC-10 (Product Scalability — metadata-first dependencies). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
+   529→
+   530→## 14. Cross References
+   531→
+   532→- `00_Project_Charter` §3, §4, §5 — LOCKs, ECs, and PCs implemented by this stack.
+   533→- `02_SAD` §3 — Architectural decisions this stack operationalizes.
+   534→- `03_DDD` §5 — Bounded contexts whose schemas use Drizzle.
+   535→- `05_ProjectStructure` — Folder layout for these technologies.
+   536→- `06_ArchitectureDecisionRecords` — Permanent record of all tech stack ADs.
+   537→- `11_ProductConstitution` — Expands PC-10 which this stack supports.
+   538→- `12_ToolManifestSpecification` — Schema validated via Zod (AD-07).
+   539→- `07_FolderStructure` — Granular file conventions.
+   540→- `08_CodingStandards` — Coding rules enforced via ESLint here.
+   541→- `10_DesignSystem` — Design tokens implemented via Tailwind.
+   542→- `13_FBRD` — Tool manifest schema validated via Zod.
+   543→- `14_ACD` — Reusable components built on shadcn/ui.
+   544→- `16_DatabaseDesign` — Drizzle schemas per context.
+   545→- `17_APIConvention` — API routes implemented via Next.js API handlers.
+   546→- `24_DeploymentGuide` — Vercel deployment configuration.
+   547→- `25_AI_Guideline` — Constrains AI's modification of this stack (LOCK-09, EC-11).
+   548→

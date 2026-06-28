@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.0.0
-> **Implements:** LOCK-07 (Guest-First), LOCK-10 (Design Philosophy); EC-05 (Progressive Enhancement), EC-06 (Accessibility First); PC-05 (UX Consistency), PC-06 (Monetization), PC-08 (Error Experience)
+> **Revision:** 1.1.0
+> **Implements:** LOCK-07 (Guest-First), LOCK-10 (Design Philosophy); EC-05 (Progressive Enhancement), EC-06 (Accessibility First); PC-05 (UX Consistency), PC-06 (Monetization), PC-08 (Error Experience); DGA-04 (Search UX patterns)
 
 ---
 
@@ -34,8 +34,8 @@ This document implements LOCK-07 (guest-first UX — no registration before valu
 - Visual design tokens → `10_DesignSystem`.
 - Component APIs → `14_ACD`.
 - Specific tool implementations → per-tool specs.
-- SEO content → `18_SEOSpecification`.
-- Admin UX → `21_AdminSpecification`.
+- SEO content → `21_SEOSpecification`.
+- Admin UX → `24_AdminSpecification`.
 
 ## 3. Architectural Decisions
 
@@ -725,10 +725,10 @@ Site-wide footer (same across all pages).
 - Depends on `14_ACD` — components used.
 - `06_ArchitectureDecisionRecords` — ADR-058 (UX Consistency), ADR-059 (Monetization), ADR-061 (Error Experience).
 - `11_ProductConstitution` — PC-05, PC-06, PC-08 expanded.
-- `18_SEOSpecification` — SEO elements in layout.
-- `19_UserFlow` — detailed user flow diagrams.
-- `22_DevelopmentGuideline` — UX review in quality gates.
-- `23_TestingStrategy` — accessibility and UX testing.
+- `21_SEOSpecification` — SEO elements in layout.
+- `22_UserFlow` — detailed user flow diagrams.
+- `25_DevelopmentGuideline` — UX review in quality gates.
+- `26_TestingStrategy` — accessibility and UX testing.
 
 ### 15.2 External Dependencies
 - React, Next.js.
@@ -745,12 +745,16 @@ Site-wide footer (same across all pages).
 | Revision | Date | Author | Change |
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial UDS. Defined tool page interaction pattern, validation strategy, state designs (empty/loading/error/success/validation), accessibility standards (WCAG AA operationalized), mobile UX patterns, monetization touchpoints, navigation patterns, degraded journeys. |
+| 1.1.0 | 2026-06-28 | Chief Architect | Linked to Data & Growth Architecture articles. Renumbered cross-references to reflect insertion of `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture` (docs 16-28 shifted to 19-31). |
 
 ## 17. Cross References
 
-- `00_Project_Charter` §3 LOCK-07, LOCK-10; §4 EC-05, EC-06; §5 PC-05, PC-06, PC-08 — Implemented.
+- `00_Project_Charter` §3 LOCK-07, LOCK-10; §4 EC-05, EC-06; §5 PC-05, PC-06, PC-08; §6 DGA-04 — Implemented.
 - `01_BRD` §4.2 — Onboarding standards (guest-first).
 - `06_ArchitectureDecisionRecords` — ADR-058 (UX Consistency), ADR-059 (Monetization), ADR-061 (Error Experience).
+- `16_EventSchemaSpecification` — Event schema (DGA-02).
+- `17_AnalyticsArchitecture` — Analytics adapters (DGA-02, DGA-09).
+- `18_SearchArchitecture` — Search index (DGA-04).
 - `07_FolderStructure` — Component file locations.
 - `08_CodingStandards` — Accessibility coding rules.
 - `10_DesignSystem` — Visual tokens and primitive components.
@@ -758,9 +762,9 @@ Site-wide footer (same across all pages).
 - `12_ToolManifestSpecification` — Manifest fields consumed by UX.
 - `13_FBRD` — Tool specs plan UX per this document.
 - `14_ACD` — Components implementing these patterns.
-- `18_SEOSpecification` — SEO elements in layout.
-- `19_UserFlow` — Detailed user flow diagrams.
-- `21_AdminSpecification` — Admin UX (separate but consistent).
-- `22_DevelopmentGuideline` — UX review in quality gates.
-- `23_TestingStrategy` — Accessibility and UX testing.
-- `25_AI_Guideline` — AI must follow UX patterns (LOCK-09, EC-11).
+- `21_SEOSpecification` — SEO elements in layout.
+- `22_UserFlow` — Detailed user flow diagrams.
+- `24_AdminSpecification` — Admin UX (separate but consistent).
+- `25_DevelopmentGuideline` — UX review in quality gates.
+- `26_TestingStrategy` — Accessibility and UX testing.
+- `28_AI_Guideline` — AI must follow UX patterns (LOCK-09, EC-11).

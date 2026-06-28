@@ -3,8 +3,8 @@
      3→> **Status:** 🟢 Approved
      4→> **Document Owner:** Chief Architect
      5→> **Last Updated:** 2026-06-28
-     6→> **Revision:** 1.1.0
-     7→> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-02 (One Source of Truth)
+     6→> **Revision:** 1.2.0
+     7→> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-02 (One Source of Truth); PC-02 (Product Contract via ToolManifest aggregate)
      8→
      9→---
     10→
@@ -30,10 +30,10 @@
     30→### 2.2 Out of Scope
     31→
     32→- Physical architecture (layers, runtimes) → `02_SAD`.
-    33→- Folder layout → `05_ProjectStructure`, `06_FolderStructure`.
-    34→- Database table schemas → `13_DatabaseDesign`.
-    35→- API endpoint definitions → `14_APIConvention`.
-    36→- UI flows between contexts → `16_UserFlow`.
+    33→- Folder layout → `05_ProjectStructure`, `07_FolderStructure`.
+    34→- Database table schemas → `16_DatabaseDesign`.
+    35→- API endpoint definitions → `17_APIConvention`.
+    36→- UI flows between contexts → `19_UserFlow`.
     37→
     38→## 3. Architectural Decisions
     39→
@@ -120,7 +120,7 @@
    120→└── Versioning: manifest_version, tool_version
    121→```
    122→
-   123→The manifest schema is public (documented in `10_FBRD`) and versioned. Breaking changes require a manifest_version bump and a migration path for existing tools.
+   123→The manifest schema is public (documented in `13_FBRD`) and versioned. Breaking changes require a manifest_version bump and a migration path for existing tools.
    124→
    125→**Consequences.**
    126→- ✅ Phase 4 plugin marketplace requires no architectural change — just a signing/sandboxing layer on top.
@@ -218,7 +218,7 @@
    218→- **Favorite** — bookmarked tool by user.
    219→
    220→**Invariants:**
-   221→- A User has exactly one role at a time (per `17_RBAC`).
+   221→- A User has exactly one role at a time (per `20_RBAC`).
    222→- HistoryEntries are immutable once created; deleted via soft-delete.
    223→- Favorites are unique per (userId, toolSlug).
    224→
@@ -306,7 +306,7 @@
    306→| Term | Definition |
    307→|------|------------|
    308→| **Tool** | A discrete utility that follows the Tool Engine lifecycle (LOCK-03). Identified by slug within a category. Stateless. |
-   309→| **ToolManifest** | The aggregate root describing a Tool. Self-contained, serializable. Defined in `10_FBRD`. |
+   309→| **ToolManifest** | The aggregate root describing a Tool. Self-contained, serializable. Defined in `13_FBRD`. |
    310→| **ToolCategory** | A taxonomy node grouping related Tools (e.g., "image", "pdf"). |
    311→| **ToolExecution** | One run of a Tool from Input to Download. Ephemeral; not persisted by Tools Context. |
    312→| **ToolRegistry** | The build-time-generated map of all ToolManifests. Not a runtime DB table. |
@@ -320,7 +320,7 @@
    320→|------|------------|
    321→| **User** | An authenticated identity. Has exactly one role. May be guest (null User). |
    322→| **Session** | An active authentication token scoped to a device. Expires or is revoked. |
-   323→| **Role** | A label (guest, user, premium, editor, admin, super_admin) granting permissions per `17_RBAC`. |
+   323→| **Role** | A label (guest, user, premium, editor, admin, super_admin) granting permissions per `20_RBAC`. |
    324→| **HistoryEntry** | A record of a ToolExecution saved by a User. References Tool by slug. |
    325→| **Favorite** | A User's bookmark of a Tool. |
    326→| **Guest** | An unauthenticated visitor. Treated as null User; tools still function (LOCK-06, LOCK-07). |
@@ -502,42 +502,47 @@
    502→- Depends on `02_SAD` — physical architecture that hosts the bounded contexts.
    503→- `05_ProjectStructure` — maps bounded contexts to folder structure.
    504→- `06_ArchitectureDecisionRecords` — records AD-01 through AD-05 as ADRs.
-   505→- `11_FBRD` — defines ToolManifest aggregate (Tools Context root).
-   506→- `14_DatabaseDesign` — implements each context's schema.
-   507→- `15_APIConvention` — defines how contexts expose published APIs.
-   508→- `18_RBAC` — defines Role aggregate in Identity Context.
-   509→- `19_AdminSpecification` — operates Platform Ops Context.
-   510→
-   511→### 12.2 External Dependencies
-   512→- Supabase Postgres — provides schema isolation per context.
-   513→- No external DDD framework; patterns implemented in plain TypeScript.
-   514→
-   515→### 12.3 Assumptions
-   516→- Six contexts remain stable through Phase 2. Phase 3+ may add 1-3 more.
-   517→- Context boundaries align with team boundaries as team grows (Conway's Law applied intentionally).
-   518→
-   519→## 13. Revision History
+   505→- `11_ProductConstitution` — expands PC-02 (Product Contract) which DDD's Tools Context implements.
+   506→- `12_ToolManifestSpecification` — defines ToolManifest aggregate (referenced by AD-034).
+   507→- `13_FBRD` — defines ToolManifest aggregate (Tools Context root).
+   508→- `16_DatabaseDesign` — implements each context's schema.
+   509→- `17_APIConvention` — defines how contexts expose published APIs.
+   510→- `20_RBAC` — defines Role aggregate in Identity Context.
+   511→- `21_AdminSpecification` — operates Platform Ops Context.
+   512→
+   513→### 12.2 External Dependencies
+   514→- Supabase Postgres — provides schema isolation per context.
+   515→- No external DDD framework; patterns implemented in plain TypeScript.
+   516→
+   517→### 12.3 Assumptions
+   518→- Six contexts remain stable through Phase 2. Phase 3+ may add 1-3 more.
+   519→- Context boundaries align with team boundaries as team grows (Conway's Law applied intentionally).
    520→
-   521→| Revision | Date | Author | Change |
-   522→|----------|------|--------|--------|
-   523→| 1.0.0 | 2026-06-28 | Chief Architect | Initial DDD. Defined 6 bounded contexts, ubiquitous language glossary, context map, aggregate consistency rules. |
-   524→| 1.1.0 | 2026-06-28 | Chief Architect | Linked bounded context design to EC-02 (One Source of Truth). Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords` (docs 06-25 shifted to 07-26). |
-   525→
-   526→## 14. Cross References
-   527→
-   528→- `00_Project_Charter` §3, §4 — Source of LOCKs and ECs implemented by this document.
-   529→- `02_SAD` — Physical architecture hosting the bounded contexts.
-   530→- `04_TechStack` — Technologies used to implement domain events and ACLs.
-   531→- `05_ProjectStructure` — Folder layout mapping to bounded contexts.
-   532→- `06_ArchitectureDecisionRecords` — Permanent record of DDD architectural decisions.
-   533→- `07_FolderStructure` — Granular file conventions per context.
-   534→- `11_FBRD` — ToolManifest aggregate (Tools Context root).
-   535→- `12_ACD` — Tool Engine component (implementation of Tools Context aggregate).
-   536→- `14_DatabaseDesign` — Schema per context.
-   537→- `15_APIConvention` — Published APIs between contexts.
-   538→- `16_SEOSpecification` — How Content Context supports SEO.
-   539→- `17_UserFlow` — How user journeys cross context boundaries.
-   540→- `18_RBAC` — Role aggregate in Identity Context.
-   541→- `19_AdminSpecification` — Platform Ops Context operation.
-   542→- `23_AI_Guideline` — Constrains AI's modification of domain model (LOCK-09, EC-11).
-   543→
+   521→## 13. Revision History
+   522→
+   523→| Revision | Date | Author | Change |
+   524→|----------|------|--------|--------|
+   525→| 1.0.0 | 2026-06-28 | Chief Architect | Initial DDD. Defined 6 bounded contexts, ubiquitous language glossary, context map, aggregate consistency rules. |
+   526→| 1.1.0 | 2026-06-28 | Chief Architect | Linked bounded context design to EC-02 (One Source of Truth). Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords` (docs 06-25 shifted to 07-26). |
+   527→| 1.2.0 | 2026-06-28 | Chief Architect | Linked ToolManifest aggregate to PC-02 (Product Contract). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
+   528→
+   529→## 14. Cross References
+   530→
+   531→- `00_Project_Charter` §3, §4, §5 — Source of LOCKs, ECs, and PCs implemented by this document.
+   532→- `02_SAD` — Physical architecture hosting the bounded contexts.
+   533→- `04_TechStack` — Technologies used to implement domain events and ACLs.
+   534→- `05_ProjectStructure` — Folder layout mapping to bounded contexts.
+   535→- `06_ArchitectureDecisionRecords` — Permanent record of DDD architectural decisions.
+   536→- `11_ProductConstitution` — Expands PC-02 which DDD implements.
+   537→- `12_ToolManifestSpecification` — ToolManifest aggregate (Tools Context root).
+   538→- `07_FolderStructure` — Granular file conventions per context.
+   539→- `13_FBRD` — ToolManifest aggregate (Tools Context root).
+   540→- `14_ACD` — Tool Engine component (implementation of Tools Context aggregate).
+   541→- `16_DatabaseDesign` — Schema per context.
+   542→- `17_APIConvention` — Published APIs between contexts.
+   543→- `18_SEOSpecification` — How Content Context supports SEO.
+   544→- `19_UserFlow` — How user journeys cross context boundaries.
+   545→- `20_RBAC` — Role aggregate in Identity Context.
+   546→- `21_AdminSpecification` — Platform Ops Context operation.
+   547→- `25_AI_Guideline` — Constrains AI's modification of domain model (LOCK-09, EC-11).
+   548→

@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.1.0
-> **Implements:** LOCK-10 (Design Philosophy); EC-06 (Accessibility First), EC-10 (Design System Governance); PC-05 (UX Consistency), PC-08 (Error Experience)
+> **Revision:** 1.2.0
+> **Implements:** LOCK-10 (Design Philosophy); EC-06 (Accessibility First), EC-10 (Design System Governance); PC-05 (UX Consistency), PC-08 (Error Experience); DGA-03 (SEO Metadata as Structured Data — OG/Twitter Card tokens)
 
 ---
 
@@ -833,24 +833,28 @@ export default config;
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial Design System. Defined token-driven theming via CSS custom properties, monochrome palette with single accent, typography scale, spacing scale, radius scale, shadow scale, motion standards, layout grid, icon system, accessibility standards (WCAG AA), dark mode strategy, z-index scale. Listed component patterns and Tailwind configuration. |
 | 1.1.0 | 2026-06-28 | Chief Architect | Linked design system to PC-05 (UX Consistency) and PC-08 (Error Experience). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
+| 1.2.0 | 2026-06-28 | Chief Architect | Linked to Data & Growth Architecture articles. Renumbered cross-references to reflect insertion of `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture` (docs 16-28 shifted to 19-31). |
 
 ## 13. Cross References
 
-- `00_Project_Charter` §3 LOCK-10, §4 EC-06, EC-10, §5 PC-05, PC-08 — Implemented.
+- `00_Project_Charter` §3 LOCK-10, §4 EC-06, EC-10, §5 PC-05, PC-08, §6 DGA-03 — Implemented.
 - `01_BRD` §3.3 — Brand trust goal supported by consistent design.
 - `02_SAD` — Components align with architectural layers.
 - `04_TechStack` AD-05, AD-06 — shadcn/ui and Tailwind power this system.
 - `06_ArchitectureDecisionRecords` — ADR-010 (Design Philosophy), ADR-018 (Accessibility), ADR-022 (Design System Governance), ADR-040 (shadcn/ui), ADR-041 (Tailwind).
 - `11_ProductConstitution` — Expands PC-05 (UX Consistency), PC-08 (Error Experience).
 - `12_ToolManifestSpecification` — Manifest references design system components.
+- `16_EventSchemaSpecification` — Event schema (DGA-02).
+- `17_AnalyticsArchitecture` — Analytics adapters (DGA-02, DGA-09).
+- `18_SearchArchitecture` — Search index (DGA-04).
 - `07_FolderStructure` — Component file locations.
 - `08_CodingStandards` §12 — Design system compliance rules.
 - `09_NamingConvention` — CSS class and token naming.
 - `13_FBRD` — Tool manifests reference design system components.
 - `14_ACD` — Detailed component APIs and contracts.
 - `15_UDS` — User flows using these components.
-- `18_SEOSpecification` — Open Graph image standards use design tokens.
-- `21_AdminSpecification` — Admin UI uses same design system.
-- `23_TestingStrategy` — Accessibility and visual testing.
-- `24_DeploymentGuide` — Performance monitoring of design choices.
-- `25_AI_Guideline` — AI must use design system (LOCK-09, EC-11).
+- `21_SEOSpecification` — Open Graph image standards use design tokens.
+- `24_AdminSpecification` — Admin UI uses same design system.
+- `26_TestingStrategy` — Accessibility and visual testing.
+- `27_DeploymentGuide` — Performance monitoring of design choices.
+- `28_AI_Guideline` — AI must use design system (LOCK-09, EC-11).

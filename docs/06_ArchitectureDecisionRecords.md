@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.1.0
-> **Implements:** EC-01 (Documentation First), LOCK-09 (AI Discipline), PC-02 (Product Contract)
+> **Revision:** 1.2.0
+> **Implements:** EC-01 (Documentation First), LOCK-09 (AI Discipline), PC-02 (Product Contract), DGA-02 (Event-Driven Analytics)
 > **Policy:** APPEND-ONLY. Never modify historical records. Supersessions are recorded as new ADRs that reference the superseded one.
 
 ---
@@ -188,6 +188,21 @@ Every ADR in this repository MUST follow this template:
 | ADR-061 | Error Experience | Approved | `00_Project_Charter` §5 PC-08 |
 | ADR-062 | Feature Discoverability | Approved | `00_Project_Charter` §5 PC-09 |
 | ADR-063 | Product Scalability | Approved | `00_Project_Charter` §5 PC-10 |
+
+### 6.2c Data & Growth Architecture ADRs (Governance Tier 4)
+
+| ADR | Title | Status | Source |
+|-----|-------|--------|--------|
+| ADR-064 | Database as a Product Service | Approved | `00_Project_Charter` §6 DGA-01 |
+| ADR-065 | Event-Driven Analytics | Approved | `00_Project_Charter` §6 DGA-02 |
+| ADR-066 | SEO Metadata as Structured Data | Approved | `00_Project_Charter` §6 DGA-03 |
+| ADR-067 | Search Architecture | Approved | `00_Project_Charter` §6 DGA-04 |
+| ADR-068 | Content Architecture | Approved | `00_Project_Charter` §6 DGA-05 |
+| ADR-069 | Feature Flags | Approved | `00_Project_Charter` §6 DGA-06 |
+| ADR-070 | Auditability | Approved | `00_Project_Charter` §6 DGA-07 |
+| ADR-071 | API Evolution | Approved | `00_Project_Charter` §6 DGA-08 |
+| ADR-072 | Growth Metrics | Approved | `00_Project_Charter` §6 DGA-09 |
+| ADR-073 | Future Marketplace Readiness | Approved | `00_Project_Charter` §6 DGA-10 |
 
 ### 6.3 Technical ADRs (Tier 3) — Software Architecture (`02_SAD`)
 
@@ -441,7 +456,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If abuse (e.g., automated scraping) forces stricter gating, propose a targeted ADR rather than weakening LOCK-07 globally.
 
-**Cross References.** `00_Project_Charter` §3 LOCK-07, `01_BRD` §4.2, `19_UserFlow`.
+**Cross References.** `00_Project_Charter` §3 LOCK-07, `01_BRD` §4.2, `22_UserFlow`.
 
 ---
 
@@ -467,9 +482,9 @@ Every ADR in this repository MUST follow this template:
 - **SEO plugin added post-launch:** Rejected — too late; URL structure and routing can't be retrofitted cheaply.
 - **Per-tool SEO config files (separate from manifest):** Rejected — duplicates manifest's responsibility.
 
-**Future Review Trigger.** If search engine algorithms shift significantly (e.g., AI-generated search results reduce organic traffic >40%), update `18_SEOSpecification` and possibly this ADR.
+**Future Review Trigger.** If search engine algorithms shift significantly (e.g., AI-generated search results reduce organic traffic >40%), update `21_SEOSpecification` and possibly this ADR.
 
-**Cross References.** `00_Project_Charter` §3 LOCK-08, `02_SAD` AD-03, `18_SEOSpecification`, `13_FBRD` §Tool Manifest.
+**Cross References.** `00_Project_Charter` §3 LOCK-08, `02_SAD` AD-03, `21_SEOSpecification`, `13_FBRD` §Tool Manifest.
 
 ---
 
@@ -495,9 +510,9 @@ Every ADR in this repository MUST follow this template:
 - **Unrestricted AI development:** Rejected — leads to architectural drift within months.
 - **AI banned entirely:** Rejected — forfeits legitimate productivity gains.
 
-**Future Review Trigger.** As AI capabilities evolve, refine the rules in `25_AI_Guideline` and `26_ZAI_Context`.
+**Future Review Trigger.** As AI capabilities evolve, refine the rules in `28_AI_Guideline` and `29_ZAI_Context`.
 
-**Cross References.** `00_Project_Charter` §3 LOCK-09, `25_AI_Guideline`, `26_ZAI_Context`, `22_DevelopmentGuideline` §AI-Assisted Development.
+**Cross References.** `00_Project_Charter` §3 LOCK-09, `28_AI_Guideline`, `29_ZAI_Context`, `25_DevelopmentGuideline` §AI-Assisted Development.
 
 ---
 
@@ -551,9 +566,9 @@ Every ADR in this repository MUST follow this template:
 - **External admin tools (e.g., Retool):** Rejected — doesn't integrate with our bounded contexts; creates data silos.
 - **Phase-1-minimal admin (CRUD only):** Rejected — would require rebuilding for Phase 2+ needs.
 
-**Future Review Trigger.** When new operational needs emerge (e.g., experiment management), add module per `21_AdminSpecification`.
+**Future Review Trigger.** When new operational needs emerge (e.g., experiment management), add module per `24_AdminSpecification`.
 
-**Cross References.** `00_Project_Charter` §3 LOCK-11, `21_AdminSpecification`, `20_RBAC`.
+**Cross References.** `00_Project_Charter` §3 LOCK-11, `24_AdminSpecification`, `23_RBAC`.
 
 ---
 
@@ -581,7 +596,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If a new lifecycle state becomes necessary (e.g., "experimental"), add via charter amendment.
 
-**Cross References.** `00_Project_Charter` §3 LOCK-12, `13_FBRD` §Tool Manifest, `21_AdminSpecification` §Feature Lifecycle.
+**Cross References.** `00_Project_Charter` §3 LOCK-12, `13_FBRD` §Tool Manifest, `24_AdminSpecification` §Feature Lifecycle.
 
 ---
 
@@ -613,7 +628,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** Permanent.
 
-**Cross References.** `00_Project_Charter` §4 EC-01, `22_DevelopmentGuideline`, this document.
+**Cross References.** `00_Project_Charter` §4 EC-01, `25_DevelopmentGuideline`, this document.
 
 ---
 
@@ -721,7 +736,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** Permanent.
 
-**Cross References.** `00_Project_Charter` §4 EC-05, `02_SAD` §Graceful Degradation, `19_UserFlow` §Degraded Journeys.
+**Cross References.** `00_Project_Charter` §4 EC-05, `02_SAD` §Graceful Degradation, `22_UserFlow` §Degraded Journeys.
 
 ---
 
@@ -749,7 +764,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If WCAG releases a new standard (e.g., WCAG 3.0), update `15_UDS` accordingly.
 
-**Cross References.** `00_Project_Charter` §4 EC-06, `10_DesignSystem` §Accessibility, `15_UDS` §Accessibility Standards, `23_TestingStrategy` §Accessibility Testing.
+**Cross References.** `00_Project_Charter` §4 EC-06, `10_DesignSystem` §Accessibility, `15_UDS` §Accessibility Standards, `26_TestingStrategy` §Accessibility Testing.
 
 ---
 
@@ -776,7 +791,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** As device capabilities and network speeds evolve, update specific budget numbers in `08_CodingStandards`.
 
-**Cross References.** `00_Project_Charter` §4 EC-07, `02_SAD` §Performance Standards, `08_CodingStandards` §Performance Budget, `24_DeploymentGuide` §Performance Monitoring.
+**Cross References.** `00_Project_Charter` §4 EC-07, `02_SAD` §Performance Standards, `08_CodingStandards` §Performance Budget, `27_DeploymentGuide` §Performance Monitoring.
 
 ---
 
@@ -803,7 +818,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** Permanent; new threat vectors trigger updates to `08_CodingStandards` §Security Rules.
 
-**Cross References.** `00_Project_Charter` §4 EC-08, `08_CodingStandards` §Security Rules, `17_APIConvention` §Security, `16_DatabaseDesign` §RLS, `20_RBAC`, `24_DeploymentGuide` §Security Headers.
+**Cross References.** `00_Project_Charter` §4 EC-08, `08_CodingStandards` §Security Rules, `20_APIConvention` §Security, `19_DatabaseDesign` §RLS, `23_RBAC`, `27_DeploymentGuide` §Security Headers.
 
 ---
 
@@ -831,7 +846,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** Permanent.
 
-**Cross References.** `00_Project_Charter` §4 EC-09, `23_TestingStrategy`, `08_CodingStandards` §Testability Requirements.
+**Cross References.** `00_Project_Charter` §4 EC-09, `26_TestingStrategy`, `08_CodingStandards` §Testability Requirements.
 
 ---
 
@@ -884,9 +899,9 @@ Every ADR in this repository MUST follow this template:
 - **Unrestricted AI:** Rejected — drifts from architecture.
 - **AI banned:** Rejected — forfeits productivity.
 
-**Future Review Trigger.** As AI capabilities evolve, refine `25_AI_Guideline` and `26_ZAI_Context`.
+**Future Review Trigger.** As AI capabilities evolve, refine `28_AI_Guideline` and `29_ZAI_Context`.
 
-**Cross References.** `00_Project_Charter` §4 EC-11, `25_AI_Guideline`, `26_ZAI_Context`, `22_DevelopmentGuideline` §AI-Assisted Development.
+**Cross References.** `00_Project_Charter` §4 EC-11, `28_AI_Guideline`, `29_ZAI_Context`, `25_DevelopmentGuideline` §AI-Assisted Development.
 
 ---
 
@@ -911,9 +926,9 @@ Every ADR in this repository MUST follow this template:
 **Alternatives Considered.**
 - **Free-tier-specific optimizations:** Rejected — creates lock-in to free tier.
 
-**Future Review Trigger.** When migration to paid tier begins, document migration steps in `24_DeploymentGuide` §Enterprise Migration.
+**Future Review Trigger.** When migration to paid tier begins, document migration steps in `27_DeploymentGuide` §Enterprise Migration.
 
-**Cross References.** `00_Project_Charter` §4 EC-12, `04_TechStack` §Upgrade Paths, `02_SAD` §Future Scalability, `24_DeploymentGuide` §Enterprise Migration.
+**Cross References.** `00_Project_Charter` §4 EC-12, `04_TechStack` §Upgrade Paths, `02_SAD` §Future Scalability, `27_DeploymentGuide` §Enterprise Migration.
 
 ---
 
@@ -1086,7 +1101,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If Vercel removes Edge Runtime, re-evaluate deployment topology.
 
-**Cross References.** `02_SAD` AD-06, `24_DeploymentGuide`.
+**Cross References.** `02_SAD` AD-06, `27_DeploymentGuide`.
 
 ---
 
@@ -1118,7 +1133,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** When a new concern emerges that doesn't fit any context, propose a new context via DDD amendment.
 
-**Cross References.** `03_DDD` AD-01, `05_ProjectStructure` AD-01, `16_DatabaseDesign`.
+**Cross References.** `03_DDD` AD-01, `05_ProjectStructure` AD-01, `19_DatabaseDesign`.
 
 ---
 
@@ -1225,7 +1240,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If event volume becomes problematic, add event sourcing infrastructure (Phase 3+).
 
-**Cross References.** `03_DDD` AD-05, `17_APIConvention`.
+**Cross References.** `03_DDD` AD-05, `20_APIConvention`.
 
 ---
 
@@ -1258,7 +1273,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If Next.js stagnates or significantly breaks backwards compatibility, evaluate alternatives.
 
-**Cross References.** `04_TechStack` AD-01, `24_DeploymentGuide`.
+**Cross References.** `04_TechStack` AD-01, `27_DeploymentGuide`.
 
 ---
 
@@ -1316,7 +1331,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If Supabase free tier becomes inadequate (Phase 2+) or pricing changes unfavorably, evaluate alternatives. Architecture is portable via Drizzle.
 
-**Cross References.** `04_TechStack` AD-03, `16_DatabaseDesign`, `24_DeploymentGuide`.
+**Cross References.** `04_TechStack` AD-03, `19_DatabaseDesign`, `27_DeploymentGuide`.
 
 ---
 
@@ -1346,7 +1361,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** Permanent.
 
-**Cross References.** `04_TechStack` AD-04, `16_DatabaseDesign`.
+**Cross References.** `04_TechStack` AD-04, `19_DatabaseDesign`.
 
 ---
 
@@ -1435,7 +1450,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** Permanent.
 
-**Cross References.** `04_TechStack` AD-07, `13_FBRD` §Tool Manifest, `17_APIConvention`.
+**Cross References.** `04_TechStack` AD-07, `13_FBRD` §Tool Manifest, `20_APIConvention`.
 
 ---
 
@@ -1522,7 +1537,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If Vercel pricing changes unfavorably or free tier shrinks, evaluate self-hosting. Next.js is portable.
 
-**Cross References.** `04_TechStack` AD-10, `24_DeploymentGuide`.
+**Cross References.** `04_TechStack` AD-10, `27_DeploymentGuide`.
 
 ---
 
@@ -1728,7 +1743,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** Permanent.
 
-**Cross References.** `05_ProjectStructure` AD-06, `18_SEOSpecification`.
+**Cross References.** `05_ProjectStructure` AD-06, `21_SEOSpecification`.
 
 ---
 
@@ -1788,7 +1803,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If user research shows that a single problem requires multi-step processing that doesn't fit one tool, propose a "workflow" concept (not a multi-feature tool).
 
-**Cross References.** `00_Project_Charter` §5 PC-01, `11_ProductConstitution` §PC-01, `13_FBRD` §Tool Product Contract, `28_Backlog`.
+**Cross References.** `00_Project_Charter` §5 PC-01, `11_ProductConstitution` §PC-01, `13_FBRD` §Tool Product Contract, `31_Backlog`.
 
 ---
 
@@ -1844,7 +1859,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If a new dimension becomes important (e.g., i18n support), add to the standard via ADR.
 
-**Cross References.** `00_Project_Charter` §5 PC-03, `11_ProductConstitution` §PC-03, `22_DevelopmentGuideline` §Definition of Done, `23_TestingStrategy`.
+**Cross References.** `00_Project_Charter` §5 PC-03, `11_ProductConstitution` §PC-03, `25_DevelopmentGuideline` §Definition of Done, `26_TestingStrategy`.
 
 ---
 
@@ -1859,7 +1874,7 @@ Every ADR in this repository MUST follow this template:
 
 **Context.** LOCK-12 defines feature lifecycle (Concept → ... → Stable). Without quality gates, promotion to Stable is arbitrary — a tool becomes Stable when its author says so, not when it meets objective criteria.
 
-**Decision.** A feature cannot reach Stable unless it passes 7 reviews: Functional, Accessibility, Performance, SEO, Security, Documentation, UX. Each review has objective criteria (defined in `22_DevelopmentGuideline`). All 7 must pass; any failure blocks promotion.
+**Decision.** A feature cannot reach Stable unless it passes 7 reviews: Functional, Accessibility, Performance, SEO, Security, Documentation, UX. Each review has objective criteria (defined in `25_DevelopmentGuideline`). All 7 must pass; any failure blocks promotion.
 
 **Consequences.**
 - ✅ Stable status is meaningful and trustworthy.
@@ -1872,7 +1887,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If a new review dimension becomes critical (e.g., privacy review), add via ADR.
 
-**Cross References.** `00_Project_Charter` §5 PC-04, `11_ProductConstitution` §PC-04, `22_DevelopmentGuideline` §Quality Gates, `21_AdminSpecification` §Feature Lifecycle.
+**Cross References.** `00_Project_Charter` §5 PC-04, `11_ProductConstitution` §PC-04, `25_DevelopmentGuideline` §Quality Gates, `24_AdminSpecification` §Feature Lifecycle.
 
 ---
 
@@ -1927,7 +1942,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If revenue per user is too low to sustain the platform, propose alternative monetization (e.g., API tier) rather than weakening PC-06.
 
-**Cross References.** `00_Project_Charter` §5 PC-06, `11_ProductConstitution` §PC-06, `01_BRD` §4.1, `19_UserFlow` §Monetization Touchpoints.
+**Cross References.** `00_Project_Charter` §5 PC-06, `11_ProductConstitution` §PC-06, `01_BRD` §4.1, `22_UserFlow` §Monetization Touchpoints.
 
 ---
 
@@ -1954,7 +1969,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If a new event type becomes important (e.g., Tool Abandoned), add via ADR and update `12_ToolManifestSpecification`.
 
-**Cross References.** `00_Project_Charter` §5 PC-07, `11_ProductConstitution` §PC-07, `12_ToolManifestSpecification` §Analytics Configuration, `21_AdminSpecification` §Analytics Module.
+**Cross References.** `00_Project_Charter` §5 PC-07, `11_ProductConstitution` §PC-07, `12_ToolManifestSpecification` §Analytics Configuration, `24_AdminSpecification` §Analytics Module.
 
 ---
 
@@ -2010,7 +2025,7 @@ Every ADR in this repository MUST follow this template:
 
 **Future Review Trigger.** If new discovery methods emerge (e.g., AI-powered recommendations), add via ADR.
 
-**Cross References.** `00_Project_Charter` §5 PC-09, `11_ProductConstitution` §PC-09, `12_ToolManifestSpecification` §Related Tools, `18_SEOSpecification` §Internal Linking.
+**Cross References.** `00_Project_Charter` §5 PC-09, `11_ProductConstitution` §PC-09, `12_ToolManifestSpecification` §Related Tools, `21_SEOSpecification` §Internal Linking.
 
 ---
 
@@ -2040,6 +2055,300 @@ Every ADR in this repository MUST follow this template:
 **Future Review Trigger.** If manifest schema becomes insufficient for a new tool category, extend via ADR (not bypass).
 
 **Cross References.** `00_Project_Charter` §5 PC-10, `11_ProductConstitution` §PC-10, `12_ToolManifestSpecification`, `05_ProjectStructure` §Tool Registry Pattern, `02_SAD` AD-03.
+
+---
+
+### Part 8: Data & Growth Architecture ADRs (Governance Tier 4)
+
+---
+
+### ADR-064 — Database as a Product Service
+
+- **Decision ID:** ADR-064
+- **Date:** 2026-06-28
+- **Status:** Approved
+- **Category:** Data & Growth Architecture
+- **Implements:** DGA-01, LOCK-02, LOCK-06
+- **Decision Owner:** Chief Architect
+
+**Context.** Databases are often treated as default persistence for any data that flows through a system. This leads to bloated schemas, privacy risks (unnecessary PII storage), and tight coupling between tools and DB availability. LOCK-06 mandates that core tools function without DB; DGA-01 elevates this to a product principle: the DB is a product capability, not a default.
+
+**Decision.** Only information that creates long-term user value is persisted. Temporary processing results remain browser-local whenever possible (LOCK-02). The database stores: authentication, user profile, history, favorites, cloud sync, analytics aggregates, admin/config, content, audit logs. It does NOT store: tool execution inputs/outputs (ephemeral), search indexes (generated), SEO metadata (in manifest), feature flags (in admin config but cached).
+
+**Consequences.**
+- ✅ DB schema stays lean; each table has clear product purpose.
+- ✅ Privacy: less data stored = smaller attack surface.
+- ✅ DB outages don't break tools (LOCK-06).
+- ⚠️ Some "convenient" persistence is rejected; justified by discipline.
+
+**Alternatives Considered.**
+- **Persist everything by default:** Rejected — schema bloat, privacy risk, coupling.
+- **Per-tool DB tables:** Rejected — violates LOCK-04 (modularity); doesn't scale to 1,000+ tools.
+
+**Future Review Trigger.** If a tool category genuinely requires persistent state (e.g., scheduled batch processing), propose an ADR for that category.
+
+**Cross References.** `00_Project_Charter` §6 DGA-01, `19_DatabaseDesign`, `02_SAD` AD-05, `03_DDD` AD-03.
+
+---
+
+### ADR-065 — Event-Driven Analytics
+
+- **Decision ID:** ADR-065
+- **Date:** 2026-06-28
+- **Status:** Approved
+- **Category:** Data & Growth Architecture
+- **Implements:** DGA-02, PC-07, LOCK-04
+- **Decision Owner:** Chief Architect
+
+**Context.** Analytics vendors (Google Analytics, PostHog, Plausible) have different APIs and event models. Hardcoding to one vendor creates lock-in; switching vendors requires rewriting business logic. PC-07 mandates consistent analytics events per tool.
+
+**Decision.** Every important action produces a standardized analytics event. Analytics is vendor-neutral: the canonical event schema (in `16_EventSchemaSpecification`) is the source of truth. Analytics providers are adapters implementing a common interface. Business logic emits canonical events; adapters translate to provider-specific formats. Supported providers: Google Analytics (GA4), PostHog, Plausible, self-hosted.
+
+**Consequences.**
+- ✅ Switching analytics providers is configuration, not rewrite.
+- ✅ Multi-provider support (e.g., GA for marketing, PostHog for product) possible.
+- ✅ Canonical event schema enables growth metrics (DGA-09).
+- ⚠️ Slight indirection (event → adapter → provider); justified by flexibility.
+
+**Alternatives Considered.**
+- **Single vendor (GA4):** Rejected — lock-in; can't switch if pricing/terms change.
+- **Custom analytics from scratch:** Rejected — reinvents the wheel; loses provider ecosystem.
+
+**Future Review Trigger.** If a new analytics provider emerges with unique capabilities, add an adapter via ADR.
+
+**Cross References.** `00_Project_Charter` §6 DGA-02, `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, PC-07 (ADR-060).
+
+---
+
+### ADR-066 — SEO Metadata as Structured Data
+
+- **Decision ID:** ADR-066
+- **Date:** 2026-06-28
+- **Status:** Approved
+- **Category:** Data & Growth Architecture
+- **Implements:** DGA-03, LOCK-08, PC-10
+- **Decision Owner:** Chief Architect
+
+**Context.** SEO metadata (title, description, OG, Twitter Card, JSON-LD, FAQ, breadcrumb) is often hardcoded in page components or scattered across config files. This leads to inconsistency, stale metadata, and difficulty updating SEO strategy. LOCK-08 mandates every tool page has complete SEO; DGA-03 mandates SEO originates from structured metadata.
+
+**Decision.** The Tool Manifest is the canonical source for all SEO metadata. No SEO values are hardcoded inside pages. The manifest's `seo` field encodes: title, description, keywords, canonical URL, Open Graph, Twitter Card, JSON-LD structured data, FAQ, breadcrumb, search intent. Build-time codegen consumes the manifest and generates per-route SEO metadata.
+
+**Consequences.**
+- ✅ SEO updates are manifest edits, not page rewrites.
+- ✅ SEO consistency guaranteed across all tools.
+- ✅ Codegen ensures no stale metadata.
+- ⚠️ Manifest schema must be comprehensive; documented in `12_ToolManifestSpecification`.
+
+**Alternatives Considered.**
+- **Per-page SEO config files:** Rejected — fragments from manifest; goes stale.
+- **Hardcoded SEO in components:** Rejected — can't update at scale; error-prone.
+
+**Future Review Trigger.** If search engines introduce new metadata formats (e.g., new JSON-LD types), extend manifest schema via ADR.
+
+**Cross References.** `00_Project_Charter` §6 DGA-03, `12_ToolManifestSpecification` §SEO, `21_SEOSpecification`, `05_ProjectStructure` AD-04 (codegen).
+
+---
+
+### ADR-067 — Search Architecture
+
+- **Decision ID:** ADR-067
+- **Date:** 2026-06-28
+- **Status:** Approved
+- **Category:** Data & Growth Architecture
+- **Implements:** DGA-04, PC-09, LOCK-05
+- **Decision Owner:** Chief Architect
+
+**Context.** At 1,000+ tools, users can't browse to find what they need; search is essential. Without a structured search architecture, search becomes an afterthought with limited capabilities. PC-09 mandates feature discoverability; DGA-04 mandates search supports multiple modes.
+
+**Decision.** Search supports: Instant Search (as-you-type), Category Search, Related Tools, Popular Tools, Recently Used, Synonyms, Fuzzy Matching, Tags. Search indexes are generated from the Tool Manifest at build time. Client-side search (Pagefind or similar) for speed; no server round-trip for search queries.
+
+**Consequences.**
+- ✅ Users find tools fast; engagement increases.
+- ✅ Search index never goes stale (build-time generation).
+- ✅ No server cost for search queries.
+- ⚠️ Index size grows with tool count; mitigated by lazy-loading.
+
+**Alternatives Considered.**
+- **Server-side search (e.g., Algolia):** Rejected for Phase 1 — cost; adds dependency. Phase 3+ if needed.
+- **No search (browse only):** Rejected — doesn't scale to 1,000+ tools.
+
+**Future Review Trigger.** If client-side search performance degrades at >1,000 tools, evaluate server-side search (Algolia, Meilisearch).
+
+**Cross References.** `00_Project_Charter` §6 DGA-04, `18_SearchArchitecture`, PC-09 (ADR-062), `12_ToolManifestSpecification` (index source).
+
+---
+
+### ADR-068 — Content Architecture
+
+- **Decision ID:** ADR-068
+- **Date:** 2026-06-28
+- **Status:** Approved
+- **Category:** Data & Growth Architecture
+- **Implements:** DGA-05, LOCK-04
+- **Decision Owner:** Chief Architect
+
+**Context.** Content (documentation, help articles, blog, tutorials) and tool execution are different concerns. Mixing them creates coupling — a CMS change affects the Tool Engine, and vice versa. `03_DDD` AD-01 establishes Content as a separate bounded context; DGA-05 elevates this to a growth principle.
+
+**Decision.** Documentation, Help, Blog, Tutorials, and Tool Pages are separate content types. Future CMS integration MUST NOT affect the Tool Engine. Content remains isolated from tool execution. Content Context owns articles, media assets, taxonomy. Tools Context owns tool manifests and execution. They communicate via published APIs only.
+
+**Consequences.**
+- ✅ CMS can be swapped/upgraded without touching tools.
+- ✅ Tool Engine remains stable regardless of content strategy.
+- ✅ Clear ownership: content team owns Content Context; tool team owns Tools Context.
+
+**Alternatives Considered.**
+- **Unified content model:** Rejected — couples content and tools; hard to evolve independently.
+- **CMS-first (tools as content):** Rejected — tools have execution semantics that content doesn't.
+
+**Future Review Trigger.** If a CMS is introduced (Phase 2+), ensure it integrates via Content Context's published API, not by reaching into Tools Context.
+
+**Cross References.** `00_Project_Charter` §6 DGA-05, `03_DDD` AD-01 (Content Context), `19_DatabaseDesign` §Content Context, `24_AdminSpecification` §Content Modules.
+
+---
+
+### ADR-069 — Feature Flags
+
+- **Decision ID:** ADR-069
+- **Date:** 2026-06-28
+- **Status:** Approved
+- **Category:** Data & Growth Architecture
+- **Implements:** DGA-06, LOCK-11, LOCK-12
+- **Decision Owner:** Chief Architect
+
+**Context.** Without feature flags, every feature is deployed all-or-nothing. This makes beta testing, A/B experiments, regional rollouts, and gradual rollouts impossible without code changes. LOCK-11 mandates admin as operational control center; LOCK-12 mandates feature lifecycle management.
+
+**Decision.** Feature flags are a first-class platform capability. Every major feature is deployable independently via flags. Supported flag types: Boolean (on/off), Percentage rollout (0-100%), Audience targeting (by locale, user role, tenant), A/B experiment (variant assignment). Flags are managed in Platform Ops Context (`03_DDD`); evaluated at Edge Middleware for performance.
+
+**Consequences.**
+- ✅ Beta features can be enabled for specific users.
+- ✅ A/B experiments run without code deploys.
+- ✅ Gradual rollouts reduce deployment risk.
+- ✅ Regional rollouts (e.g., EU first) supported.
+- ⚠️ Flag management discipline required; stale flags create complexity.
+
+**Alternatives Considered.**
+- **No feature flags (deploy all-or-nothing):** Rejected — can't beta test; high deployment risk.
+- **Third-party flag service (LaunchDarkly):** Rejected for Phase 1 — cost. Phase 3+ if needed.
+
+**Future Review Trigger.** If flag volume becomes hard to manage, adopt a flag lifecycle policy (archive stale flags).
+
+**Cross References.** `00_Project_Charter` §6 DGA-06, `03_DDD` §Platform Ops Context, `24_AdminSpecification` §Feature Flags, `27_DeploymentGuide` (flag evaluation at Edge).
+
+---
+
+### ADR-070 — Auditability
+
+- **Decision ID:** ADR-070
+- **Date:** 2026-06-28
+- **Status:** Approved
+- **Category:** Data & Growth Architecture
+- **Implements:** DGA-07, LOCK-11, EC-08
+- **Decision Owner:** Chief Architect
+
+**Context.** Without audit logs, administrative actions (tool published, role changed, settings modified) are opaque. Security incidents can't be investigated; compliance (GDPR, SOC 2) requires audit trails. LOCK-11 mandates audit trail from Phase 1; DGA-07 elevates this to a growth principle.
+
+**Decision.** Every administrative action is auditable. Audit entries record: who (user ID), what (action type), when (timestamp), where (IP, user agent), before/after (state change). Audit logs are immutable (append-only; never edited or deleted). Examples of audited actions: Tool Published, Tool Deprecated, SEO Updated, User Role Changed, Settings Modified, Feature Flag Toggled, Content Published.
+
+**Consequences.**
+- ✅ Security incidents investigatable.
+- ✅ Compliance (GDPR, SOC 2) supported.
+- ✅ Trust: users can request audit of their data (GDPR right).
+- ⚠️ Storage cost for audit logs; mitigated by retention policy (e.g., 7 years).
+
+**Alternatives Considered.**
+- **Audit only critical actions:** Rejected — incomplete; can't reconstruct incidents.
+- **Mutable audit logs (editable for corrections):** Rejected — violates immutability; loses trust.
+
+**Future Review Trigger.** If compliance requirements expand (e.g., SOC 2 Type II), extend audit schema accordingly.
+
+**Cross References.** `00_Project_Charter` §6 DGA-07, `23_RBAC`, `24_AdminSpecification` §Audit Trail, `19_DatabaseDesign` §Audit Entries.
+
+---
+
+### ADR-071 — API Evolution
+
+- **Decision ID:** ADR-071
+- **Date:** 2026-06-28
+- **Status:** Approved
+- **Category:** Data & Growth Architecture
+- **Implements:** DGA-08, EC-12, LOCK-05
+- **Decision Owner:** Chief Architect
+
+**Context.** Public APIs (future Phase 3+) and internal APIs need to evolve. Without versioning and deprecation policy, changes break consumers silently. EC-12 mandates enterprise readiness; LOCK-05 mandates stable contracts for plugins.
+
+**Decision.** Public APIs are versioned (`/api/v1/...`). Deprecation follows a documented policy: deprecated endpoints work for 6 months with `Deprecation` header; removed in next major version. Backward compatibility is preferred; breaking changes require ADR entries. Semver for API versions.
+
+**Consequences.**
+- ✅ API consumers can upgrade on their schedule.
+- ✅ Plugin developers have stable contracts.
+- ✅ Enterprise customers trust API stability.
+- ⚠️ Maintaining multiple API versions adds complexity; mitigated by clear deprecation timeline.
+
+**Alternatives Considered.**
+- **Unversioned APIs:** Rejected — breaks consumers silently; enterprise non-starter.
+- **Continuous breaking changes:** Rejected — destroys consumer trust.
+
+**Future Review Trigger.** When API v2 is needed, write ADR for migration path.
+
+**Cross References.** `00_Project_Charter` §6 DGA-08, `20_APIConvention`, EC-12 (ADR-024), LOCK-05 (ADR-005).
+
+---
+
+### ADR-072 — Growth Metrics
+
+- **Decision ID:** ADR-072
+- **Date:** 2026-06-28
+- **Status:** Approved
+- **Category:** Data & Growth Architecture
+- **Implements:** DGA-09, PC-07, DGA-02
+- **Decision Owner:** Chief Architect
+
+**Context.** Growth metrics (tool popularity, conversion rate, completion rate, registration rate, search success rate, return visits, average processing time) are essential for product decisions. Without standardized events (DGA-02), metrics are computed inconsistently or not at all.
+
+**Decision.** Every tool automatically contributes to ecosystem metrics. Growth metrics are generated from standardized analytics events (DGA-02). Metrics include: Tool Popularity (views per tool), Conversion Rate (viewed → downloaded), Completion Rate (started → completed), Registration Rate (prompt viewed → registered), Search Success Rate (searched → clicked result), Return Visits (7-day return rate), Average Processing Time (per tool). Metrics computed nightly from raw events; stored as DailyAggregates in Analytics Context.
+
+**Consequences.**
+- ✅ Product decisions backed by data.
+- ✅ Tool performance comparable (popularity, completion).
+- ✅ Funnel analysis (viewed → started → completed → downloaded).
+- ⚠️ Metric computation requires nightly batch; near-real-time not supported in Phase 1.
+
+**Alternatives Considered.**
+- **Real-time metrics:** Rejected for Phase 1 — infrastructure cost. Phase 3+ if needed.
+- **Per-tool custom metrics:** Rejected — not aggregatable; meaningless cross-tool data.
+
+**Future Review Trigger.** If real-time metrics become necessary (e.g., for A/B experiment monitoring), add streaming analytics infrastructure.
+
+**Cross References.** `00_Project_Charter` §6 DGA-09, `17_AnalyticsArchitecture` §Growth Metrics, `16_EventSchemaSpecification`, PC-07 (ADR-060), DGA-02 (ADR-065).
+
+---
+
+### ADR-073 — Future Marketplace Readiness
+
+- **Decision ID:** ADR-073
+- **Date:** 2026-06-28
+- **Status:** Approved
+- **Category:** Data & Growth Architecture
+- **Implements:** DGA-10, LOCK-05
+- **Decision Owner:** Chief Architect
+
+**Context.** Phase 4 envisions a plugin marketplace: community-created tools, verified publishers, ratings, reviews, tool collections. If the architecture doesn't anticipate this from Phase 1, retrofitting requires major restructuring. LOCK-05 mandates plugin-ready architecture; DGA-10 elevates this to a growth principle.
+
+**Decision.** The architecture anticipates marketplace capabilities. No implementation is required today, but database and manifest design avoid blocking these future capabilities. Specifically: (1) ToolManifest schema includes `plugin` extension field (publisher, signature, sandbox, platform version); (2) Database schema avoids assuming all tools are first-party; (3) Identity Context can support publisher identities; (4) Analytics can attribute tools to publishers; (5) Content Context can support ratings/reviews as content types.
+
+**Consequences.**
+- ✅ Phase 4 marketplace requires no architectural change.
+- ✅ First-party and third-party tools are structurally identical.
+- ✅ Marketplace features (ratings, reviews, collections) can be added incrementally.
+- ⚠️ Some Phase 1 design choices are slightly more abstract to accommodate future plugins; justified.
+
+**Alternatives Considered.**
+- **Design for first-party only:** Rejected — would require major restructuring for Phase 4.
+- **Build marketplace now:** Rejected — premature; no demand in Phase 1.
+
+**Future Review Trigger.** When Phase 4 marketplace development begins, add ADRs for: plugin signing, sandboxing, marketplace UI, rating/review schemas, publisher verification.
+
+**Cross References.** `00_Project_Charter` §6 DGA-10, `12_ToolManifestSpecification` §Plugin Extension, `19_DatabaseDesign` §Marketplace Prep, LOCK-05 (ADR-005), `00_Project_Charter` §12 Future Expansion.
 
 ---
 
@@ -2133,11 +2442,11 @@ Code reviewers MUST:
 ### 11.1 Document Dependencies
 - Depends on `00_Project_Charter` §3 (Architectural Locks) and §4 (Engineering Constitution) — source of all governance ADRs.
 - Depends on `02_SAD`, `03_DDD`, `04_TechStack`, `05_ProjectStructure` — source of all technical ADRs.
-- Future technical documents (`13_FBRD` through `28_Backlog`) will add ADRs as they record architectural decisions.
+- Future technical documents (`13_FBRD` through `31_Backlog`) will add ADRs as they record architectural decisions.
 
 ### 11.2 Process Dependencies
-- `22_DevelopmentGuideline` defines the PR workflow that requires ADR updates.
-- `25_AI_Guideline` defines AI's responsibility to consult this repository.
+- `25_DevelopmentGuideline` defines the PR workflow that requires ADR updates.
+- `28_AI_Guideline` defines AI's responsibility to consult this repository.
 
 ### 11.3 Assumptions
 - The ADR template and numbering scheme remain stable for the project lifetime.
@@ -2149,10 +2458,11 @@ Code reviewers MUST:
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial ADR repository. Consolidated 12 Architectural Locks (ADR-001 through ADR-012), 12 Engineering Constitution articles (ADR-013 through ADR-024), and 29 technical ADs (ADR-025 through ADR-053) from Batches 1 and 2. Defined ADR template, lifecycle, and append-only policy. |
 | 1.1.0 | 2026-06-28 | Chief Architect | Appended 10 Product Constitution ADRs (ADR-054 through ADR-063) from `00_Project_Charter` §5. Added §6.2b Product Constitution ADRs index. Added Part 7 with full ADR text for ADR-054 through ADR-063. Established four-tier governance: Architectural Locks > Engineering Constitution > Product Constitution > Technical Documents. |
+| 1.2.0 | 2026-06-28 | Chief Architect | Appended 10 Data & Growth Architecture ADRs (ADR-064 through ADR-073) from `00_Project_Charter` §6. Added §6.2c Data & Growth Architecture ADRs index. Added Part 8 with full ADR text for ADR-064 through ADR-073. Established five-tier governance: Architectural Locks > Engineering Constitution > Product Constitution > Data & Growth Architecture > Technical Documents. Renumbered cross-references to reflect insertion of `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture` (docs 16-28 shifted to 19-31). |
 
 ## 13. Cross References
 
-- `00_Project_Charter` §3, §4, §5 — Source of governance ADRs (ADR-001 through ADR-063).
+- `00_Project_Charter` §3, §4, §5, §6 — Source of governance ADRs (ADR-001 through ADR-073).
 - `01_BRD` — Business context motivating many ADRs.
 - `02_SAD` §3 — Source of ADR-025 through ADR-030.
 - `03_DDD` §3 — Source of ADR-031 through ADR-035.
@@ -2160,6 +2470,9 @@ Code reviewers MUST:
 - `05_ProjectStructure` §3 — Source of ADR-047 through ADR-053.
 - `11_ProductConstitution` — Expands ADR-054 through ADR-063 (PC-01 through PC-10).
 - `12_ToolManifestSpecification` — Canonical schema implementing ADR-055, ADR-060, ADR-062, ADR-063.
+- `16_EventSchemaSpecification` — Defines event schema referenced by ADR-065, ADR-072.
+- `17_AnalyticsArchitecture` — Implements ADR-065 (Event-Driven Analytics), ADR-072 (Growth Metrics).
+- `18_SearchArchitecture` — Implements ADR-067 (Search Architecture).
 - `07_FolderStructure` — Implements ADR-047, ADR-048, ADR-049.
 - `08_CodingStandards` — Implements ADR-013, ADR-014, ADR-015, ADR-019, ADR-020, ADR-021, ADR-022, ADR-056, ADR-057, ADR-061.
 - `09_NamingConvention` — Implements ADR-048, ADR-056.
@@ -2167,16 +2480,16 @@ Code reviewers MUST:
 - `13_FBRD` — Implements ADR-003, ADR-005, ADR-012, ADR-026, ADR-027, ADR-034, ADR-054, ADR-055.
 - `14_ACD` — Implements ADR-026, ADR-040, ADR-043, ADR-051, ADR-058, ADR-061.
 - `15_UDS` — Implements ADR-010, ADR-018, ADR-058, ADR-061.
-- `16_DatabaseDesign` — Implements ADR-029, ADR-031, ADR-033, ADR-038, ADR-039.
-- `17_APIConvention` — Implements ADR-035, ADR-042.
-- `18_SEOSpecification` — Implements ADR-008, ADR-027, ADR-050, ADR-052, ADR-062.
-- `19_UserFlow` — Implements ADR-007, ADR-017, ADR-059.
-- `20_RBAC` — Implements ADR-011, ADR-020.
-- `21_AdminSpecification` — Implements ADR-011, ADR-012, ADR-060, ADR-063.
-- `22_DevelopmentGuideline` — Implements ADR-013, ADR-023, ADR-056, ADR-057.
-- `23_TestingStrategy` — Implements ADR-018, ADR-019, ADR-021, ADR-056.
-- `24_DeploymentGuide` — Implements ADR-024, ADR-030, ADR-038, ADR-045.
-- `25_AI_Guideline` — Implements ADR-009, ADR-023.
-- `26_ZAI_Context` — Implements ADR-009, ADR-023.
-- `27_Roadmap` — Phased plan referencing many ADRs.
-- `28_Backlog` — Phase 1 tool list, each tool follows ADR-026, ADR-049, ADR-054 through ADR-063.
+- `19_DatabaseDesign` — Implements ADR-029, ADR-031, ADR-033, ADR-038, ADR-039.
+- `20_APIConvention` — Implements ADR-035, ADR-042.
+- `21_SEOSpecification` — Implements ADR-008, ADR-027, ADR-050, ADR-052, ADR-062.
+- `22_UserFlow` — Implements ADR-007, ADR-017, ADR-059.
+- `23_RBAC` — Implements ADR-011, ADR-020.
+- `24_AdminSpecification` — Implements ADR-011, ADR-012, ADR-060, ADR-063.
+- `25_DevelopmentGuideline` — Implements ADR-013, ADR-023, ADR-056, ADR-057.
+- `26_TestingStrategy` — Implements ADR-018, ADR-019, ADR-021, ADR-056.
+- `27_DeploymentGuide` — Implements ADR-024, ADR-030, ADR-038, ADR-045.
+- `28_AI_Guideline` — Implements ADR-009, ADR-023.
+- `29_ZAI_Context` — Implements ADR-009, ADR-023.
+- `30_Roadmap` — Phased plan referencing many ADRs.
+- `31_Backlog` — Phase 1 tool list, each tool follows ADR-026, ADR-049, ADR-054 through ADR-063.

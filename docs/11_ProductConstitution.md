@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved (📋 Constitutional)
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.0.0
-> **Implements:** PC-01 through PC-10 (expanded from `00_Project_Charter` §5)
+> **Revision:** 1.1.0
+> **Implements:** PC-01 through PC-10 (expanded from `00_Project_Charter` §5); DGA-02 (Event-Driven Analytics), DGA-03 (SEO as Structured Data), DGA-04 (Search Architecture), DGA-09 (Growth Metrics)
 
 ---
 
@@ -32,8 +32,8 @@ The Product Constitution is the third governance tier, sitting below the Archite
 - The canonical ToolManifest schema → `12_ToolManifestSpecification`.
 - Specific tool implementations → `13_FBRD` and per-tool specs.
 - UI/UX interaction patterns → `15_UDS`.
-- Code review process → `22_DevelopmentGuideline`.
-- Testing strategy → `23_TestingStrategy`.
+- Code review process → `25_DevelopmentGuideline`.
+- Testing strategy → `26_TestingStrategy`.
 
 ## 3. Architectural Decisions
 
@@ -174,7 +174,7 @@ The 13 mandatory items:
 | 7 | Success Feedback | Successful execution shows clear success state (toast, highlight, etc.). |
 | 8 | Accessibility | WCAG 2.1 AA conformance; keyboard nav, screen reader, focus visibility, reduced motion (EC-06). |
 | 9 | Mobile Support | Tool usable on 360px viewport; touch targets ≥44x44px. |
-| 10 | SEO | Per `18_SEOSpecification`: metadata, structured data, FAQ, related tools, breadcrumb. |
+| 10 | SEO | Per `21_SEOSpecification`: metadata, structured data, FAQ, related tools, breadcrumb. |
 | 11 | Analytics | Emits all PC-07 required events. |
 | 12 | Documentation | Tool README documents purpose, inputs, outputs, edge cases. |
 | 13 | Tests | Unit tests for stages; E2E test for workflow; accessibility test. |
@@ -208,7 +208,7 @@ Seven quality gates, each with objective criteria:
 | 1 | Functional | All manifest-declared features work as specified; tests pass. | Engineer (peer) |
 | 2 | Accessibility | WCAG 2.1 AA; Lighthouse accessibility ≥95; keyboard nav tested; screen reader tested. | Engineer (trained) |
 | 3 | Performance | Lighthouse performance ≥90; bundle size within budget; TTFB <500ms. | Engineer |
-| 4 | SEO | All `18_SEOSpecification` requirements met; structured data valid; unique metadata. | SEO reviewer |
+| 4 | SEO | All `21_SEOSpecification` requirements met; structured data valid; unique metadata. | SEO reviewer |
 | 5 | Security | Input validation; no secrets in client; RLS policies; no XSS vectors. | Security reviewer |
 | 6 | Documentation | Tool README complete; ADRs updated if architectural change; manifest accurate. | Tech writer or engineer |
 | 7 | UX | Layout follows PC-05; error states follow PC-08; success feedback present; mobile usable. | UX reviewer or designer |
@@ -558,11 +558,11 @@ Some tool categories may need additional product rules (e.g., AI tools need disc
 - `13_FBRD` — per-feature requirements referencing PC-01, PC-02.
 - `14_ACD` — components implementing PC-05, PC-08.
 - `15_UDS` — UX patterns implementing PC-05, PC-08.
-- `18_SEOSpecification` — SEO implementing PC-09.
-- `19_UserFlow` — user flows implementing PC-06.
-- `21_AdminSpecification` — admin implementing PC-04 (lifecycle), PC-07 (analytics), PC-10 (inventory).
-- `22_DevelopmentGuideline` — quality gates implementing PC-04, completion standard PC-03.
-- `23_TestingStrategy` — testing implementing PC-03.
+- `21_SEOSpecification` — SEO implementing PC-09.
+- `22_UserFlow` — user flows implementing PC-06.
+- `24_AdminSpecification` — admin implementing PC-04 (lifecycle), PC-07 (analytics), PC-10 (inventory).
+- `25_DevelopmentGuideline` — quality gates implementing PC-04, completion standard PC-03.
+- `26_TestingStrategy` — testing implementing PC-03.
 
 ### 10.2 External Dependencies
 - None. Product Constitution is governance, not implementation.
@@ -576,22 +576,26 @@ Some tool categories may need additional product rules (e.g., AI tools need disc
 | Revision | Date | Author | Change |
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial Product Constitution. Expanded PC-01 through PC-10 with operational detail, enforcement mechanisms, worked examples, and interaction with other governance layers. |
+| 1.1.0 | 2026-06-28 | Chief Architect | Linked to Data & Growth Architecture articles. Renumbered cross-references to reflect insertion of `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture` (docs 16-28 shifted to 19-31). |
 
 ## 12. Cross References
 
-- `00_Project_Charter` §5 — Source of PC articles (binding text).
+- `00_Project_Charter` §5, §6 — Source of PC articles and DGAs (binding text).
 - `01_BRD` §4.1 — Monetization standards operationalizing PC-06.
 - `02_SAD` §6 — Tool Engine implementing PC-02, PC-03, PC-07.
 - `05_ProjectStructure` §Tool Registry Pattern — Codegen implementing PC-10.
 - `06_ArchitectureDecisionRecords` — ADR-054 through ADR-063 (formal ADRs for each PC article).
+- `16_EventSchemaSpecification` — Event schema (DGA-02).
+- `17_AnalyticsArchitecture` — Analytics adapters (DGA-02, DGA-09).
+- `18_SearchArchitecture` — Search index (DGA-04).
 - `12_ToolManifestSpecification` — Canonical schema encoding PC-02 contract.
 - `13_FBRD` — Per-feature requirements implementing PC-01, PC-02.
 - `14_ACD` — `ToolLayout` component implementing PC-05; error components implementing PC-08.
 - `15_UDS` — Tool page layout implementing PC-05; error states implementing PC-08.
-- `18_SEOSpecification` — Internal linking implementing PC-09.
-- `19_UserFlow` — Monetization touchpoints implementing PC-06.
-- `21_AdminSpecification` — Feature lifecycle (PC-04), analytics (PC-07), inventory (PC-10).
-- `22_DevelopmentGuideline` — Quality gates (PC-04), definition of done (PC-03).
-- `23_TestingStrategy` — Testing for completion standard (PC-03).
-- `25_AI_Guideline` — AI must follow Product Constitution (LOCK-09, EC-11).
-- `28_Backlog` — Every backlog tool must satisfy all PC articles.
+- `21_SEOSpecification` — Internal linking implementing PC-09.
+- `22_UserFlow` — Monetization touchpoints implementing PC-06.
+- `24_AdminSpecification` — Feature lifecycle (PC-04), analytics (PC-07), inventory (PC-10).
+- `25_DevelopmentGuideline` — Quality gates (PC-04), definition of done (PC-03).
+- `26_TestingStrategy` — Testing for completion standard (PC-03).
+- `28_AI_Guideline` — AI must follow Product Constitution (LOCK-09, EC-11).
+- `31_Backlog` — Every backlog tool must satisfy all PC articles.

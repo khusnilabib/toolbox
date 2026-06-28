@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.1.0
-> **Implements:** LOCK-04 (Modular), LOCK-09 (AI Discipline); EC-01 (Documentation First), EC-02 (One Source of Truth), EC-03 (Component Reuse First), EC-07 (Performance Budget), EC-08 (Security by Default), EC-09 (Testing Philosophy), EC-10 (Design System Governance); PC-03 (Tool Completion Standard), PC-04 (Quality Gates), PC-08 (Error Experience)
+> **Revision:** 1.2.0
+> **Implements:** LOCK-04 (Modular), LOCK-09 (AI Discipline); EC-01 (Documentation First), EC-02 (One Source of Truth), EC-03 (Component Reuse First), EC-07 (Performance Budget), EC-08 (Security by Default), EC-09 (Testing Philosophy), EC-10 (Design System Governance); PC-03 (Tool Completion Standard), PC-04 (Quality Gates), PC-08 (Error Experience); DGA-02 (Event-Driven Analytics — event schema validation), DGA-07 (Auditability — audit logging code)
 
 ---
 
@@ -36,8 +36,8 @@ This document is enforced via ESLint, Prettier, TypeScript compiler options, Hus
 - File and folder naming conventions → `07_FolderStructure`.
 - Variable, function, type naming → `09_NamingConvention`.
 - Design tokens and visual design → `10_DesignSystem`.
-- Testing strategy and framework choices → `23_TestingStrategy`.
-- PR workflow and branching → `22_DevelopmentGuideline`.
+- Testing strategy and framework choices → `26_TestingStrategy`.
+- PR workflow and branching → `25_DevelopmentGuideline`.
 
 ## 3. Architectural Decisions
 
@@ -650,8 +650,8 @@ Every PR must satisfy this checklist before approval:
 - `06_ArchitectureDecisionRecords` — records AD-01 through AD-12.
 - `09_NamingConvention` — naming rules within files.
 - `10_DesignSystem` — design tokens used in code.
-- `22_DevelopmentGuideline` — PR workflow enforcing these standards.
-- `23_TestingStrategy` — testing standards complement these.
+- `25_DevelopmentGuideline` — PR workflow enforcing these standards.
+- `26_TestingStrategy` — testing standards complement these.
 
 ### 16.2 External Dependencies
 - TypeScript 5+, ESLint, Prettier, Husky, lint-staged.
@@ -669,25 +669,29 @@ Every PR must satisfy this checklist before approval:
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial Coding Standards. Defined TypeScript strict config, no-any rule, Zod-at-boundaries rule, boundary enforcement via ESLint, file size limits, performance budget, security coding rules, testability requirements, design system compliance, code review checklist. |
 | 1.1.0 | 2026-06-28 | Chief Architect | Linked coding standards to PC-03 (Tool Completion Standard), PC-04 (Quality Gates), PC-08 (Error Experience). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
+| 1.2.0 | 2026-06-28 | Chief Architect | Linked to Data & Growth Architecture articles. Renumbered cross-references to reflect insertion of `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture` (docs 16-28 shifted to 19-31). |
 
 ## 18. Cross References
 
-- `00_Project_Charter` §3, §4, §5 — LOCKs, ECs, and PCs implemented.
+- `00_Project_Charter` §3, §4, §5, §6 — LOCKs, ECs, PCs, and DGAs implemented.
 - `02_SAD` AD-01 — Layered architecture enforced via ESLint here.
 - `04_TechStack` AD-02, §9 — TypeScript and ESLint configurations.
 - `05_ProjectStructure` AD-07 — Database-optional layout enforced here.
 - `06_ArchitectureDecisionRecords` — ADR-013 through ADR-024 (ECs), ADR-025 through ADR-053 (technical ADs).
 - `11_ProductConstitution` — Expands PC-03, PC-04, PC-08.
 - `12_ToolManifestSpecification` — Manifest schema validated via Zod.
+- `16_EventSchemaSpecification` — Event schema (DGA-02).
+- `17_AnalyticsArchitecture` — Analytics adapters (DGA-02, DGA-09).
+- `18_SearchArchitecture` — Search index (DGA-04).
 - `07_FolderStructure` — File and folder conventions complementing these standards.
 - `09_NamingConvention` — Naming rules within files.
 - `10_DesignSystem` — Design tokens used in code.
 - `13_FBRD` — Tool manifest schema validated via Zod.
 - `14_ACD` — Reusable components from `@packages/ui`.
-- `16_DatabaseDesign` — RLS policies complement security rules.
-- `17_APIConvention` — API-specific coding rules.
-- `20_RBAC` — Authorization rules enforced in server actions.
-- `22_DevelopmentGuideline` — PR workflow including this checklist.
-- `23_TestingStrategy` — Testing standards referenced in §11.
-- `24_DeploymentGuide` — CI pipeline runs these checks.
-- `25_AI_Guideline` — AI must follow these standards (LOCK-09, EC-11).
+- `19_DatabaseDesign` — RLS policies complement security rules.
+- `20_APIConvention` — API-specific coding rules.
+- `23_RBAC` — Authorization rules enforced in server actions.
+- `25_DevelopmentGuideline` — PR workflow including this checklist.
+- `26_TestingStrategy` — Testing standards referenced in §11.
+- `27_DeploymentGuide` — CI pipeline runs these checks.
+- `28_AI_Guideline` — AI must follow these standards (LOCK-09, EC-11).

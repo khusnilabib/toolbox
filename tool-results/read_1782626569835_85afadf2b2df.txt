@@ -3,8 +3,8 @@
      3→> **Status:** 🟢 Approved
      4→> **Document Owner:** Chief Architect
      5→> **Last Updated:** 2026-06-28
-     6→> **Revision:** 1.0.0
-     7→> **Implements:** LOCK-04 (Modular), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-03 (Component Reuse First), EC-04 (Tool Template Standard), EC-01 (Documentation First)
+     6→> **Revision:** 1.1.0
+     7→> **Implements:** LOCK-04 (Modular), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-03 (Component Reuse First), EC-04 (Tool Template Standard), EC-01 (Documentation First); PC-04 (Tool Template Standard)
      8→
      9→---
     10→
@@ -35,7 +35,7 @@
     35→- Top-level directory layout → `05_ProjectStructure`.
     36→- Code style within files → `08_CodingStandards`.
     37→- Naming of variables, functions, types → `09_NamingConvention`.
-    38→- Database schema definitions → `14_DatabaseDesign`.
+    38→- Database schema definitions → `16_DatabaseDesign`.
     39→
     40→## 3. Architectural Decisions
     41→
@@ -221,7 +221,7 @@
    221→| Tool-specific docs | `src/tools/[category]/[slug]/README.md` |
    222→| Package docs | `/packages/[name]/README.md` |
    223→| ADRs | `/docs/06_ArchitectureDecisionRecords.md` (consolidated) |
-   224→| API docs | `/docs/15_APIConvention.md` + inline JSDoc |
+   224→| API docs | `/docs/17_APIConvention.md` + inline JSDoc |
    225→| README | Project root `README.md` (links to `/docs`) |
    226→
    227→**Implements:** EC-01 (Documentation First).
@@ -683,23 +683,26 @@
    683→| Revision | Date | Author | Change |
    684→|----------|------|--------|--------|
    685→| 1.0.0 | 2026-06-28 | Chief Architect | Initial Folder Structure. Defined file naming conventions, tool folder template, layer subdirectory pattern, shared code split rule, generated files convention, documentation placement. |
-   686→
-   687→## 13. Cross References
-   688→
-   689→- `00_Project_Charter` §3, §4 — LOCKs and ECs implemented by this structure.
-   690→- `02_SAD` AD-01 — Layered architecture implemented by layer subdirectories here.
-   691→- `03_DDD` §5 — Bounded contexts mapped to top-level directories.
-   692→- `04_TechStack` — Technologies (pnpm, ESLint) enforcing this structure.
-   693→- `05_ProjectStructure` — High-level layout this document details.
-   694→- `06_ArchitectureDecisionRecords` — ADR-047 through ADR-053 record structure decisions.
-   695→- `08_CodingStandards` — Coding rules within files in this structure.
-   696→- `09_NamingConvention` — Naming rules for variables, functions, types within files.
-   697→- `10_DesignSystem` — Design tokens used by components in this structure.
-   698→- `11_FBRD` — Tool manifest schema (the file at the root of every tool folder).
-   699→- `12_ACD` — Reusable components referenced from `@packages/ui`.
-   700→- `14_DatabaseDesign` — Drizzle migrations under `drizzle/[context]/`.
-   701→- `19_AdminSpecification` — Admin routes under `src/app/(admin)/`.
-   702→- `20_DevelopmentGuideline` — PR workflow including structure verification.
-   703→- `22_DeploymentGuide` — Build pipeline including registry codegen.
-   704→- `23_AI_Guideline` — AI must follow this structure (LOCK-09, EC-11).
-   705→
+   686→| 1.1.0 | 2026-06-28 | Chief Architect | Linked folder template to PC-04 (Tool Template Standard). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
+   687→
+   688→## 13. Cross References
+   689→
+   690→- `00_Project_Charter` §3, §4, §5 — LOCKs, ECs, and PCs implemented by this structure.
+   691→- `02_SAD` AD-01 — Layered architecture implemented by layer subdirectories here.
+   692→- `03_DDD` §5 — Bounded contexts mapped to top-level directories.
+   693→- `04_TechStack` — Technologies (pnpm, ESLint) enforcing this structure.
+   694→- `05_ProjectStructure` — High-level layout this document details.
+   695→- `06_ArchitectureDecisionRecords` — ADR-047 through ADR-053 record structure decisions.
+   696→- `11_ProductConstitution` — Expands PC-04 (Tool Template Standard).
+   697→- `12_ToolManifestSpecification` — Schema at the root of every tool folder.
+   698→- `08_CodingStandards` — Coding rules within files in this structure.
+   699→- `09_NamingConvention` — Naming rules for variables, functions, types within files.
+   700→- `10_DesignSystem` — Design tokens used by components in this structure.
+   701→- `13_FBRD` — Tool manifest schema (the file at the root of every tool folder).
+   702→- `14_ACD` — Reusable components referenced from `@packages/ui`.
+   703→- `16_DatabaseDesign` — Drizzle migrations under `drizzle/[context]/`.
+   704→- `21_AdminSpecification` — Admin routes under `src/app/(admin)/`.
+   705→- `22_DevelopmentGuideline` — PR workflow including structure verification.
+   706→- `24_DeploymentGuide` — Build pipeline including registry codegen.
+   707→- `25_AI_Guideline` — AI must follow this structure (LOCK-09, EC-11).
+   708→

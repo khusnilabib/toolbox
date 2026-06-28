@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.2.0
-> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-02 (One Source of Truth); PC-02 (Product Contract via ToolManifest aggregate)
+> **Revision:** 1.3.0
+> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-02 (One Source of Truth); PC-02 (Product Contract via ToolManifest aggregate); DGA-05 (Content Architecture), DGA-10 (Future Marketplace Readiness)
 
 ---
 
@@ -31,9 +31,9 @@ This document is the authoritative source for: what counts as a Tool, what count
 
 - Physical architecture (layers, runtimes) → `02_SAD`.
 - Folder layout → `05_ProjectStructure`, `07_FolderStructure`.
-- Database table schemas → `16_DatabaseDesign`.
-- API endpoint definitions → `17_APIConvention`.
-- UI flows between contexts → `19_UserFlow`.
+- Database table schemas → `19_DatabaseDesign`.
+- API endpoint definitions → `20_APIConvention`.
+- UI flows between contexts → `22_UserFlow`.
 
 ## 3. Architectural Decisions
 
@@ -218,7 +218,7 @@ The ToolManifest is the only contract between a tool and the platform. Anything 
 - **Favorite** — bookmarked tool by user.
 
 **Invariants:**
-- A User has exactly one role at a time (per `20_RBAC`).
+- A User has exactly one role at a time (per `23_RBAC`).
 - HistoryEntries are immutable once created; deleted via soft-delete.
 - Favorites are unique per (userId, toolSlug).
 
@@ -320,7 +320,7 @@ Terms below have ONE meaning within their context. When a term is used in a diff
 |------|------------|
 | **User** | An authenticated identity. Has exactly one role. May be guest (null User). |
 | **Session** | An active authentication token scoped to a device. Expires or is revoked. |
-| **Role** | A label (guest, user, premium, editor, admin, super_admin) granting permissions per `20_RBAC`. |
+| **Role** | A label (guest, user, premium, editor, admin, super_admin) granting permissions per `23_RBAC`. |
 | **HistoryEntry** | A record of a ToolExecution saved by a User. References Tool by slug. |
 | **Favorite** | A User's bookmark of a Tool. |
 | **Guest** | An unauthenticated visitor. Treated as null User; tools still function (LOCK-06, LOCK-07). |
@@ -505,10 +505,10 @@ If a context grows too large (e.g., Identity grows to include team management, o
 - `11_ProductConstitution` — expands PC-02 (Product Contract) which DDD's Tools Context implements.
 - `12_ToolManifestSpecification` — defines ToolManifest aggregate (referenced by AD-034).
 - `13_FBRD` — defines ToolManifest aggregate (Tools Context root).
-- `16_DatabaseDesign` — implements each context's schema.
-- `17_APIConvention` — defines how contexts expose published APIs.
-- `20_RBAC` — defines Role aggregate in Identity Context.
-- `21_AdminSpecification` — operates Platform Ops Context.
+- `19_DatabaseDesign` — implements each context's schema.
+- `20_APIConvention` — defines how contexts expose published APIs.
+- `23_RBAC` — defines Role aggregate in Identity Context.
+- `24_AdminSpecification` — operates Platform Ops Context.
 
 ### 12.2 External Dependencies
 - Supabase Postgres — provides schema isolation per context.
@@ -525,23 +525,26 @@ If a context grows too large (e.g., Identity grows to include team management, o
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial DDD. Defined 6 bounded contexts, ubiquitous language glossary, context map, aggregate consistency rules. |
 | 1.1.0 | 2026-06-28 | Chief Architect | Linked bounded context design to EC-02 (One Source of Truth). Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords` (docs 06-25 shifted to 07-26). |
 | 1.2.0 | 2026-06-28 | Chief Architect | Linked ToolManifest aggregate to PC-02 (Product Contract). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
+| 1.3.0 | 2026-06-28 | Chief Architect | Linked DDD to DGA-05 (Content Architecture) and DGA-10 (Future Marketplace Readiness). Renumbered cross-references to reflect insertion of `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture` (docs 16-28 shifted to 19-31). |
 
 ## 14. Cross References
 
-- `00_Project_Charter` §3, §4, §5 — Source of LOCKs, ECs, and PCs implemented by this document.
+- `00_Project_Charter` §3, §4, §5, §6 — Source of LOCKs, ECs, PCs, and DGAs implemented by this document.
 - `02_SAD` — Physical architecture hosting the bounded contexts.
 - `04_TechStack` — Technologies used to implement domain events and ACLs.
 - `05_ProjectStructure` — Folder layout mapping to bounded contexts.
 - `06_ArchitectureDecisionRecords` — Permanent record of DDD architectural decisions.
 - `11_ProductConstitution` — Expands PC-02 which DDD implements.
 - `12_ToolManifestSpecification` — ToolManifest aggregate (Tools Context root).
+- `16_EventSchemaSpecification` — Event schema referenced by Analytics Context.
+- `17_AnalyticsArchitecture` — Analytics Context implementation patterns.
 - `07_FolderStructure` — Granular file conventions per context.
 - `13_FBRD` — ToolManifest aggregate (Tools Context root).
 - `14_ACD` — Tool Engine component (implementation of Tools Context aggregate).
-- `16_DatabaseDesign` — Schema per context.
-- `17_APIConvention` — Published APIs between contexts.
-- `18_SEOSpecification` — How Content Context supports SEO.
-- `19_UserFlow` — How user journeys cross context boundaries.
-- `20_RBAC` — Role aggregate in Identity Context.
-- `21_AdminSpecification` — Platform Ops Context operation.
-- `25_AI_Guideline` — Constrains AI's modification of domain model (LOCK-09, EC-11).
+- `19_DatabaseDesign` — Schema per context.
+- `20_APIConvention` — Published APIs between contexts.
+- `21_SEOSpecification` — How Content Context supports SEO.
+- `22_UserFlow` — How user journeys cross context boundaries.
+- `23_RBAC` — Role aggregate in Identity Context.
+- `24_AdminSpecification` — Platform Ops Context operation.
+- `28_AI_Guideline` — Constrains AI's modification of domain model (LOCK-09, EC-11).

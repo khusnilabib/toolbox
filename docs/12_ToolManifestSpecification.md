@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved (📋 Constitutional)
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.0.0
-> **Implements:** LOCK-03 (Tool Engine), LOCK-05 (Plugin-Ready), LOCK-08 (SEO), LOCK-12 (Feature Lifecycle); PC-02 (Product Contract), PC-07 (Analytics), PC-09 (Discoverability), PC-10 (Product Scalability)
+> **Revision:** 1.1.0
+> **Implements:** LOCK-03 (Tool Engine), LOCK-05 (Plugin-Ready), LOCK-08 (SEO), LOCK-12 (Feature Lifecycle); PC-02 (Product Contract), PC-07 (Analytics), PC-09 (Discoverability), PC-10 (Product Scalability); DGA-03 (SEO Metadata as Structured Data), DGA-04 (Search Index Source), DGA-10 (Future Marketplace Readiness)
 
 ---
 
@@ -32,9 +32,9 @@ The manifest is also the **plugin contract** for the future Phase 4 marketplace.
 
 - Tool stage implementations → `13_FBRD`, `14_ACD`.
 - Tool folder structure → `07_FolderStructure` §Tool Folder Template.
-- Specific tool manifests (Image Resizer, etc.) → `28_Backlog`.
-- Admin UI for managing tools → `21_AdminSpecification`.
-- SEO content standards → `18_SEOSpecification`.
+- Specific tool manifests (Image Resizer, etc.) → `31_Backlog`.
+- Admin UI for managing tools → `24_AdminSpecification`.
+- SEO content standards → `21_SEOSpecification`.
 
 ## 3. Architectural Decisions
 
@@ -970,7 +970,7 @@ export const analyticsConfig = [
 2. Fill identity fields first (slug, category, title).
 3. Define the product contract (purpose, userProblem, schemas).
 4. Implement stages; reference them in `stages`.
-5. Write SEO metadata (consult `18_SEOSpecification`).
+5. Write SEO metadata (consult `21_SEOSpecification`).
 6. Identify 3+ related tools.
 7. Configure analytics (standard events are automatic; add custom if needed).
 8. Set limits conservatively (can be relaxed later).
@@ -986,7 +986,7 @@ export const analyticsConfig = [
 ### 10.3 When Reviewing a Manifest PR
 - Verify all required fields present.
 - Verify Zod schemas are valid.
-- Verify SEO metadata meets `18_SEOSpecification`.
+- Verify SEO metadata meets `21_SEOSpecification`.
 - Verify `relatedTools` has ≥3 entries.
 - Verify `failureStates` messages meet PC-08 (what/why/how).
 - Verify `limits` are reasonable.
@@ -1024,9 +1024,9 @@ export const analyticsConfig = [
 - `11_ProductConstitution` — PC-02, PC-07, PC-09, PC-10.
 - `13_FBRD` — Per-feature requirements referencing manifest fields.
 - `14_ACD` — Tool Engine component consuming the manifest.
-- `18_SEOSpecification` — SEO field standards.
-- `21_AdminSpecification` — Admin inventory from manifest.
-- `22_DevelopmentGuideline` — PR workflow for manifest changes.
+- `21_SEOSpecification` — SEO field standards.
+- `24_AdminSpecification` — Admin inventory from manifest.
+- `25_DevelopmentGuideline` — PR workflow for manifest changes.
 
 ### 12.2 External Dependencies
 - Zod (runtime validation).
@@ -1041,14 +1041,18 @@ export const analyticsConfig = [
 | Revision | Date | Author | Change |
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial Tool Manifest Specification. Defined complete TypeScript type, Zod validation schema, field-by-field specification, manifest file location and structure, build-time codegen contract for 7 generated artifacts, versioning strategy, plugin extension preview. |
+| 1.1.0 | 2026-06-28 | Chief Architect | Linked to Data & Growth Architecture articles. Renumbered cross-references to reflect insertion of `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture` (docs 16-28 shifted to 19-31). |
 
 ## 14. Cross References
 
-- `00_Project_Charter` §3 LOCK-03, LOCK-05, LOCK-08, LOCK-12; §5 PC-02, PC-07, PC-09, PC-10 — Implemented.
+- `00_Project_Charter` §3 LOCK-03, LOCK-05, LOCK-08, LOCK-12; §5 PC-02, PC-07, PC-09, PC-10; §6 DGA-03, DGA-04, DGA-10 — Implemented.
 - `02_SAD` AD-02, AD-03 — Tool Engine and Registry consume the manifest.
 - `03_DDD` AD-04 — ToolManifest as aggregate root.
 - `05_ProjectStructure` AD-04 — Codegen pattern consuming manifests.
 - `06_ArchitectureDecisionRecords` — ADR-055 (Product Contract), ADR-060 (Analytics), ADR-062 (Discoverability), ADR-063 (Product Scalability).
+- `16_EventSchemaSpecification` — Event schema (DGA-02).
+- `17_AnalyticsArchitecture` — Analytics adapters (DGA-02, DGA-09).
+- `18_SearchArchitecture` — Search index (DGA-04).
 - `07_FolderStructure` §Tool Folder Template — Manifest file location.
 - `08_CodingStandards` — Zod validation standards.
 - `09_NamingConvention` — Slug naming rules.
@@ -1056,8 +1060,8 @@ export const analyticsConfig = [
 - `13_FBRD` — Per-tool feature specs reference manifest fields.
 - `14_ACD` — Tool Engine component uses manifest's `stages`.
 - `15_UDS` — Tool page layout uses manifest's `seo` and `relatedTools`.
-- `18_SEOSpecification` — SEO field standards.
-- `21_AdminSpecification` — Admin inventory from manifest.
-- `22_DevelopmentGuideline` — PR workflow for manifest changes.
-- `25_AI_Guideline` — AI must follow manifest schema (LOCK-09, EC-11).
-- `28_Backlog` — Every backlog tool's manifest follows this spec.
+- `21_SEOSpecification` — SEO field standards.
+- `24_AdminSpecification` — Admin inventory from manifest.
+- `25_DevelopmentGuideline` — PR workflow for manifest changes.
+- `28_AI_Guideline` — AI must follow manifest schema (LOCK-09, EC-11).
+- `31_Backlog` — Every backlog tool's manifest follows this spec.

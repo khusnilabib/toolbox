@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.0.0
-> **Implements:** LOCK-03 (Tool Engine), LOCK-04 (Modular); EC-03 (Component Reuse First), EC-10 (Design System Governance); PC-03 (Completion Standard), PC-05 (UX Consistency), PC-08 (Error Experience)
+> **Revision:** 1.1.0
+> **Implements:** LOCK-03 (Tool Engine), LOCK-04 (Modular); EC-03 (Component Reuse First), EC-10 (Design System Governance); PC-03 (Completion Standard), PC-05 (UX Consistency), PC-08 (Error Experience); DGA-02 (Analytics components), DGA-04 (Search components)
 
 ---
 
@@ -34,7 +34,7 @@ This document covers three categories of components: (1) **Tool Engine component
 - Primitive design system components (Button, Input, Card) → `10_DesignSystem`.
 - User flows and interaction patterns → `15_UDS`.
 - Specific tool implementations → per-tool specs.
-- Component testing strategy → `23_TestingStrategy`.
+- Component testing strategy → `26_TestingStrategy`.
 - Naming conventions → `09_NamingConvention`.
 
 ## 3. Architectural Decisions
@@ -678,7 +678,7 @@ interface FeedbackWidgetProps {
 - `11_ProductConstitution` — PC-03, PC-05, PC-08.
 - `13_FBRD` — tool specs reference these components.
 - `15_UDS` — interaction patterns using these components.
-- `23_TestingStrategy` — component testing.
+- `26_TestingStrategy` — component testing.
 
 ### 11.2 External Dependencies
 - React, Next.js.
@@ -695,12 +695,16 @@ interface FeedbackWidgetProps {
 | Revision | Date | Author | Change |
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial ACD. Defined Tool Engine components (ToolEngine + 7 stage types), tool page layout components (ToolLayout + 11 components), component catalog, contracts, accessibility standards. |
+| 1.1.0 | 2026-06-28 | Chief Architect | Linked to Data & Growth Architecture articles. Renumbered cross-references to reflect insertion of `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture` (docs 16-28 shifted to 19-31). |
 
 ## 13. Cross References
 
-- `00_Project_Charter` §3 LOCK-03, LOCK-04; §4 EC-03, EC-10; §5 PC-03, PC-05, PC-08 — Implemented.
+- `00_Project_Charter` §3 LOCK-03, LOCK-04; §4 EC-03, EC-10; §5 PC-03, PC-05, PC-08; §6 DGA-02, DGA-04 — Implemented.
 - `02_SAD` §6 — Tool Engine detailed (components here implement it).
 - `06_ArchitectureDecisionRecords` — ADR-026 (Tool Engine), ADR-040 (shadcn/ui), ADR-043 (RHF+Zod), ADR-051 (shared code), ADR-058 (UX Consistency), ADR-061 (Error Experience).
+- `16_EventSchemaSpecification` — Event schema (DGA-02).
+- `17_AnalyticsArchitecture` — Analytics adapters (DGA-02, DGA-09).
+- `18_SearchArchitecture` — Search index (DGA-04).
 - `07_FolderStructure` — Component file locations.
 - `08_CodingStandards` — Component coding standards.
 - `09_NamingConvention` — Component naming.
@@ -709,7 +713,7 @@ interface FeedbackWidgetProps {
 - `12_ToolManifestSpecification` — Manifest fields components consume.
 - `13_FBRD` — Tool specs reference these components.
 - `15_UDS` — Interaction patterns using these components.
-- `18_SEOSpecification` — FAQ and Breadcrumb SEO.
-- `22_DevelopmentGuideline` — Component PR workflow.
-- `23_TestingStrategy` — Component testing.
-- `25_AI_Guideline` — AI must use these components (LOCK-09, EC-11).
+- `21_SEOSpecification` — FAQ and Breadcrumb SEO.
+- `25_DevelopmentGuideline` — Component PR workflow.
+- `26_TestingStrategy` — Component testing.
+- `28_AI_Guideline` — AI must use these components (LOCK-09, EC-11).

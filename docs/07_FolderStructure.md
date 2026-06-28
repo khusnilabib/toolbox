@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.1.0
-> **Implements:** LOCK-04 (Modular), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-03 (Component Reuse First), EC-04 (Tool Template Standard), EC-01 (Documentation First); PC-04 (Tool Template Standard)
+> **Revision:** 1.2.0
+> **Implements:** LOCK-04 (Modular), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-03 (Component Reuse First), EC-04 (Tool Template Standard), EC-01 (Documentation First); PC-04 (Tool Template Standard); DGA-04 (Search Architecture — search index folder)
 
 ---
 
@@ -35,7 +35,7 @@ This document enforces LOCK-04 (modularity), LOCK-05 (plugin-ready architecture 
 - Top-level directory layout → `05_ProjectStructure`.
 - Code style within files → `08_CodingStandards`.
 - Naming of variables, functions, types → `09_NamingConvention`.
-- Database schema definitions → `16_DatabaseDesign`.
+- Database schema definitions → `19_DatabaseDesign`.
 
 ## 3. Architectural Decisions
 
@@ -221,7 +221,7 @@ When uncertain, default to `/src/shared` — promoting to `/packages` is easy; d
 | Tool-specific docs | `src/tools/[category]/[slug]/README.md` |
 | Package docs | `/packages/[name]/README.md` |
 | ADRs | `/docs/06_ArchitectureDecisionRecords.md` (consolidated) |
-| API docs | `/docs/17_APIConvention.md` + inline JSDoc |
+| API docs | `/docs/20_APIConvention.md` + inline JSDoc |
 | README | Project root `README.md` (links to `/docs`) |
 
 **Implements:** EC-01 (Documentation First).
@@ -684,10 +684,11 @@ A tool template scaffold lives at `scripts/tool-template/` and can be copied via
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial Folder Structure. Defined file naming conventions, tool folder template, layer subdirectory pattern, shared code split rule, generated files convention, documentation placement. |
 | 1.1.0 | 2026-06-28 | Chief Architect | Linked folder template to PC-04 (Tool Template Standard). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
+| 1.2.0 | 2026-06-28 | Chief Architect | Linked to Data & Growth Architecture articles. Renumbered cross-references to reflect insertion of `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture` (docs 16-28 shifted to 19-31). |
 
 ## 13. Cross References
 
-- `00_Project_Charter` §3, §4, §5 — LOCKs, ECs, and PCs implemented by this structure.
+- `00_Project_Charter` §3, §4, §5, §6 — LOCKs, ECs, PCs, and DGAs implemented by this structure.
 - `02_SAD` AD-01 — Layered architecture implemented by layer subdirectories here.
 - `03_DDD` §5 — Bounded contexts mapped to top-level directories.
 - `04_TechStack` — Technologies (pnpm, ESLint) enforcing this structure.
@@ -695,13 +696,16 @@ A tool template scaffold lives at `scripts/tool-template/` and can be copied via
 - `06_ArchitectureDecisionRecords` — ADR-047 through ADR-053 record structure decisions.
 - `11_ProductConstitution` — Expands PC-04 (Tool Template Standard).
 - `12_ToolManifestSpecification` — Schema at the root of every tool folder.
+- `16_EventSchemaSpecification` — Event schema (DGA-02).
+- `17_AnalyticsArchitecture` — Analytics adapters (DGA-02, DGA-09).
+- `18_SearchArchitecture` — Search index (DGA-04).
 - `08_CodingStandards` — Coding rules within files in this structure.
 - `09_NamingConvention` — Naming rules for variables, functions, types within files.
 - `10_DesignSystem` — Design tokens used by components in this structure.
 - `13_FBRD` — Tool manifest schema (the file at the root of every tool folder).
 - `14_ACD` — Reusable components referenced from `@packages/ui`.
-- `16_DatabaseDesign` — Drizzle migrations under `drizzle/[context]/`.
-- `21_AdminSpecification` — Admin routes under `src/app/(admin)/`.
-- `22_DevelopmentGuideline` — PR workflow including structure verification.
-- `24_DeploymentGuide` — Build pipeline including registry codegen.
-- `25_AI_Guideline` — AI must follow this structure (LOCK-09, EC-11).
+- `19_DatabaseDesign` — Drizzle migrations under `drizzle/[context]/`.
+- `24_AdminSpecification` — Admin routes under `src/app/(admin)/`.
+- `25_DevelopmentGuideline` — PR workflow including structure verification.
+- `27_DeploymentGuide` — Build pipeline including registry codegen.
+- `28_AI_Guideline` — AI must follow this structure (LOCK-09, EC-11).
