@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.1.0
-> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-03 (Component Reuse First), EC-04 (Tool Template Standard)
+> **Revision:** 1.2.0
+> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-03 (Component Reuse First), EC-04 (Tool Template Standard); PC-04 (Tool Template Standard), PC-10 (Product Scalability)
 
 ---
 
@@ -31,11 +31,11 @@ The structure scales from 30 tools (Phase 1) to 1,000+ tools (Phase 4) without r
 
 ### 2.2 Out of Scope
 
-- Granular file naming conventions (file-level patterns) → `06_FolderStructure`.
-- Specific code patterns within files → `07_CodingStandards`.
-- Component-level breakdown → `11_ACD`.
-- Database schema layout → `13_DatabaseDesign`.
-- CI/CD pipeline configuration → `21_DeploymentGuide`.
+- Granular file naming conventions (file-level patterns) → `07_FolderStructure`.
+- Specific code patterns within files → `08_CodingStandards`.
+- Component-level breakdown → `14_ACD`.
+- Database schema layout → `16_DatabaseDesign`.
+- CI/CD pipeline configuration → `24_DeploymentGuide`.
 
 ## 3. Architectural Decisions
 
@@ -182,7 +182,7 @@ CI verifies that generated files are committed and match the manifests; mismatch
 - ✅ `/packages` code is highly reusable and could be open-sourced later.
 - ✅ `/src/shared` keeps context-spanning app code organized.
 - ✅ Clear ownership: `/packages` owned by platform team; `/src/shared` owned by whoever needs it.
-- ⚠️ Discipline required to put the right code in the right place; documented in `06_FolderStructure`.
+- ⚠️ Discipline required to put the right code in the right place; documented in `07_FolderStructure`.
 
 **Implements:** LOCK-04 (modularity), DRY principle.
 
@@ -206,7 +206,7 @@ src/app/
 │   ├── register/page.tsx
 │   └── dashboard/page.tsx
 ├── (admin)/
-│   └── admin/               # Per `18_AdminSpecification`
+│   └── admin/               # Per `21_AdminSpecification`
 └── (marketing)/
     ├── page.tsx             # Homepage
     ├── about/page.tsx
@@ -395,7 +395,7 @@ This section expands AD-03. Every tool folder follows this exact structure.
 
 ### 6.1 The Manifest File (`manifest.ts`)
 
-The manifest is the tool's identity and contract. It is the ONLY file the registry reads. Schema defined in `10_FBRD`.
+The manifest is the tool's identity and contract. It is the ONLY file the registry reads. Schema defined in `13_FBRD`.
 
 ```typescript
 // src/tools/image/image-resize/manifest.ts
@@ -679,10 +679,12 @@ Generated files ARE committed to the repo. Reasons:
 - `07_FolderStructure` — granular file conventions within this layout.
 - `08_CodingStandards` — coding rules enforced in this structure.
 - `06_ArchitectureDecisionRecords` — records AD-01 through AD-07 as ADRs.
-- `11_FBRD` — ToolManifest schema referenced by registry.
-- `12_ACD` — components referenced in `@packages/ui`.
-- `19_AdminSpecification` — admin layout under `(admin)/` route group.
-- `22_DeploymentGuide` — build pipeline runs codegen.
+- `11_ProductConstitution` — Expands PC-04 (Tool Template Standard), PC-10 (Product Scalability).
+- `12_ToolManifestSpecification` — Defines the manifest schema this structure hosts.
+- `13_FBRD` — ToolManifest schema referenced by registry.
+- `14_ACD` — components referenced in `@packages/ui`.
+- `21_AdminSpecification` — admin layout under `(admin)/` route group.
+- `24_DeploymentGuide` — build pipeline runs codegen.
 
 ### 13.2 External Dependencies
 - Next.js App Router (file-based routing).
@@ -700,23 +702,26 @@ Generated files ARE committed to the repo. Reasons:
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial Project Structure. Defined feature-based top-level layout, layered folders per context, tool module anatomy, registry pattern (build-time codegen), shared code split (`/packages` + `/src/shared`), boundary enforcement strategy. |
 | 1.1.0 | 2026-06-28 | Chief Architect | Linked structure to EC-03 (Component Reuse First) and EC-04 (Tool Template Standard). Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords`. |
+| 1.2.0 | 2026-06-28 | Chief Architect | Linked structure to PC-04 (Tool Template Standard) and PC-10 (Product Scalability). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
 
 ## 15. Cross References
 
-- `00_Project_Charter` §3, §4 — LOCKs and ECs implemented by this structure.
+- `00_Project_Charter` §3, §4, §5 — LOCKs, ECs, and PCs implemented by this structure.
 - `02_SAD` §3 AD-01 — Layered architecture mapped to folders here.
 - `03_DDD` §5 — Bounded contexts mapped to top-level directories here.
 - `04_TechStack` AD-11 — pnpm workspaces enable this monorepo.
 - `06_ArchitectureDecisionRecords` — Permanent record of project structure ADs.
+- `11_ProductConstitution` — Expands PC-04, PC-10.
+- `12_ToolManifestSpecification` — Canonical schema this structure centers on.
 - `07_FolderStructure` — Granular file naming within this structure.
 - `08_CodingStandards` — Coding rules enforced via ESLint configured here.
 - `09_NamingConvention` — Naming rules applied to files in this structure.
-- `11_FBRD` — ToolManifest schema (the file this structure centers on).
-- `12_ACD` — Reusable components in `@packages/ui`.
-- `14_DatabaseDesign` — Drizzle migrations under `drizzle/[context]/`.
-- `15_APIConvention` — API routes under `src/app/api/`.
-- `16_SEOSpecification` — SEO output derived from generated registry.
-- `19_AdminSpecification` — Admin routes under `src/app/(admin)/`.
-- `20_DevelopmentGuideline` — Development workflow within this structure.
-- `22_DeploymentGuide` — Build pipeline including registry codegen.
-- `23_AI_Guideline` — AI must follow this structure (LOCK-09, EC-11).
+- `13_FBRD` — ToolManifest schema (the file this structure centers on).
+- `14_ACD` — Reusable components in `@packages/ui`.
+- `16_DatabaseDesign` — Drizzle migrations under `drizzle/[context]/`.
+- `17_APIConvention` — API routes under `src/app/api/`.
+- `18_SEOSpecification` — SEO output derived from generated registry.
+- `21_AdminSpecification` — Admin routes under `src/app/(admin)/`.
+- `22_DevelopmentGuideline` — Development workflow within this structure.
+- `24_DeploymentGuide` — Build pipeline including registry codegen.
+- `25_AI_Guideline` — AI must follow this structure (LOCK-09, EC-11).

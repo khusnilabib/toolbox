@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.0.0
-> **Implements:** LOCK-04 (Modular), LOCK-09 (AI Discipline); EC-02 (One Source of Truth), EC-04 (Tool Template Standard)
+> **Revision:** 1.1.0
+> **Implements:** LOCK-04 (Modular), LOCK-09 (AI Discipline); EC-02 (One Source of Truth), EC-04 (Tool Template Standard); PC-04 (Tool Template Standard)
 
 ---
 
@@ -475,7 +475,7 @@ The following names are reserved and must not be used as identifiers:
 
 ### 8.4 Internationalization
 - Tool slugs remain in English (URL standard).
-- Tool titles, descriptions, FAQ support multiple languages via manifest's `seo` field per `11_FBRD`.
+- Tool titles, descriptions, FAQ support multiple languages via manifest's `seo` field per `13_FBRD`.
 
 ## 9. Dependencies
 
@@ -488,10 +488,10 @@ The following names are reserved and must not be used as identifiers:
 - `06_ArchitectureDecisionRecords` — records AD-01 through AD-15.
 - `08_CodingStandards` — coding rules within files (this document defines names).
 - `10_DesignSystem` — design token names.
-- `11_FBRD` — ToolManifest field names.
-- `14_DatabaseDesign` — database table/column naming.
-- `15_APIConvention` — API endpoint naming.
-- `16_SEOSpecification` — URL naming for SEO.
+- `13_FBRD` — ToolManifest field names.
+- `16_DatabaseDesign` — database table/column naming.
+- `17_APIConvention` — API endpoint naming.
+- `18_SEOSpecification` — URL naming for SEO.
 
 ### 9.2 External Dependencies
 - TypeScript, React, Next.js, Postgres ecosystem conventions.
@@ -505,21 +505,24 @@ The following names are reserved and must not be used as identifiers:
 | Revision | Date | Author | Change |
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial Naming Convention. Defined casing conventions, file/folder naming, variable/function/type/component/hook/props naming, database naming, API endpoint naming, tool slug naming, env var naming, constant naming, domain event naming, CSS class naming. |
+| 1.1.0 | 2026-06-28 | Chief Architect | Linked naming conventions to PC-04 (Tool Template Standard). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
 
 ## 11. Cross References
 
-- `00_Project_Charter` §3, §4 — LOCKs and ECs implemented.
+- `00_Project_Charter` §3, §4, §5 — LOCKs, ECs, and PCs implemented.
 - `02_SAD` AD-02 — Tool Engine stage names follow conventions here.
 - `03_DDD` §6 — Ubiquitous language glossary terms follow these conventions.
 - `04_TechStack` — Ecosystem conventions (TypeScript, React, Postgres).
 - `05_ProjectStructure` — Folder names referenced here.
 - `06_ArchitectureDecisionRecords` — AD-01 through AD-15 record naming decisions.
+- `11_ProductConstitution` — Expands PC-04 (Tool Template Standard).
+- `12_ToolManifestSpecification` — Canonical schema naming conventions.
 - `07_FolderStructure` — File naming conventions (this document details the names).
 - `08_CodingStandards` — Code style rules (this document defines identifiers).
 - `10_DesignSystem` — Design token names.
-- `11_FBRD` — ToolManifest field names.
-- `14_DatabaseDesign` — Database naming in practice.
-- `15_APIConvention` — API endpoint naming in practice.
-- `16_SEOSpecification` — URL naming for SEO.
-- `19_AdminSpecification` — Admin route naming.
-- `23_AI_Guideline` — AI must follow naming conventions (LOCK-09, EC-11).
+- `13_FBRD` — ToolManifest field names.
+- `16_DatabaseDesign` — Database naming in practice.
+- `17_APIConvention` — API endpoint naming in practice.
+- `18_SEOSpecification` — URL naming for SEO.
+- `21_AdminSpecification` — Admin route naming.
+- `25_AI_Guideline` — AI must follow naming conventions (LOCK-09, EC-11).

@@ -1,0 +1,854 @@
+     1→     1→# 10 — Design System
+     2→     2→
+     3→     3→> **Status:** 🟢 Approved
+     4→     4→> **Document Owner:** Chief Architect
+     5→     5→> **Last Updated:** 2026-06-28
+     6→     6→> **Revision:** 1.0.0
+     7→     7→> **Implements:** LOCK-10 (Design Philosophy); EC-06 (Accessibility First), EC-10 (Design System Governance)
+     8→     8→
+     9→     9→---
+    10→    10→
+    11→    11→## 1. Purpose
+    12→    12→
+    13→    13→This Design System document defines the visual language of [PROJECT_NAME]: design tokens (colors, typography, spacing, radius, shadows, motion), component patterns, theming (light/dark mode), and accessibility standards. It operationalizes LOCK-10 (developer-first minimalism inspired by Vercel-like aesthetic) and the Engineering Constitution articles that govern design: EC-06 (accessibility first) and EC-10 (design system governance).
+    14→    14→
+    15→    15→A design system is the single source of truth for visual decisions. Without one, every engineer and designer makes slightly different choices — button radii drift from 6px to 8px to 4px; grays shift from `#666` to `#555` to `#777`; spacing varies from 12px to 16px to 14px. Individually trivial, collectively these inconsistencies make a platform feel unprofessional. The design system prevents this by encoding every visual decision as a token, and every token is consumed via Tailwind classes.
+    16→    16→
+    17→    17→This document is enforced via Tailwind configuration (tokens mapped to Tailwind theme), shadcn/ui component library (consistent primitives), ESLint rules (no inline styles, no hardcoded colors), and code review. Per EC-10, no page may introduce ad hoc UI patterns — every visual element originates from this system.
+    18→    18→
+    19→    19→## 2. Scope
+    20→    20→
+    21→    21→### 2.1 In Scope
+    22→    22→
+    23→    23→- Design tokens: colors, typography, spacing, radius, shadows, motion, z-index.
+    24→    24→- Light/dark mode theming strategy.
+    25→    25→- Component patterns (Button, Input, Card, etc. — high-level; details in `12_ACD`).
+    26→    26→- Accessibility standards (WCAG AA, keyboard, focus, screen reader, reduced motion).
+    27→    27→- Icon system (lucide-react).
+    28→    28→- Layout grid and breakpoints.
+    29→    29→- Animation and transition standards.
+    30→    30→- Tailwind theme configuration.
+    31→    31→
+    32→    32→### 2.2 Out of Scope
+    33→    33→
+    34→    34→- Detailed component APIs and props → `12_ACD`.
+    35→    35→- User flows and interaction patterns → `13_UDS`.
+    36→    36→- Specific page layouts → per-page specs in `11_FBRD` and beyond.
+    37→    37→- Brand voice and tone → `01_BRD` §3.3.
+    38→    38→- Logo design → brand assets in `/public/images/`.
+    39→    39→
+    40→    40→## 3. Architectural Decisions
+    41→    41→
+    42→    42→### AD-01 — Token-Driven Theming via CSS Custom Properties
+    43→    43→
+    44→    44→**Context.** Hardcoded colors in components break dark mode and prevent theming. CSS-in-JS solutions add runtime overhead. A token-driven approach using CSS custom properties enables theme switching without re-renders.
+    45→    45→
+    46→    46→**Decision.** Design tokens are defined as CSS custom properties in `globals.css` at the `:root` level (light theme) and `.dark` class (dark theme). Tailwind theme extension maps these tokens to Tailwind classes (e.g., `bg-background` → `background-color: var(--background)`).
+    47→    47→
+    48→    48→```css
+    49→    49→:root {
+    50→    50→  --background: 0 0% 100%;           /* white */
+    51→    51→  --foreground: 0 0% 3.9%;           /* near black */
+    52→    52→  --primary: 0 0% 9%;                /* primary action */
+    53→    53→  --primary-foreground: 0 0% 98%;
+    54→    54→  /* ... more tokens */
+    55→    55→}
+    56→    56→
+    57→    57→.dark {
+    58→    58→  --background: 0 0% 3.9%;
+    59→    59→  --foreground: 0 0% 98%;
+    60→    60→  --primary: 0 0% 98%;
+    61→    61→  --primary-foreground: 0 0% 9%;
+    62→    62→  /* ... more tokens */
+    63→    63→}
+    64→    64→```
+    65→    65→
+    66→    66→Tailwind config:
+    67→    67→```typescript
+    68→    68→module.exports = {
+    69→    69→  theme: {
+    70→    70→    extend: {
+    71→    71→      colors: {
+    72→    72→        background: 'hsl(var(--background))',
+    73→    73→        foreground: 'hsl(var(--foreground))',
+    74→    74→        primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))' },
+    75→    75→        // ... more
+    76→    76→      },
+    77→    77→    },
+    78→    78→  },
+    79→    79→};
+    80→    80→```
+    81→    81→
+    82→    82→**Consequences.**
+    83→    83→- ✅ Theme switching via class toggle on `<html>` — no re-renders.
+    84→    84→- ✅ Consistent token usage across all components.
+    85→    85→- ✅ Dark mode supported from day 1 (LOCK-10).
+    86→    86→- ⚠️ Slight indirection (token → CSS var → Tailwind class); justified by flexibility.
+    87→    87→
+    88→    88→**Implements:** LOCK-10 (Dark/Light mode ready), EC-10 (Design System Governance).
+    89→    89→
+    90→    90→### AD-02 — Monochrome Palette with Single Accent
+    91→    91→
+    92→    92→**Context.** LOCK-10 mandates developer-first minimalism with a monochrome palette. Adding multiple accent colors fragments the visual language.
+    93→    93→
+    94→    94→**Decision.** Palette:
+    95→    95→- **Background and foreground:** pure grayscale (white to near-black).
+    96→    96→- **Primary actions:** near-black in light mode, near-white in dark mode (inverted).
+    97→    97→- **Accent color:** single accent reserved for highlighting (links, focused elements, badges). The accent is configurable via token; default is a subtle blue (`hsl(221, 83%, 53%)`) for familiarity, but can be re-themed without code changes.
+    98→    98→- **Semantic colors:** success (green), warning (yellow), destructive (red), info (blue). Used sparingly for status indicators, not decoration.
+    99→    99→
+   100→   100→All other colors are grayscale. No gradients, no decorative color.
+   101→   101→
+   102→   102→**Consequences.**
+   103→   103→- ✅ Consistent, professional aesthetic.
+   104→   104→- ✅ High contrast (WCAG AAA where feasible — EC-06).
+   105→   105→- ✅ Color-blind friendly (semantic meaning conveyed via color + icon, not color alone).
+   106→   106→
+   107→   107→**Implements:** LOCK-10, EC-06.
+   108→   108→
+   109→   109→### AD-03 — Typography Scale
+   110→   110→
+   111→   111→**Context.** Without a defined type scale, font sizes drift (14px, 15px, 16px, 17px all appearing). A modular scale ensures hierarchy and rhythm.
+   112→   112→
+   113→   113→**Decision.** Typography scale (rem-based, 1rem = 16px):
+   114→   114→
+   115→   115→| Token | Size | Weight | Use |
+   116→   116→|-------|------|--------|-----|
+   117→   117→| `text-xs` | 0.75rem (12px) | 400 | Captions, badges, small print |
+   118→   118→| `text-sm` | 0.875rem (14px) | 400 | Secondary text, labels, table cells |
+   119→   119→| `text-base` | 1rem (16px) | 400 | Body text, default |
+   120→   120→| `text-lg` | 1.125rem (18px) | 500 | Section headings, emphasized text |
+   121→   121→| `text-xl` | 1.25rem (20px) | 600 | Page subheadings |
+   122→   122→| `text-2xl` | 1.5rem (24px) | 600 | Page headings |
+   123→   123→| `text-3xl` | 1.875rem (30px) | 700 | Hero headings |
+   124→   124→| `text-4xl` | 2.25rem (36px) | 700 | Large hero, marketing |
+   125→   125→| `text-5xl` | 3rem (48px) | 700 | Marketing only |
+   126→   126→
+   127→   127→**Font families:**
+   128→   128→- **Sans-serif (default):** `Inter` (loaded via `next/font/google`). Used for UI, body text.
+   129→   129→- **Mono:** `JetBrains Mono` (loaded via `next/font/google`). Used for code blocks, technical identifiers.
+   130→   130→- **No serif fonts** in Phase 1. May add for editorial content (articles) in Phase 2.
+   131→   131→
+   132→   132→**Line heights:**
+   133→   133→- Body: 1.5
+   134→   134→- Headings: 1.2
+   135→   135→- Code: 1.6
+   136→   136→
+   137→   137→**Letter spacing:**
+   138→   138→- Body: normal (0)
+   139→   139→- Headings: -0.01em (slightly tighter for large text)
+   140→   140→- Small text: 0.01em (slightly looser for readability)
+   141→   141→
+   142→   142→**Implements:** LOCK-10 (premium feel via precise typography).
+   143→   143→
+   144→   144→### AD-04 — Spacing Scale
+   145→   145→
+   146→   146→**Context.** Inconsistent spacing (12px, 14px, 16px, 18px padding) breaks visual rhythm. Tailwind's spacing scale (4px base) provides consistency.
+   147→   147→
+   148→   148→**Decision.** Use Tailwind's default spacing scale:
+   149→   149→
+   150→   150→| Token | Size | Use |
+   151→   151→|-------|------|-----|
+   152→   152→| `0` | 0 | No spacing |
+   153→   153→| `1` | 4px | Tight inline spacing |
+   154→   154→| `2` | 8px | Compact element padding |
+   155→   155→| `3` | 12px | Small element padding |
+   156→   156→| `4` | 16px | Default element padding |
+   157→   157→| `6` | 24px | Section internal spacing |
+   158→   158→| `8` | 32px | Section spacing |
+   159→   159→| `12` | 48px | Page section spacing |
+   160→   160→| `16` | 64px | Large page section spacing |
+   161→   161→| `24` | 96px | Hero spacing |
+   162→   162→
+   163→   163→**Rules:**
+   164→   164→- Use only these values; no `p-[13px]` arbitrary values.
+   165→   165→- Spacing between related elements: `2` or `3` (8-12px).
+   166→   166→- Spacing within a section: `4` or `6` (16-24px).
+   167→   167→- Spacing between sections: `8` or `12` (32-48px).
+   168→   168→- Page-level rhythm: multiples of 8px.
+   169→   169→
+   170→   170→**Implements:** LOCK-10 (spacious layout), EC-10 (consistent spacing).
+   171→   171→
+   172→   172→### AD-05 — Border Radius Scale
+   173→   173→
+   174→   174→**Context.** Inconsistent corner radii (4px, 6px, 8px, 12px) look unprofessional.
+   175→   175→
+   176→   176→**Decision.** Radius scale:
+   177→   177→
+   178→   178→| Token | Radius | Use |
+   179→   179→|-------|--------|-----|
+   180→   180→| `rounded-none` | 0 | Tables, dividers |
+   181→   181→| `rounded-sm` | 2px | Small inline elements, badges |
+   182→   182→| `rounded-md` | 6px | Inputs, buttons (default) |
+   183→   183→| `rounded-lg` | 8px | Cards, modals |
+   184→   184→| `rounded-xl` | 12px | Large cards, feature panels |
+   185→   185→| `rounded-full` | 9999px | Pills, avatars, circular buttons |
+   186→   186→
+   187→   187→**Rules:**
+   188→   188→- Default radius: `rounded-md` (6px).
+   189→   189→- Cards: `rounded-lg` (8px) or `rounded-xl` (12px) for emphasis.
+   190→   190→- Inputs and buttons: `rounded-md` (6px).
+   191→   191→- Never mix radii in a single component (e.g., button with `rounded-lg` inside a `rounded-md` card).
+   192→   192→
+   193→   193→**Implements:** LOCK-10 (consistent component usage).
+   194→   194→
+   195→   195→### AD-06 — Shadow Scale
+   196→   196→
+   197→   197→**Context.** Shadows convey depth. Without a scale, shadows vary wildly.
+   198→   198→
+   199→   199→**Decision.** Shadow scale (subtle, developer-first aesthetic):
+   200→   200→
+   201→   201→| Token | Shadow | Use |
+   202→   202→|-------|--------|-----|
+   203→   203→| `shadow-none` | none | Flat elements |
+   204→   204→| `shadow-sm` | `0 1px 2px 0 rgb(0 0 0 / 0.05)` | Subtle elevation (inputs on focus) |
+   205→   205→| `shadow-md` | `0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)` | Cards, dropdowns |
+   206→   206→| `shadow-lg` | `0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)` | Modals, popovers |
+   207→   207→| `shadow-xl` | `0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)` | Floating panels |
+   208→   208→
+   209→   209→**Rules:**
+   210→   210→- Default: `shadow-none` (flat aesthetic).
+   211→   211→- Use `shadow-sm` for inputs on focus.
+   212→   212→- Use `shadow-md` for cards with hover interaction.
+   213→   213→- Use `shadow-lg` for modals and popovers.
+   214→   214→- Dark mode: shadows are less visible; rely more on border for depth.
+   215→   215→
+   216→   216→**Implements:** LOCK-10 (minimal animation, premium feel via precise elevation).
+   217→   217→
+   218→   218→### AD-07 — Motion and Animation Standards
+   219→   219→
+   220→   220→**Context.** LOCK-10 mandates minimal animation. Excessive motion degrades the developer-first aesthetic and can cause accessibility issues (motion sensitivity).
+   221→   221→
+   222→   222→**Decision.** Motion standards:
+   223→   223→
+   224→   224→**Allowed animations (state-change only):**
+   225→   225→- Hover transitions: 150ms ease-out.
+   226→   226→- Focus transitions: 100ms ease-out.
+   227→   227→- Modal/dialog open: 200ms ease-out.
+   228→   228→- Modal/dialog close: 150ms ease-in.
+   229→   229→- Toast notifications: 200ms ease-out.
+   230→   230→
+   231→   231→**Forbidden animations:**
+   232→   232→- Decorative animations (pulsing, bouncing, rotating for non-loading states).
+   233→   233→- Auto-playing carousels.
+   234→   234→- Parallax scrolling.
+   235→   235→- Animated illustrations.
+   236→   236→- Page transition animations (instant page changes preferred).
+   237→   237→
+   238→   238→**Loading states:**
+   239→   239→- Skeleton loaders with subtle pulse (1.5s ease-in-out infinite).
+   240→   240→- Progress bars for long operations.
+   241→   241→- No spinner-only loading states (always skeleton or progress).
+   242→   242→
+   243→   243→**Reduced motion:**
+   244→   244→- All animations respect `prefers-reduced-motion: reduce` (EC-06).
+   245→   245→- When reduced motion is preferred, animations are instant or replaced with opacity changes.
+   246→   246→
+   247→   247→```css
+   248→   248→@media (prefers-reduced-motion: reduce) {
+   249→   249→  *, *::before, *::after {
+   250→   250→    animation-duration: 0.01ms !important;
+   251→   251→    transition-duration: 0.01ms !important;
+   252→   252→  }
+   253→   253→}
+   254→   254→```
+   255→   255→
+   256→   256→**Implements:** LOCK-10 (minimal animation), EC-06 (reduced motion compatibility).
+   257→   257→
+   258→   258→### AD-08 — Layout Grid and Breakpoints
+   259→   259→
+   260→   260→**Context.** Responsive design requires consistent breakpoints. Tailwind's default breakpoints are well-established.
+   261→   261→
+   262→   262→**Decision.** Breakpoints (Tailwind defaults):
+   263→   263→
+   264→   264→| Prefix | Min Width | Use |
+   265→   265→|--------|-----------|-----|
+   266→   266→| (default) | 0 | Mobile-first baseline (360px+) |
+   267→   267→| `sm:` | 640px | Large phones, small tablets |
+   268→   268→| `md:` | 768px | Tablets |
+   269→   269→| `lg:` | 1024px | Small laptops |
+   270→   270→| `xl:` | 1280px | Desktops |
+   271→   271→| `2xl:` | 1536px | Large desktops |
+   272→   272→
+   273→   273→**Container:**
+   274→   274→- Max width: `max-w-7xl` (1280px) for most pages.
+   275→   275→- Max width: `max-w-4xl` (896px) for article pages (reading width).
+   276→   276→- Padding: `px-4` on mobile, `px-6` on `sm:`, `px-8` on `lg:`.
+   277→   277→- Centered: `mx-auto`.
+   278→   278→
+   279→   279→**Grid:**
+   280→   280→- Use Tailwind's grid utilities (`grid`, `grid-cols-*`, `gap-*`).
+   281→   281→- Tool grid: `grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4`.
+   282→   282→- Article grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`.
+   283→   283→
+   284→   284→**Mobile-first:**
+   285→   285→- All components designed for 360px viewport first.
+   286→   286→- Use `min-w-*` for minimum sizes, not `max-w-*` for mobile.
+   287→   287→- Touch targets minimum 44x44px (WCAG recommendation).
+   288→   288→
+   289→   289→**Implements:** LOCK-10 (mobile-first, responsive), EC-06 (accessibility — touch targets).
+   290→   290→
+   291→   291→### AD-09 — Icon System
+   292→   292→
+   293→   293→**Context.** Mixing icon sources (SVG sprites, icon fonts, custom SVGs) creates inconsistency.
+   294→   294→
+   295→   295→**Decision.** Icon system:
+   296→   296→- **Library:** `lucide-react` (consistent with shadcn/ui).
+   297→   297→- **Size:** 16px (default), 20px (medium), 24px (large). Use Tailwind `w-4 h-4`, `w-5 h-5`, `w-6 h-6`.
+   298→   298→- **Color:** inherits from `currentColor` (use `text-foreground`, `text-muted-foreground`, etc.).
+   299→   299→- **Stroke width:** 2px (default).
+   300→   300→- **No custom SVGs** unless the icon is not available in lucide-react. Document exceptions in component.
+   301→   301→- **No icon fonts.**
+   302→   302→
+   303→   303→**Implements:** EC-10 (Design System Governance — consistent icon source).
+   304→   304→
+   305→   305→### AD-10 — Accessibility Standards
+   306→   306→
+   307→   307→**Context.** EC-06 mandates WCAG AA conformance. Specific standards make this enforceable.
+   308→   308→
+   309→   309→**Decision.** Accessibility standards:
+   310→   310→
+   311→   311→**Color contrast:**
+   312→   312→- Body text on background: ≥7:1 (WCAG AAA).
+   313→   313→- Large text (≥24px or ≥18.66px bold) on background: ≥4.5:1 (WCAG AA).
+   314→   314→- UI components and graphical elements: ≥3:1.
+   315→   315→- Verified via automated tooling (Lighthouse CI) and manual review.
+   316→   316→
+   317→   317→**Keyboard navigation:**
+   318→   318→- All interactive elements operable via keyboard.
+   319→   319→- Logical tab order (follows visual order).
+   320→   320→- Visible focus indicator (`focus-visible:` Tailwind classes with `outline-2 outline-offset-2 outline-primary`).
+   321→   321→- No keyboard traps.
+   322→   322→- Skip-to-content link at top of every page.
+   323→   323→
+   324→   324→**Screen reader support:**
+   325→   325→- Semantic HTML (`<button>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>`, `<header>`, `<footer>`).
+   326→   326→- ARIA labels only when semantic HTML insufficient.
+   327→   327→- `aria-label` on icon-only buttons.
+   328→   328→- `aria-live="polite"` on dynamic content (toasts, alerts).
+   329→   329→- `aria-busy` on loading elements.
+   330→   330→- Hidden content via `aria-hidden="true"` (not `display: none` if it should be screen-reader accessible).
+   331→   331→
+   332→   332→**Forms:**
+   333→   333→- Every input has associated `<label>`.
+   334→   334→- Error messages via `aria-describedby` linking to input.
+   335→   335→- Required fields marked with `aria-required="true"` and visible indicator.
+   336→   336→- Validation errors announced via `aria-live`.
+   337→   337→
+   338→   338→**Reduced motion:**
+   339→   339→- Per AD-07. `prefers-reduced-motion` respected.
+   340→   340→
+   341→   341→**Touch targets:**
+   342→   342→- Minimum 44x44px on touch devices.
+   343→   343→- Adequate spacing between interactive elements.
+   344→   344→
+   345→   345→**Images:**
+   346→   346→- All images have `alt` attribute.
+   347→   347→- Decorative images: `alt=""` (empty).
+   348→   348→- Complex images: `aria-describedby` linking to longer description.
+   349→   349→
+   350→   350→**Implements:** EC-06 (Accessibility First).
+   351→   351→
+   352→   352→### AD-11 — Dark Mode Strategy
+   353→   353→
+   354→   354→**Context.** LOCK-10 mandates dark mode ready from day 1. The strategy must be token-driven (no hardcoded colors) and toggleable.
+   355→   355→
+   356→   356→**Decision.** Dark mode strategy:
+   357→   357→- **Token-driven:** All colors via CSS custom properties (AD-01).
+   358→   358→- **Class-based theming:** `.dark` class on `<html>` element toggles dark mode.
+   359→   359→- **User preference:** Stored in cookie (server-readable for SSR) and localStorage.
+   360→   360→- **System preference:** Default to `prefers-color-scheme` if no user preference.
+   361→   361→- **No flash of incorrect theme:** Server-rendered `<html>` class based on cookie.
+   362→   362→
+   363→   363→**Implementation:**
+   364→   364→```typescript
+   365→   365→// src/app/layout.tsx
+   366→   366→export async function generateMetadata() {
+   367→   367→  // ...
+   368→   368→}
+   369→   369→
+   370→   370→export default function RootLayout({ children }: { children: React.ReactNode }) {
+   371→   371→  return (
+   372→   372→    <html lang="en" suppressHydrationWarning>
+   373→   373→      <head>
+   374→   374→        <script
+   375→   375→          dangerouslySetInnerHTML={{
+   376→   376→            __html: `
+   377→   377→              (function() {
+   378→   378→                const theme = document.cookie.match(/theme=(dark|light)/)?.[1]
+   379→   379→                  || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+   380→   380→                document.documentElement.classList.toggle('dark', theme === 'dark');
+   381→   381→              })();
+   382→   382→            `,
+   383→   383→          }}
+   384→   384→        />
+   385→   385→      </head>
+   386→   386→      <body>{children}</body>
+   387→   387→    </html>
+   388→   388→  );
+   389→   389→}
+   390→   390→```
+   391→   391→
+   392→   392→**Implements:** LOCK-10 (Dark/Light mode ready).
+   393→   393→
+   394→   394→### AD-12 — Z-Index Scale
+   395→   395→
+   396→   396→**Context.** Without a z-index scale, values drift and stacking becomes unpredictable.
+   397→   397→
+   398→   398→**Decision.** Z-index scale:
+   399→   399→
+   400→   400→| Token | Value | Use |
+   401→   401→|-------|-------|-----|
+   402→   402→| `z-0` | 0 | Default |
+   403→   403→| `z-10` | 10 | Sticky headers, dropdowns |
+   404→   404→| `z-20` | 20 | Sticky sidebars |
+   405→   405→| `z-30` | 30 | Modals |
+   406→   406→| `z-40` | 40 | Popovers, tooltips |
+   407→   407→| `z-50` | 50 | Toast notifications |
+   408→   408→| `z-[100]` | 100 | Critical overlays (error boundaries) |
+   409→   409→
+   410→   410→**Rules:**
+   411→   411→- Use only these values.
+   412→   412→- Never use `z-[9999]` or other arbitrary values.
+   413→   413→- Higher z-index = more "on top"; respect the hierarchy.
+   414→   414→
+   415→   415→**Implements:** EC-10 (consistent stacking).
+   416→   416→
+   417→   417→## 4. Design Principles
+   418→   418→
+   419→   419→### P1 — Token-Driven, Always
+   420→   420→Every color, spacing, radius, shadow, font size comes from a token. No hardcoded values. This is the foundation of dark mode and theming.
+   421→   421→
+   422→   422→### P2 — Minimal by Default
+   423→   423→Start with the minimum viable visual treatment. Add decoration only when it improves usability. LOCK-10 mandates this.
+   424→   424→
+   425→   425→### P3 — Hierarchy Through Contrast, Not Decoration
+   426→   426→Visual hierarchy via typography size/weight, spacing, and color contrast — not via decorative elements (borders, gradients, shadows).
+   427→   427→
+   428→   428→### P4 — Accessible by Construction
+   429→   429→Accessibility is built into tokens (contrast ratios) and components (semantic HTML, ARIA). Not bolted on later.
+   430→   430→
+   431→   431→### P5 — Consistent Across the Ecosystem
+   432→   432→Every tool page, every admin page, every marketing page uses the same tokens and components. The user feels they're in one product, not a patchwork.
+   433→   433→
+   434→   434→### P6 — Performance-Conscious
+   435→   435→Minimal CSS, no runtime CSS-in-JS, fonts loaded via `next/font` for optimization. Design choices must not bloat the bundle.
+   436→   436→
+   437→   437→## 5. Design Tokens (Full Reference)
+   438→   438→
+   439→   439→### 5.1 Color Tokens
+   440→   440→
+   441→   441→**Light mode:**
+   442→   442→```css
+   443→   443→:root {
+   444→   444→  /* Backgrounds */
+   445→   445→  --background: 0 0% 100%;              /* white */
+   446→   446→  --foreground: 0 0% 3.9%;              /* near black */
+   447→   447→
+   448→   448→  /* Primary (action) */
+   449→   449→  --primary: 0 0% 9%;                   /* near black */
+   450→   450→  --primary-foreground: 0 0% 98%;       /* near white */
+   451→   451→
+   452→   452→  /* Secondary (subtle action) */
+   453→   453→  --secondary: 0 0% 96.1%;              /* light gray */
+   454→   454→  --secondary-foreground: 0 0% 9%;      /* near black */
+   455→   455→
+   456→   456→  /* Muted (de-emphasized) */
+   457→   457→  --muted: 0 0% 96.1%;                  /* light gray */
+   458→   458→  --muted-foreground: 0 0% 45.1%;       /* medium gray */
+   459→   459→
+   460→   460→  /* Accent (links, highlights) */
+   461→   461→  --accent: 221 83% 53%;                /* blue */
+   462→   462→  --accent-foreground: 0 0% 98%;        /* near white */
+   463→   463→
+   464→   464→  /* Destructive */
+   465→   465→  --destructive: 0 84.2% 60.2%;         /* red */
+   466→   466→  --destructive-foreground: 0 0% 98%;   /* near white */
+   467→   467→
+   468→   468→  /* Success */
+   469→   469→  --success: 142 71% 45%;               /* green */
+   470→   470→  --success-foreground: 0 0% 98%;       /* near white */
+   471→   471→
+   472→   472→  /* Warning */
+   473→   473→  --warning: 38 92% 50%;                /* yellow/amber */
+   474→   474→  --warning-foreground: 0 0% 9%;        /* near black */
+   475→   475→
+   476→   476→  /* Borders and inputs */
+   477→   477→  --border: 0 0% 89.8%;                 /* light gray */
+   478→   478→  --input: 0 0% 89.8%;                  /* light gray */
+   479→   479→  --ring: 221 83% 53%;                  /* blue (focus ring) */
+   480→   480→
+   481→   481→  /* Charts (for analytics) */
+   482→   482→  --chart-1: 221 83% 53%;
+   483→   483→  --chart-2: 142 71% 45%;
+   484→   484→  --chart-3: 38 92% 50%;
+   485→   485→  --chart-4: 0 84% 60%;
+   486→   486→  --chart-5: 270 76% 53%;
+   487→   487→}
+   488→   488→```
+   489→   489→
+   490→   490→**Dark mode:**
+   491→   491→```css
+   492→   492→.dark {
+   493→   493→  --background: 0 0% 3.9%;              /* near black */
+   494→   494→  --foreground: 0 0% 98%;               /* near white */
+   495→   495→
+   496→   496→  --primary: 0 0% 98%;                  /* near white */
+   497→   497→  --primary-foreground: 0 0% 9%;        /* near black */
+   498→   498→
+   499→   499→  --secondary: 0 0% 14.9%;              /* dark gray */
+   500→   500→  --secondary-foreground: 0 0% 98%;     /* near white */
+   501→   501→
+   502→   502→  --muted: 0 0% 14.9%;                  /* dark gray */
+   503→   503→  --muted-foreground: 0 0% 63.9%;       /* light gray */
+   504→   504→
+   505→   505→  --accent: 217 91% 60%;                /* lighter blue for dark bg */
+   506→   506→  --accent-foreground: 0 0% 98%;        /* near white */
+   507→   507→
+   508→   508→  --destructive: 0 62.8% 30.6%;         /* darker red */
+   509→   509→  --destructive-foreground: 0 0% 98%;   /* near white */
+   510→   510→
+   511→   511→  --success: 142 71% 45%;               /* same green */
+   512→   512→  --success-foreground: 0 0% 98%;       /* near white */
+   513→   513→
+   514→   514→  --warning: 38 92% 50%;                /* same yellow */
+   515→   515→  --warning-foreground: 0 0% 9%;        /* near black */
+   516→   516→
+   517→   517→  --border: 0 0% 14.9%;                 /* dark gray */
+   518→   518→  --input: 0 0% 14.9%;                  /* dark gray */
+   519→   519→  --ring: 217 91% 60%;                  /* lighter blue */
+   520→   520→}
+   521→   521→```
+   522→   522→
+   523→   523→### 5.2 Typography Tokens
+   524→   524→
+   525→   525→| Token | Value | Tailwind Class |
+   526→   526→|-------|-------|----------------|
+   527→   527→| Font sans | `Inter, system-ui, sans-serif` | `font-sans` |
+   528→   528→| Font mono | `JetBrains Mono, monospace` | `font-mono` |
+   529→   529→| Text xs | 12px / 1rem line-height | `text-xs` |
+   530→   530→| Text sm | 14px / 1.25rem | `text-sm` |
+   531→   531→| Text base | 16px / 1.5rem | `text-base` |
+   532→   532→| Text lg | 18px / 1.75rem | `text-lg` |
+   533→   533→| Text xl | 20px / 1.75rem | `text-xl` |
+   534→   534→| Text 2xl | 24px / 2rem | `text-2xl` |
+   535→   535→| Text 3xl | 30px / 2.25rem | `text-3xl` |
+   536→   536→| Text 4xl | 36px / 2.5rem | `text-4xl` |
+   537→   537→| Text 5xl | 48px / 1rem | `text-5xl` |
+   538→   538→
+   539→   539→Font weights: `font-normal` (400), `font-medium` (500), `font-semibold` (600), `font-bold` (700).
+   540→   540→
+   541→   541→### 5.3 Spacing Tokens
+   542→   542→
+   543→   543→Per AD-04. Tailwind default scale (4px base).
+   544→   544→
+   545→   545→### 5.4 Radius Tokens
+   546→   546→
+   547→   547→Per AD-05. Tailwind defaults: `rounded-sm` (2px), `rounded-md` (6px), `rounded-lg` (8px), `rounded-xl` (12px), `rounded-full` (9999px).
+   548→   548→
+   549→   549→### 5.5 Shadow Tokens
+   550→   550→
+   551→   551→Per AD-06. Tailwind defaults: `shadow-sm`, `shadow-md`, `shadow-lg`, `shadow-xl`.
+   552→   552→
+   553→   553→### 5.6 Motion Tokens
+   554→   554→
+   555→   555→| Token | Duration | Easing | Use |
+   556→   556→|-------|----------|--------|-----|
+   557→   557→| `fast` | 100ms | ease-out | Focus transitions |
+   558→   558→| `normal` | 150ms | ease-out | Hover transitions |
+   559→   559→| `slow` | 200ms | ease-out | Modal/dialog open |
+   560→   560→| `slower` | 300ms | ease-out | Large element transitions |
+   561→   561→
+   562→   562→Implemented via Tailwind classes: `transition`, `duration-150`, `ease-out`.
+   563→   563→
+   564→   564→### 5.7 Z-Index Tokens
+   565→   565→
+   566→   566→Per AD-12.
+   567→   567→
+   568→   568→## 6. Component Patterns (Overview)
+   569→   569→
+   570→   570→Detailed component APIs in `12_ACD`. This section lists the components in the design system and their purposes.
+   571→   571→
+   572→   572→### 6.1 Primitives (in `@packages/ui`)
+   573→   573→
+   574→   574→| Component | Purpose |
+   575→   575→|-----------|---------|
+   576→   576→| `Button` | Primary action button |
+   577→   577→| `IconButton` | Icon-only button (with `aria-label`) |
+   578→   578→| `Input` | Text input |
+   579→   579→| `Textarea` | Multi-line text input |
+   580→   580→| `Select` | Dropdown select |
+   581→   581→| `Checkbox` | Checkbox |
+   582→   582→| `RadioGroup` | Radio button group |
+   583→   583→| `Switch` | Toggle switch |
+   584→   584→| `Slider` | Range slider |
+   585→   585→| `Label` | Form label |
+   586→   586→| `FormField` | Form field wrapper (label + input + error) |
+   587→   587→| `Card` | Container with border and optional shadow |
+   588→   588→| `Dialog` / `Modal` | Modal dialog |
+   589→   589→| `Sheet` | Slide-out panel |
+   590→   590→| `Popover` | Floating content |
+   591→   591→| `Tooltip` | Hover tooltip |
+   592→   592→| `Toast` | Notification toast |
+   593→   593→| `Alert` | Inline alert |
+   594→   594→| `Badge` | Small status indicator |
+   595→   595→| `Avatar` | User avatar |
+   596→   596→| `Tabs` | Tabbed interface |
+   597→   597→| `Accordion` | Collapsible sections |
+   598→   598→| `Table` | Data table |
+   599→   599→| `Progress` | Progress bar |
+   600→   600→| `Skeleton` | Loading skeleton |
+   601→   601→| `Spinner` | Loading spinner (use sparingly) |
+   602→   602→| `Separator` | Horizontal/vertical divider |
+   603→   603→| `ScrollArea` | Custom scrollable area |
+   604→   604→
+   605→   605→### 6.2 Composite Components (in `src/shared/components/`)
+   606→   606→
+   607→   607→| Component | Purpose |
+   608→   608→|-----------|---------|
+   609→   609→| `PageContainer` | Standard page wrapper (max-width, padding) |
+   610→   610→| `SectionHeading` | Section heading with optional action |
+   611→   611→| `Breadcrumb` | Breadcrumb navigation (LOCK-08) |
+   612→   612→| `ThemeToggle` | Light/dark mode toggle |
+   613→   613→| `EmptyState` | Empty state illustration + text |
+   614→   614→| `ErrorState` | Error state with retry |
+   615→   615→| `LoadingState` | Loading state with skeleton |
+   616→   616→| `FileDropzone` | File upload dropzone |
+   617→   617→| `ToolCard` | Tool card for grid display |
+   618→   618→| `ToolGrid` | Grid of ToolCards |
+   619→   619→| `FAQ` | FAQ section (LOCK-08) |
+   620→   620→| `RelatedTools` | Related tools section (LOCK-08) |
+   621→   621→
+   622→   622→### 6.3 Tool Engine Components
+   623→   623→
+   624→   624→| Component | Purpose |
+   625→   625→|-----------|---------|
+   626→   626→| `ToolLayout` | Standard tool page layout |
+   627→   627→| `ToolInputForm` | Tool configuration form |
+   628→   628→| `ToolProcessingProgress` | Processing progress UI |
+   629→   629→| `ToolPreview` | Result preview container |
+   630→   630→| `ToolDownloadButton` | Download button (with registration gate per LOCK-07) |
+   631→   631→
+   632→   632→## 7. Tailwind Configuration
+   633→   633→
+   634→   634→```typescript
+   635→   635→// tailwind.config.ts
+   636→   636→import type { Config } from 'tailwindcss';
+   637→   637→
+   638→   638→const config: Config = {
+   639→   639→  darkMode: 'class',
+   640→   640→  content: [
+   641→   641→    './src/**/*.{ts,tsx}',
+   642→   642→    './packages/**/*.{ts,tsx}',
+   643→   643→  ],
+   644→   644→  theme: {
+   645→   645→    extend: {
+   646→   646→      colors: {
+   647→   647→        background: 'hsl(var(--background))',
+   648→   648→        foreground: 'hsl(var(--foreground))',
+   649→   649→        primary: {
+   650→   650→          DEFAULT: 'hsl(var(--primary))',
+   651→   651→          foreground: 'hsl(var(--primary-foreground))',
+   652→   652→        },
+   653→   653→        secondary: {
+   654→   654→          DEFAULT: 'hsl(var(--secondary))',
+   655→   655→          foreground: 'hsl(var(--secondary-foreground))',
+   656→   656→        },
+   657→   657→        muted: {
+   658→   658→          DEFAULT: 'hsl(var(--muted))',
+   659→   659→          foreground: 'hsl(var(--muted-foreground))',
+   660→   660→        },
+   661→   661→        accent: {
+   662→   662→          DEFAULT: 'hsl(var(--accent))',
+   663→   663→          foreground: 'hsl(var(--accent-foreground))',
+   664→   664→        },
+   665→   665→        destructive: {
+   666→   666→          DEFAULT: 'hsl(var(--destructive))',
+   667→   667→          foreground: 'hsl(var(--destructive-foreground))',
+   668→   668→        },
+   669→   669→        success: {
+   670→   670→          DEFAULT: 'hsl(var(--success))',
+   671→   671→          foreground: 'hsl(var(--success-foreground))',
+   672→   672→        },
+   673→   673→        warning: {
+   674→   674→          DEFAULT: 'hsl(var(--warning))',
+   675→   675→          foreground: 'hsl(var(--warning-foreground))',
+   676→   676→        },
+   677→   677→        border: 'hsl(var(--border))',
+   678→   678→        input: 'hsl(var(--input))',
+   679→   679→        ring: 'hsl(var(--ring))',
+   680→   680→        chart: {
+   681→   681→          1: 'hsl(var(--chart-1))',
+   682→   682→          2: 'hsl(var(--chart-2))',
+   683→   683→          3: 'hsl(var(--chart-3))',
+   684→   684→          4: 'hsl(var(--chart-4))',
+   685→   685→          5: 'hsl(var(--chart-5))',
+   686→   686→        },
+   687→   687→      },
+   688→   688→      fontFamily: {
+   689→   689→        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+   690→   690→        mono: ['var(--font-jetbrains-mono)', 'monospace'],
+   691→   691→      },
+   692→   692→      borderRadius: {
+   693→   693→        lg: 'var(--radius)',
+   694→   694→        md: 'calc(var(--radius) - 2px)',
+   695→   695→        sm: 'calc(var(--radius) - 4px)',
+   696→   696→      },
+   697→   697→      keyframes: {
+   698→   698→        'accordion-down': {
+   699→   699→          from: { height: '0' },
+   700→   700→          to: { height: 'var(--radix-accordion-content-height)' },
+   701→   701→        },
+   702→   702→        'accordion-up': {
+   703→   703→          from: { height: 'var(--radix-accordion-content-height)' },
+   704→   704→          to: { height: '0' },
+   705→   705→        },
+   706→   706→      },
+   707→   707→      animation: {
+   708→   708→        'accordion-down': 'accordion-down 0.2s ease-out',
+   709→   709→        'accordion-up': 'accordion-up 0.2s ease-out',
+   710→   710→      },
+   711→   711→    },
+   712→   712→  },
+   713→   713→  plugins: [
+   714→   714→    require('tailwindcss-animate'),
+   715→   715→  ],
+   716→   716→};
+   717→   717→
+   718→   718→export default config;
+   719→   719→```
+   720→   720→
+   721→   721→## 8. Standards
+   722→   722→
+   723→   723→### 8.1 Token Usage Standards
+   724→   724→- All colors via tokens (`bg-background`, `text-foreground`, etc.).
+   725→   725→- No hardcoded hex values.
+   726→   726→- No `style={{ color: '#fff' }}` inline styles.
+   727→   727→
+   728→   728→### 8.2 Component Usage Standards
+   729→   729→- Use design system components from `@packages/ui`.
+   730→   730→- Compose into higher-level components in `src/shared/components/`.
+   731→   731→- Don't reinvent primitives (Button, Input, Card, etc.).
+   732→   732→
+   733→   733→### 8.3 Dark Mode Standards
+   734→   734→- Every component works in light and dark mode.
+   735→   735→- Test both modes during development.
+   736→   736→- No dark-mode-specific code paths; token switching handles it.
+   737→   737→
+   738→   738→### 8.4 Accessibility Standards
+   739→   739→- Per AD-10. WCAG AA conformance mandatory.
+   740→   740→- Verified via Lighthouse CI (≥95 accessibility score).
+   741→   741→
+   742→   742→### 8.5 Animation Standards
+   743→   743→- Per AD-07. Minimal animation.
+   744→   744→- Reduced motion respected.
+   745→   745→
+   746→   746→### 8.6 Performance Standards
+   747→   747→- No runtime CSS-in-JS.
+   748→   748→- Fonts via `next/font`.
+   749→   749→- Minimal custom CSS (only `globals.css`).
+   750→   750→
+   751→   751→## 9. Best Practices
+   752→   752→
+   753→   753→### 9.1 When Choosing Colors
+   754→   754→1. Use tokens, never hex values.
+   755→   755→2. Default to muted/foreground for text.
+   756→   756→3. Use primary for actions, accent for highlights.
+   757→   757→4. Use semantic colors (success/warning/destructive) only for status.
+   758→   758→5. Verify contrast in both light and dark mode.
+   759→   759→
+   760→   760→### 9.2 When Spacing Elements
+   761→   761→1. Use Tailwind spacing scale (4, 8, 12, 16, 24, 32, 48, 64).
+   762→   762→2. Within a section: 16-24px (`gap-4` or `gap-6`).
+   763→   763→3. Between sections: 32-48px (`py-8` or `py-12`).
+   764→   764→4. Page padding: 16px mobile, 24-32px desktop.
+   765→   765→
+   766→   766→### 9.3 When Adding a Component
+   767→   767→1. Check `@packages/ui` for existing (EC-03).
+   768→   768→2. Check `src/shared/components/` for app-specific composite.
+   769→   769→3. If new: place in appropriate location per `07_FolderStructure`.
+   770→   770→4. Use design tokens, not hardcoded values.
+   771→   771→5. Verify dark mode and accessibility.
+   772→   772→
+   773→   773→### 9.4 When Animating
+   774→   774→1. Default to no animation.
+   775→   775→2. Add animation only for state changes (hover, focus, open/close).
+   776→   776→3. Keep duration ≤200ms.
+   777→   777→4. Respect `prefers-reduced-motion`.
+   778→   778→5. No decorative animations.
+   779→   779→
+   780→   780→### 9.5 When Theming
+   781→   781→1. All theming via tokens.
+   782→   782→2. To change theme: modify CSS custom properties in `globals.css`.
+   783→   783→3. Dark mode: toggle `.dark` class on `<html>`.
+   784→   784→4. Test both modes.
+   785→   785→
+   786→   786→## 10. Future Scalability
+   787→   787→
+   788→   788→### 10.1 Adding New Tokens
+   789→   789→- New tokens added to `globals.css` and `tailwind.config.ts`.
+   790→   790→- Documented in this file's §5 reference.
+   791→   791→- ADR if adding a new token category.
+   792→   792→
+   793→   793→### 10.2 Adding New Components
+   794→   794→- New primitives added to `@packages/ui`.
+   795→   795→- New composites added to `src/shared/components/`.
+   796→   796→- Documented in `12_ACD`.
+   797→   797→
+   798→   798→### 10.3 Brand Customization (Phase 4)
+   799→   799→- White-label: change CSS custom properties per tenant.
+   800→   800→- Token system supports this without code changes.
+   801→   801→
+   802→   802→### 10.4 Multi-Language Support (Phase 2+)
+   803→   803→- RTL languages: add `dir="rtl"` support.
+   804→   804→- Font swap for CJK languages (Noto Sans SC, etc.).
+   805→   805→
+   806→   806→### 10.5 Storybook (Phase 2+)
+   807→   807→- Component documentation and visual testing.
+   808→   808→- Storybook stories colocated with components.
+   809→   809→
+   810→   810→## 11. Dependencies
+   811→   811→
+   812→   812→### 11.1 Document Dependencies
+   813→   813→- Depends on `00_Project_Charter` §3, §4 — LOCK-10, EC-06, EC-10.
+   814→   814→- Depends on `04_TechStack` — Tailwind, shadcn/ui, lucide-react.
+   815→   815→- Depends on `08_CodingStandards` — Design system compliance rules.
+   816→   816→- `06_ArchitectureDecisionRecords` — records AD-01 through AD-12.
+   817→   817→- `12_ACD` — Detailed component APIs.
+   818→   818→- `13_UDS` — User flows and interaction patterns.
+   819→   819→
+   820→   820→### 11.2 External Dependencies
+   821→   821→- Tailwind CSS 4+.
+   822→   822→- shadcn/ui (Radix UI primitives).
+   823→   823→- lucide-react (icons).
+   824→   824→- `next/font` (font optimization).
+   825→   825→
+   826→   826→### 11.3 Assumptions
+   827→   827→- Token system remains stable; changes require ADR.
+   828→   828→- Tailwind remains the styling framework (no migration to alternatives).
+   829→   829→
+   830→   830→## 12. Revision History
+   831→   831→
+   832→   832→| Revision | Date | Author | Change |
+   833→   833→|----------|------|--------|--------|
+   834→   834→| 1.0.0 | 2026-06-28 | Chief Architect | Initial Design System. Defined token-driven theming via CSS custom properties, monochrome palette with single accent, typography scale, spacing scale, radius scale, shadow scale, motion standards, layout grid, icon system, accessibility standards (WCAG AA), dark mode strategy, z-index scale. Listed component patterns and Tailwind configuration. |
+   835→   835→
+   836→   836→## 13. Cross References
+   837→   837→
+   838→   838→- `00_Project_Charter` §3 LOCK-10, §4 EC-06, EC-10 — Implemented.
+   839→   839→- `01_BRD` §3.3 — Brand trust goal supported by consistent design.
+   840→   840→- `02_SAD` — Components align with architectural layers.
+   841→   841→- `04_TechStack` AD-05, AD-06 — shadcn/ui and Tailwind power this system.
+   842→   842→- `06_ArchitectureDecisionRecords` — ADR-010 (Design Philosophy), ADR-018 (Accessibility), ADR-022 (Design System Governance), ADR-040 (shadcn/ui), ADR-041 (Tailwind).
+   843→   843→- `07_FolderStructure` — Component file locations.
+   844→   844→- `08_CodingStandards` §12 — Design system compliance rules.
+   845→   845→- `09_NamingConvention` — CSS class and token naming.
+   846→   846→- `11_FBRD` — Tool manifests reference design system components.
+   847→   847→- `12_ACD` — Detailed component APIs and contracts.
+   848→   848→- `13_UDS` — User flows using these components.
+   849→   849→- `16_SEOSpecification` — Open Graph image standards use design tokens.
+   850→   850→- `19_AdminSpecification` — Admin UI uses same design system.
+   851→   851→- `21_TestingStrategy` — Accessibility and visual testing.
+   852→   852→- `22_DeploymentGuide` — Performance monitoring of design choices.
+   853→   853→- `23_AI_Guideline` — AI must use design system (LOCK-09, EC-11).
+   854→   854→

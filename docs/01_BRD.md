@@ -3,17 +3,17 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect (acting PM)
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.2.0
+> **Revision:** 1.3.0
 
 ---
 
 ## 1. Purpose
 
-This Business Requirements Document translates the mission, vision, Architectural Locks (§3 of `00_Project_Charter`), and Engineering Constitution articles (§4 of `00_Project_Charter`) into concrete business requirements for **[PROJECT_NAME]** — a **browser-first productivity ecosystem that enables users to solve everyday digital tasks without installing software and without requiring an account.** This document defines who the product serves, what value it delivers, how success is measured, and how it sustains itself financially while remaining free-tier-first.
+This Business Requirements Document translates the mission, vision, Architectural Locks (§3 of `00_Project_Charter`), Engineering Constitution articles (§4 of `00_Project_Charter`), and Product Constitution articles (§5 of `00_Project_Charter`) into concrete business requirements for **[PROJECT_NAME]** — a **browser-first productivity ecosystem that enables users to solve everyday digital tasks without installing software and without requiring an account.** This document defines who the product serves, what value it delivers, how success is measured, and how it sustains itself financially while remaining free-tier-first.
 
-Every feature in the backlog (`26_Backlog`) must trace back to a business requirement in this document. Features that cannot trace back are out of scope until the BRD is amended. This traceability rule prevents scope creep — the single most common failure mode for productivity-tool platforms, where the temptation to "just add one more tool" is constant.
+Every feature in the backlog (`28_Backlog`) must trace back to a business requirement in this document. Features that cannot trace back are out of scope until the BRD is amended. This traceability rule prevents scope creep — the single most common failure mode for productivity-tool platforms, where the temptation to "just add one more tool" is constant.
 
-The BRD is intentionally separate from the SAD (`02_SAD`). Business requirements drive architecture; architecture never drives business requirements. When the two conflict, business wins, and architecture is refactored to support it. The single exception is the Architectural Locks and Engineering Constitution in `00_Project_Charter` §3 and §4 — those governance layers have priority over both business and architecture, because they encode the platform's permanent identity (LOCK-01) and the constraints that make the identity sustainable (LOCK-02 through LOCK-12, EC-01 through EC-12).
+The BRD is intentionally separate from the SAD (`02_SAD`). Business requirements drive architecture; architecture never drives business requirements. When the two conflict, business wins, and architecture is refactored to support it. The single exception is the Architectural Locks, Engineering Constitution, and Product Constitution in `00_Project_Charter` §3, §4, and §5 — those governance layers have priority over both business and architecture, because they encode the platform's permanent identity (LOCK-01), the engineering discipline that makes the identity sustainable (LOCK-02 through LOCK-12, EC-01 through EC-12), and the product rules that ensure every tool feels like part of one ecosystem (PC-01 through PC-10).
 
 ## 2. Scope
 
@@ -71,16 +71,16 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 ### 3.3 Non-Quantitative Goals
 
 1. **Brand trust.** Users must perceive [PROJECT_NAME] as fast, private, and reliable. No dark patterns. No surprise paywalls mid-workflow.
-2. **Tool quality > tool quantity.** A great tool is worth more than five mediocre ones. Each tool must meet the quality bar in `13_UDS` and `16_SEOSpecification` before launch.
+2. **Tool quality > tool quantity.** A great tool is worth more than five mediocre ones. Each tool must meet the quality bar in `15_UDS` and `18_SEOSpecification` before launch, AND must satisfy PC-03 (Tool Completion Standard — 13 mandatory items) and PC-04 (7 quality gates).
 3. **Privacy by default.** Browser-side processing is a feature, not a cost-saving measure. We market it.
 
 ## 4. Standards
 
 ### 4.1 Monetization Standards
 
-- **Never block core tool completion behind paywall.** A user must always be able to complete the primary workflow for free. This is a direct implementation of LOCK-07 (guest-first UX) and supports EC-05 (progressive enhancement).
+- **Never block core tool completion behind paywall.** A user must always be able to complete the primary workflow for free. This is a direct implementation of LOCK-07 (guest-first UX), PC-06 (Monetization Philosophy — revenue never interrupts task completion), and supports EC-05 (progressive enhancement).
 - **Paywall only value-adds**: download in batch, save to cloud, AI features, remove ads, higher file size limits.
-- **Ads are non-intrusive**: max 1 ad per tool page, never inside the workflow area, never auto-playing audio/video.
+- **Ads are non-intrusive**: max 1 ad per tool page, never inside the workflow area, never auto-playing audio/video. Ads appear only after value demonstrated (PC-06).
 - **Premium pricing is transparent**: pricing page public, no hidden tiers, cancel-anytime.
 - **Browser-first processing is a marketing claim, not a cost-saving measure.** Every browser-first tool must visibly communicate to the user that their files stay on their device. This builds trust and differentiates from competitors (LOCK-02).
 - **Security by default (EC-08).** Payment flows use Stripe-hosted checkout; we never see or store raw card numbers. All payment webhooks validated against Stripe signatures.
@@ -144,10 +144,11 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 ## 6. Best Practices
 
 ### 6.1 Acquisition
-- **SEO is the primary channel through Phase 2.** Every tool is a landing page; every category is a hub page; every article interlinks with tools. See `16_SEOSpecification`.
+- **SEO is the primary channel through Phase 2.** Every tool is a landing page; every category is a hub page; every article interlinks with tools. See `18_SEOSpecification`.
 - **Programmatic SEO where sensible.** Common patterns (e.g., "convert X to Y") generate landing pages from a template. Beware: thin content penalty risk — every generated page must have unique value-add content.
 - **Accessibility as SEO (EC-06).** WCAG AA compliance is also a search ranking factor; accessible pages rank higher.
 - **Performance as SEO (EC-07).** Core Web Vitals are ranking signals; the performance budget is also an SEO budget.
+- **Feature discoverability as retention (PC-09).** Every tool links to related tools; internal linking strengthens the SEO graph and keeps users in the ecosystem.
 - **No paid acquisition until CAC < LTV is provable.** Phase 3 at the earliest.
 
 ### 6.2 Retention
@@ -203,15 +204,17 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 
 ### 8.2 Document Dependencies
 
-- This BRD depends on `00_Project_Charter` for mission and scope.
-- `25_Roadmap` operationalizes the phase goals defined here.
-- `26_Backlog` lists the specific tools that satisfy the Phase 1 tool count.
-- `16_SEOSpecification` operationalizes the SEO acquisition strategy in §6.1.
-- `19_AdminSpecification` defines the admin tooling required to operate the content layer in §4.3.
+- This BRD depends on `00_Project_Charter` for mission, scope, Architectural Locks (§3), Engineering Constitution (§4), and Product Constitution (§5).
+- `27_Roadmap` operationalizes the phase goals defined here.
+- `28_Backlog` lists the specific tools that satisfy the Phase 1 tool count.
+- `11_ProductConstitution` binds every tool listed in `28_Backlog`.
+- `12_ToolManifestSpecification` defines the schema every backlog tool must implement.
+- `18_SEOSpecification` operationalizes the SEO acquisition strategy in §6.1.
+- `21_AdminSpecification` defines the admin tooling required to operate the content layer in §4.3.
 
 ### 8.3 Assumptions
 
-- Organic search remains a viable acquisition channel through Phase 4. If AI-generated search results reduce organic traffic by >40%, the acquisition strategy must pivot (contingency plan to be documented in `25_Roadmap` v2).
+- Organic search remains a viable acquisition channel through Phase 4. If AI-generated search results reduce organic traffic by >40%, the acquisition strategy must pivot (contingency plan to be documented in `27_Roadmap` v2).
 - Free tier limits of Vercel + Supabase remain generous enough to support Phase 1 (10k MAU).
 - At least one team member can write editorial-quality English content for SEO.
 
@@ -222,20 +225,23 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial BRD. |
 | 1.1.0 | 2026-06-28 | Chief Architect | Integrated the 12 Architectural Locks from `00_Project_Charter` §3. Strengthened browser-first as a marketing commitment (LOCK-02). Elevated guest-first UX and database-optional philosophy to lock-referenced standards. Updated cross-references to reflect doc renumbering. |
 | 1.2.0 | 2026-06-28 | Chief Architect | Integrated the 12 Engineering Constitution articles from `00_Project_Charter` §4. Linked monetization to EC-05 (progressive enhancement) and EC-08 (security by default). Added accessibility and performance as SEO factors (EC-06, EC-07). Renumbered all cross-references to reflect insertion of `06_ArchitectureDecisionRecords` (docs 06-25 shifted to 07-26). |
+| 1.3.0 | 2026-06-28 | Chief Architect | Integrated the 10 Product Constitution articles from `00_Project_Charter` §5. Linked monetization standards to PC-06 (Monetization Philosophy). Linked tool quality to PC-03 (Completion Standard) and PC-04 (Quality Gates). Linked acquisition to PC-09 (Feature Discoverability). Renumbered all cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
 
 ## 10. Cross References
 
-- `00_Project_Charter` — Source of mission, vision, scope, the 12 Architectural Locks (§3), and the 12 Engineering Constitution articles (§4). Locks and ECs have priority over this document.
+- `00_Project_Charter` — Source of mission, vision, scope, the 12 Architectural Locks (§3), the 12 Engineering Constitution articles (§4), and the 10 Product Constitution articles (§5). Locks, ECs, and PCs have priority over this document.
 - `02_SAD` — Architecture that supports the technical business commitments (browser-first, free-tier, database-optional, progressive enhancement).
 - `04_TechStack` — Operationalizes LOCK-02 (browser-first technology choices) and EC-12 (enterprise readiness).
 - `06_ArchitectureDecisionRecords` — Permanent history of architectural decisions affecting business capabilities.
-- `11_FBRD` — Tool feature template; every tool must trace to a business requirement here.
-- `16_SEOSpecification` — Implements the SEO acquisition strategy in §6.1 and LOCK-08.
-- `17_UserFlow` — Implements the onboarding standards in §4.2 and LOCK-07, EC-05.
-- `18_RBAC` — Implements admin/editor role separation in §2.3 and LOCK-11, EC-08.
-- `19_AdminSpecification` — Operates the content layer in §4.3 and implements LOCK-11.
-- `21_TestingStrategy` — Implements EC-09 (testing philosophy), including accessibility and performance testing.
-- `22_DeploymentGuide` — Implements EC-07 (performance monitoring), EC-08 (security headers), EC-12 (enterprise migration).
-- `23_AI_Guideline` — Constrains AI usage to align with §4.3 content standards and LOCK-09, EC-11.
-- `25_Roadmap` — Phase plan operationalizing §3.1.
-- `26_Backlog` — Phase 1 tool list satisfying §3.1 (30 tools).
+- `11_ProductConstitution` — Binding rules for how every tool behaves as a product (PC-01 through PC-10).
+- `12_ToolManifestSpecification` — Canonical schema every tool must implement; foundation for product scalability (PC-10).
+- `13_FBRD` — Tool feature template; every tool must trace to a business requirement here.
+- `18_SEOSpecification` — Implements the SEO acquisition strategy in §6.1 and LOCK-08, PC-09.
+- `19_UserFlow` — Implements the onboarding standards in §4.2 and LOCK-07, EC-05, PC-06.
+- `20_RBAC` — Implements admin/editor role separation in §2.3 and LOCK-11, EC-08.
+- `21_AdminSpecification` — Operates the content layer in §4.3 and implements LOCK-11, PC-07, PC-10.
+- `23_TestingStrategy` — Implements EC-09, PC-03 (testing philosophy, completion standard).
+- `24_DeploymentGuide` — Implements EC-07, EC-08, EC-12 (performance monitoring, security headers, enterprise migration).
+- `25_AI_Guideline` — Constrains AI usage to align with §4.3 content standards and LOCK-09, EC-11.
+- `27_Roadmap` — Phase plan operationalizing §3.1.
+- `28_Backlog` — Phase 1 tool list satisfying §3.1 (30 tools); every tool bound by `11_ProductConstitution`.

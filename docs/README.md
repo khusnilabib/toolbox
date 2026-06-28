@@ -9,15 +9,16 @@
 
 ## Governance Layers (Priority Order)
 
-The project is governed by **three layers**, each with distinct authority. When conflicts arise, higher layers override lower layers.
+The project is governed by **four layers**, each with distinct authority. When conflicts arise, higher layers override lower layers.
 
 | Priority | Layer | Document | What It Defines |
 |----------|-------|----------|-----------------|
 | 1 (highest) | **Architectural Locks** | `00_Project_Charter` §3 | What the platform IS (identity, philosophy, permanent rules). 12 locks. |
 | 2 | **Engineering Constitution** | `00_Project_Charter` §4 | HOW engineering is DONE (process discipline, quality gates). 12 articles. |
-| 3 | **Technical Documents** | `02`–`26` | How the locks and constitution are implemented in code. |
+| 3 | **Product Constitution** | `00_Project_Charter` §5 | HOW every tool BEHAVES as a product (one problem per tool, product contracts, quality gates). 10 articles. |
+| 4 | **Technical Documents** | `06`–`28` | How the locks, constitutions, and ECs are implemented in code. |
 
-Amending Layer 1 or 2 requires a charter revision. Layer 3 documents are amended through normal PR review.
+Amending Layers 1, 2, or 3 requires a charter revision. Layer 4 documents are amended through normal PR review. **Product decisions are architectural decisions** — the Product Constitution has the same binding authority as the Architectural Locks and Engineering Constitution.
 
 ---
 
@@ -59,21 +60,39 @@ Twelve articles define mandatory engineering discipline. They supersede implemen
 | EC-11 | **AI Collaboration Rules** | AI preserves consistency, references docs, asks before assuming. |
 | EC-12 | **Enterprise Readiness** | Free-tier now, but architecture must scale to enterprise without redesign. |
 
+## Product Constitution (Mandatory Product Rules)
+
+Ten articles define how every tool behaves as a product. They are binding on every tool, present and future. See `00_Project_Charter` §5 and `11_ProductConstitution` for the full binding text.
+
+| # | Article | One-Line Summary |
+|---|---------|------------------|
+| PC-01 | **One Tool, One Problem** | Each tool solves exactly one clearly defined user problem. No feature creep. |
+| PC-02 | **Product Contract** | Every tool defines purpose, inputs, outputs, validation, processing, success/failure/empty/loading states, SEO intent, related tools, analytics events. |
+| PC-03 | **Tool Completion Standard** | A tool is complete only with all 13 items: input, validation, processing, preview, download, errors, success feedback, accessibility, mobile, SEO, analytics, docs, tests. |
+| PC-04 | **Quality Gates** | Stable requires passing functional, accessibility, performance, SEO, security, documentation, UX reviews. |
+| PC-05 | **UX Consistency** | Every tool page follows the same layout: Hero → Tool → Result → FAQ → Related → Docs → Feedback → Footer. |
+| PC-06 | **Monetization Philosophy** | Revenue never interrupts task completion. Ads/premium only after value demonstrated. |
+| PC-07 | **Analytics Standard** | Every tool emits consistent events (viewed, started, validation failed, processing started/completed, download attempted/completed, registration viewed/completed, shared). |
+| PC-08 | **Error Experience** | Every error explains what happened, why, how to fix. Never expose stack traces. |
+| PC-09 | **Feature Discoverability** | Every tool helps users discover more tools (related, workflows, categories, search, recent, popular). |
+| PC-10 | **Product Scalability** | Every new tool requires minimal engineering effort. Manifest generates nav, SEO, sitemap, search, admin, analytics. |
+
 ---
 
 ## How to Use This Repository
 
-1. **New developers**: Start with `00_Project_Charter` (especially §3 Architectural Locks and §4 Engineering Constitution), then read `04_TechStack`, `05_ProjectStructure`, and `06_ArchitectureDecisionRecords`. You should be able to run the project locally within 2 hours.
-2. **Product / business stakeholders**: Start with `00_Project_Charter` → `01_BRD` → `25_Roadmap`.
-3. **Architects / tech leads**: Read all documents in order. Pay special attention to `02_SAD`, `03_DDD`, `14_DatabaseDesign`, `15_APIConvention`, and `06_ArchitectureDecisionRecords`.
-4. **Before making any architectural decision**: Search `06_ArchitectureDecisionRecords` for prior decisions. If your decision contradicts an existing ADR, LOCK, or EC, you must either amend the governing document (with justification) or follow the existing rule.
+1. **New developers**: Start with `00_Project_Charter` (especially §3 Architectural Locks, §4 Engineering Constitution, §5 Product Constitution), then read `04_TechStack`, `05_ProjectStructure`, `06_ArchitectureDecisionRecords`, and `12_ToolManifestSpecification`. You should be able to run the project locally within 2 hours.
+2. **Product / business stakeholders**: Start with `00_Project_Charter` → `01_BRD` → `11_ProductConstitution` → `27_Roadmap`.
+3. **Tool authors**: Start with `11_ProductConstitution` → `12_ToolManifestSpecification` → `13_FBRD` → `07_FolderStructure` §Tool Folder Template.
+4. **Architects / tech leads**: Read all documents in order. Pay special attention to `02_SAD`, `03_DDD`, `06_ArchitectureDecisionRecords`, `14_DatabaseDesign`, `15_APIConvention`.
+5. **Before making any architectural or product decision**: Search `06_ArchitectureDecisionRecords` for prior decisions. If your decision contradicts an existing ADR, LOCK, EC, or PC, you must either amend the governing document (with justification) or follow the existing rule.
 
 ## Document Index
 
 ### Foundation
 | # | Document | Purpose |
 |---|----------|---------|
-| 00 | [Project Charter](./00_Project_Charter.md) | Mission, scope, **12 Architectural Locks** (§3), **12 Engineering Constitution articles** (§4). |
+| 00 | [Project Charter](./00_Project_Charter.md) | Mission, scope, **12 Architectural Locks** (§3), **12 Engineering Constitution articles** (§4), **10 Product Constitution articles** (§5). |
 | 01 | [Business Requirements (BRD)](./01_BRD.md) | Business goals, target market, KPIs, monetization. |
 
 ### Architecture Core (tightly coupled)
@@ -93,41 +112,47 @@ Twelve articles define mandatory engineering discipline. They supersede implemen
 | 09 | [Naming Convention](./09_NamingConvention.md) | Files, components, variables, APIs, DB tables. |
 | 10 | [Design System](./10_DesignSystem.md) | Tokens, components, themes (light/dark). |
 
+### Product Specifications (constitutional)
+| # | Document | Purpose |
+|---|----------|---------|
+| 11 | [Product Constitution](./11_ProductConstitution.md) | Binding rules for how every tool behaves as a product (PC-01 through PC-10 expanded). |
+| 12 | [Tool Manifest Specification](./12_ToolManifestSpecification.md) | Canonical schema every tool must implement. Foundation for Registry, Admin, Search, SEO, Analytics, future Marketplace. |
+
 ### Feature & UI Specifications
 | # | Document | Purpose |
 |---|----------|---------|
-| 11 | [Feature-Based Requirements (FBRD)](./11_FBRD.md) | Per-feature requirement template and registry. |
-| 12 | [Architecture Component (ACD)](./12_ACD.md) | Reusable components, modules, and their contracts. |
-| 13 | [UI/UX Design Specification (UDS)](./13_UDS.md) | User flows, interaction patterns, accessibility. |
+| 13 | [Feature-Based Requirements (FBRD)](./13_FBRD.md) | Per-feature requirement template and registry. |
+| 14 | [Architecture Component (ACD)](./14_ACD.md) | Reusable components, modules, and their contracts. |
+| 15 | [UI/UX Design Specification (UDS)](./15_UDS.md) | User flows, interaction patterns, accessibility. |
 
 ### Data, API, SEO, Auth
 | # | Document | Purpose |
 |---|----------|---------|
-| 14 | [Database Design](./14_DatabaseDesign.md) | Schema, indexes, migrations, multi-tenancy. |
-| 15 | [API Convention](./15_APIConvention.md) | REST/RPC conventions, versioning, error format. |
-| 16 | [SEO Specification](./16_SEOSpecification.md) | Per-tool SEO: metadata, structured data, sitemaps. |
-| 17 | [User Flow](./17_UserFlow.md) | Guest → registered → premium journeys. |
-| 18 | [RBAC](./18_RBAC.md) | Roles, permissions, enforcement points. |
+| 16 | [Database Design](./16_DatabaseDesign.md) | Schema, indexes, migrations, multi-tenancy. |
+| 17 | [API Convention](./17_APIConvention.md) | REST/RPC conventions, versioning, error format. |
+| 18 | [SEO Specification](./18_SEOSpecification.md) | Per-tool SEO: metadata, structured data, sitemaps. |
+| 19 | [User Flow](./19_UserFlow.md) | Guest → registered → premium journeys. |
+| 20 | [RBAC](./20_RBAC.md) | Roles, permissions, enforcement points. |
 
 ### Admin & Process
 | # | Document | Purpose |
 |---|----------|---------|
-| 19 | [Admin Specification](./19_AdminSpecification.md) | `/admin` modules, screens, workflows. |
-| 20 | [Development Guideline](./20_DevelopmentGuideline.md) | Branching, PRs, CI, code review, definition of done. |
-| 21 | [Testing Strategy](./21_TestingStrategy.md) | Unit / integration / E2E / visual / load testing. |
+| 21 | [Admin Specification](./21_AdminSpecification.md) | `/admin` modules, screens, workflows. |
+| 22 | [Development Guideline](./22_DevelopmentGuideline.md) | Branching, PRs, CI, code review, definition of done. |
+| 23 | [Testing Strategy](./23_TestingStrategy.md) | Unit / integration / E2E / visual / load testing. |
 
 ### Ops & AI
 | # | Document | Purpose |
 |---|----------|---------|
-| 22 | [Deployment Guide](./22_DeploymentGuide.md) | Environments, env vars, rollback, observability. |
-| 23 | [AI Guideline](./23_AI_Guideline.md) | Where AI is used, model choices, prompt management. |
-| 24 | [ZAI Context](./24_ZAI_Context.md) | AI-assistant context, memory, agent conventions. |
+| 24 | [Deployment Guide](./24_DeploymentGuide.md) | Environments, env vars, rollback, observability. |
+| 25 | [AI Guideline](./25_AI_Guideline.md) | Where AI is used, model choices, prompt management. |
+| 26 | [ZAI Context](./26_ZAI_Context.md) | AI-assistant context, memory, agent conventions. |
 
 ### Planning
 | # | Document | Purpose |
 |---|----------|---------|
-| 25 | [Roadmap](./25_Roadmap.md) | Phase 1 → Phase 4 milestones and success criteria. |
-| 26 | [Backlog](./26_Backlog.md) | Prioritized list of tools and features per phase. |
+| 27 | [Roadmap](./27_Roadmap.md) | Phase 1 → Phase 4 milestones and success criteria. |
+| 28 | [Backlog](./28_Backlog.md) | Prioritized list of tools and features per phase. |
 
 ## Document Template
 
@@ -153,11 +178,13 @@ Documents in the Architecture Core group (`02_SAD`, `03_DDD`, `04_TechStack`, `0
 1. **Documentation first.** No production code is written until the corresponding doc exists and is reviewed. (EC-01)
 2. **Architectural Locks override everything.** The 12 locks in `00_Project_Charter` §3 have priority over every other document. Amending a lock requires a charter revision.
 3. **Engineering Constitution is mandatory.** The 12 articles in `00_Project_Charter` §4 supersede implementation preferences. Violations block PR merge.
-4. **Charter precedence.** If any document (other than a lock or EC) conflicts with `00_Project_Charter`, the charter wins.
-5. **ADR append-only.** Architectural decisions are recorded in `06_ArchitectureDecisionRecords` and never modified; supersessions are recorded as new ADRs that reference the superseded one.
-6. **Revision history mandatory.** Every change must bump the revision and record what changed and why.
-7. **Cross-references must be live.** Broken links are P1 bugs.
-8. **No orphan decisions.** Any architectural decision must cite the doc, lock, or EC it follows or amends.
+4. **Product Constitution is mandatory.** The 10 articles in `00_Project_Charter` §5 govern every tool's product behavior. Violations block tool promotion to Stable (PC-04).
+5. **Charter precedence.** If any document conflicts with `00_Project_Charter`, the charter wins.
+6. **ADR append-only.** Architectural decisions are recorded in `06_ArchitectureDecisionRecords` and never modified; supersessions are recorded as new ADRs that reference the superseded one.
+7. **Tool Manifest is canonical.** The schema in `12_ToolManifestSpecification` is the single source of truth for every tool. Registry, Admin, Search, SEO, Analytics all derive from it.
+8. **Revision history mandatory.** Every change must bump the revision and record what changed and why.
+9. **Cross-references must be live.** Broken links are P1 bugs.
+10. **No orphan decisions.** Any architectural or product decision must cite the doc, lock, EC, or PC it follows or amends.
 
 ## Status Legend
 
@@ -166,3 +193,4 @@ Documents in the Architecture Core group (`02_SAD`, `03_DDD`, `04_TechStack`, `0
 - 🔴 **Deprecated** — Superseded; kept for history only.
 - 🔒 **Locked** — Architectural Lock; cannot be changed without charter amendment.
 - ⚙️ **Constitutional** — Engineering Constitution article; mandatory engineering rule.
+- 📋 **Product** — Product Constitution article; mandatory product rule.

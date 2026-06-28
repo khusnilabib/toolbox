@@ -1,0 +1,526 @@
+     1→# 09 — Naming Convention
+     2→
+     3→> **Status:** 🟢 Approved
+     4→> **Document Owner:** Chief Architect
+     5→> **Last Updated:** 2026-06-28
+     6→> **Revision:** 1.0.0
+     7→> **Implements:** LOCK-04 (Modular), LOCK-09 (AI Discipline); EC-02 (One Source of Truth), EC-04 (Tool Template Standard)
+     8→
+     9→---
+    10→
+    11→## 1. Purpose
+    12→
+    13→This Naming Convention document defines the mandatory naming rules for every identifier in [PROJECT_NAME]: files, folders, variables, functions, types, components, hooks, props, CSS classes, database tables, API endpoints, environment variables, and more. Where `07_FolderStructure` defines folder/file structure, this document defines what those entities are named and how naming conveys intent.
+    14→
+    15→Naming is the single most impactful code-quality factor. Engineers read names far more often than they read implementations; a good name communicates intent instantly, while a bad name requires reading the implementation to understand. Inconsistent naming — `getUserData` in one file, `fetchUserInfo` in another, `retrieveUser` in a third — fragments the codebase's mental model and slows every contributor. AI assistants (LOCK-09) particularly depend on consistent naming to make correct suggestions.
+    16→
+    17→This document enforces LOCK-04 (modularity — consistent naming across modules), LOCK-09 (AI discipline — AI can rely on naming patterns), EC-02 (one source of truth — names refer to one concept), and EC-04 (tool template standard — every tool uses identical naming).
+    18→
+    19→## 2. Scope
+    20→
+    21→### 2.1 In Scope
+    22→
+    23→- File naming conventions (per file type).
+    24→- Folder naming conventions.
+    25→- Variable, function, parameter naming.
+    26→- Type, interface, enum, union naming.
+    27→- React component naming (PascalCase rules).
+    28→- Hook naming (`use*` prefix).
+    29→- Props naming.
+    30→- CSS class / Tailwind token naming.
+    31→- Database table, column, index, constraint naming.
+    32→- API endpoint naming (URL paths).
+    33→- Environment variable naming.
+    34→- Constant naming.
+    35→- Event naming (domain events).
+    36→- Tool slug naming (URL-safe identifiers).
+    37→
+    38→### 2.2 Out of Scope
+    39→
+    40→- File organization within folders → `07_FolderStructure`.
+    41→- Code style within files → `08_CodingStandards`.
+    42→- Design token values → `10_DesignSystem`.
+    43→- Specific tool slugs → `26_Backlog`.
+    44→
+    45→## 3. Architectural Decisions
+    46→
+    47→### AD-01 — Three Casing Conventions
+    48→
+    49→**Context.** Different identifier types have different conventions in the JavaScript/TypeScript ecosystem. Using one convention everywhere conflicts with ecosystem expectations; using too many creates cognitive load.
+    50→
+    51→**Decision.** Three casing conventions, each tied to identifier type:
+    52→
+    53→| Convention | Used For | Example |
+    54→|-----------|----------|---------|
+    55→| `PascalCase` | React components, types, interfaces, enums, Zod schemas | `ToolCard`, `User`, `HistoryEntry` |
+    56→| `camelCase` | Variables, functions, parameters, hooks (with `use` prefix), props | `toolSlug`, `getUser()`, `useToolHistory()`, `onComplete` |
+    57→| `kebab-case` | Files (non-component), folders, URLs, CSS classes, env vars | `image-resize.ts`, `tools/image/`, `/tools/image-resize`, `NEXT_PUBLIC_SITE_URL` |
+    58→
+    59→**Rationale:**
+    60→- `PascalCase` for types/components matches TypeScript/React ecosystem (instantly distinguishable from values).
+    61→- `camelCase` for values matches JavaScript standard.
+    62→- `kebab-case` for files/URLs matches Next.js, Vercel, and web standards (URL-safe, no case sensitivity issues).
+    63→
+    64→**Implements:** EC-04 (Tool Template Standard — consistent naming).
+    65→
+    66→### AD-02 — File Naming by Type
+    67→
+    68→**Context.** File names must instantly convey what's inside without requiring the engineer to open the file.
+    69→
+    70→**Decision.** File naming by type:
+    71→
+    72→| File Type | Convention | Example |
+    73→|-----------|-----------|---------|
+    74→| React component (one per file) | `PascalCase.tsx` | `ToolCard.tsx`, `ImageUploader.tsx` |
+    75→| Utility/helper file | `kebab-case.ts` | `image-utils.ts`, `format-bytes.ts` |
+    76→| Hook file | `use-[name].ts` | `use-tool-history.ts`, `use-current-user.ts` |
+    77→| Type definitions | `[name].types.ts` | `tool.types.ts`, `user.types.ts` |
+    78→| Zod schema | `[name]-schema.ts` | `user-schema.ts`, `tool-manifest-schema.ts` |
+    79→| Test file | `[subject].test.ts` or `[subject].test.tsx` | `image-utils.test.ts`, `ToolCard.test.tsx` |
+    80→| E2E test | `[scenario].spec.ts` | `tool-workflow.spec.ts`, `auth-flow.spec.ts` |
+    81→| Config file | `[name].config.ts` | `tailwind.config.ts`, `drizzle.config.ts` |
+    82→| Manifest | `manifest.ts` | `manifest.ts` (inside tool folder) |
+    83→| Index/barrel | `index.ts` or `index.tsx` | always `index` |
+    84→| Documentation | `kebab-case.md` | `coding-standards.md` (this file uses numeric prefix per `/docs` convention) |
+    85→
+    86→**Implements:** EC-02 (One Source of Truth — file type inferable from name).
+    87→
+    88→### AD-03 — Folder Naming
+    89→
+    90→**Context.** Folder names appear in import paths and URLs; they must be URL-safe and consistent.
+    91→
+    92→**Decision.** Folder naming rules:
+    93→- All folders: `kebab-case`.
+    94→- Special prefix `_shared/` for category-internal shared code (sorts first alphabetically).
+    95→- Bounded context folders: match context name (`identity`, `content`, `platform-ops`).
+    96→- Layer folders: `presentation`, `application`, `domain`, `infrastructure`.
+    97→- Tool category folders: `image`, `pdf`, `developer`, `text`, `converters`, `seo`, `calculators`.
+    98→- Tool slug folders: `kebab-case`, URL-safe, unique within category.
+    99→
+   100→**Implements:** LOCK-04 (Modular — consistent folder structure).
+   101→
+   102→### AD-04 — Variable and Function Naming
+   103→
+   104→**Context.** Variable and function names are read hundreds of times more than they're written. Clarity beats brevity.
+   105→
+   106→**Decision.** Rules:
+   107→- **Descriptive over abbreviated.** `userEmailAddress` not `usrEmail`. `getActiveSubscriptions` not `getActSubs`.
+   108→- **Verbs for functions.** `getUser`, `saveHistoryEntry`, `validateInput`, `processImage`. Common verbs: `get`, `fetch`, `save`, `update`, `delete`, `create`, `validate`, `process`, `transform`, `format`, `parse`, `serialize`.
+   109→- **Nouns for variables.** `user`, `historyEntry`, `toolManifest`, `inputData`.
+   110→- **Boolean variables prefixed with `is`, `has`, `can`, `should`.** `isLoading`, `hasPermission`, `canEdit`, `shouldDisplay`.
+   111→- **Constants in `SCREAMING_SNAKE_CASE`** for true constants; `camelCase` for configurable values.
+   112→- **Avoid single letters** except for loop counters (`i`, `j`, `k`) or mathematical operations (`x`, `y`, `z`).
+   113→- **No Hungarian notation.** Don't prefix with type (`strName`, `intCount`). TypeScript types convey this.
+   114→
+   115→**Implements:** EC-02, readability.
+   116→
+   117→### AD-05 — Type and Interface Naming
+   118→
+   119→**Context.** Type names appear in declarations, generic constraints, and error messages. They must be distinctive and meaningful.
+   120→
+   121→**Decision.** Rules:
+   122→- **PascalCase** for all types, interfaces, enums, unions.
+   123→- **Nouns for types.** `User`, `HistoryEntry`, `ToolManifest`, `ProcessingResult`.
+   124→- **No `I` prefix for interfaces.** `User` not `IUser` (TypeScript convention; interfaces and types interchangeable).
+   125→- **No `Type` suffix** unless disambiguating from a value with the same name. `User` not `UserType`; but `UserType` if there's also a `User` class.
+   126→- **Props suffix for React prop types.** `ToolCardProps`, `ButtonProps`.
+   127→- **State suffix for state types.** `ToolExecutionState`, `AuthState`.
+   128→- **Schema suffix for Zod schemas.** `userSchema`, `toolManifestSchema`.
+   129→- **Input/Output suffix for stage types.** `ImageResizeInput`, `ImageResizeOutput`.
+   130→- **Event suffix for domain events.** `UserRegisteredEvent`, `ToolExecutionCompletedEvent`.
+   131→
+   132→**Implements:** EC-02 (consistent naming across types).
+   133→
+   134→### AD-06 — React Component Naming
+   135→
+   136→**Context.** Components are the building blocks of UI. Their names must convey purpose and hierarchy.
+   137→
+   138→**Decision.** Rules:
+   139→- **PascalCase** for component names.
+   140→- **Nouns for components.** `ToolCard`, `ImageUploader`, `DownloadButton`, `HistoryList`.
+   141→- **Descriptive names.** `ToolCard` not `Card` (too generic); `PrimaryButton` not `Button` (already taken by design system).
+   142→- **Avoid abbreviations.** `Navigation` not `Nav` (except in well-established cases like `URL`).
+   143→- **Suffix indicates type.**
+   144→  - `...Card` — card-like container.
+   145→  - `...List` — renders a list.
+   146→  - `...Item` — single item in a list.
+   147→  - `...Button` — interactive button.
+   148→  - `...Form` — form container.
+   149→  - `...Field` — single form field.
+   150→  - `...Modal` / `...Dialog` — modal dialog.
+   151→  - `...Provider` — context provider.
+   152→  - `...Layout` — layout wrapper.
+   153→  - `...Page` — top-level page component.
+   154→- **Higher-order components prefixed with `with`.** `withAuth`, `withFeatureFlag`.
+   155→- **Compound components use dot notation.** `Card.Header`, `Card.Body`, `Card.Footer`.
+   156→
+   157→**Implements:** EC-10 (Design System Governance — components identifiable by name).
+   158→
+   159→### AD-07 — Hook Naming
+   160→
+   161→**Context.** Custom hooks must be instantly distinguishable from regular functions.
+   162→
+   163→**Decision.** Rules:
+   164→- **`use` prefix** for all hooks. `useToolHistory`, `useCurrentUser`, `useTheme`.
+   165→- **camelCase** after `use` prefix.
+   166→- **Descriptive name describing what's returned or done.** `useToolHistory` (returns history), `useSaveHistoryEntry` (performs save), `useIsMobile` (returns boolean).
+   167→- **Boolean-returning hooks prefixed with `useIs` or `useHas`.** `useIsAuthenticated`, `useHasPermission`.
+   168→- **Hook files named `use-[name].ts`.** `use-tool-history.ts` exports `useToolHistory`.
+   169→
+   170→**Implements:** React convention, readability.
+   171→
+   172→### AD-08 — Props Naming
+   173→
+   174→**Context.** Props are the API of a component. Consistent prop naming makes components composable.
+   175→
+   176→**Decision.** Rules:
+   177→- **camelCase** for all props.
+   178→- **Event handler props prefixed with `on`.** `onComplete`, `onError`, `onToolSelect`.
+   179→- **Boolean props prefixed with `is`, `has`, `can`, `should`.** `isLoading`, `hasError`, `canEdit`, `shouldAutoSave`.
+   180→- **Callback props are functions, not objects.** `onComplete: () => void` not `callbacks: { onComplete: () => void }`.
+   181→- **Children prop is always `children`.** Don't rename to `content` or `body`.
+   182→- **Default props via destructuring.** `function Button({ size = 'md', variant = 'primary' }: ButtonProps)`.
+   183→- **Prop type interface suffixed with `Props`.** `ButtonProps`, `ToolCardProps`.
+   184→
+   185→**Implements:** React convention, EC-10.
+   186→
+   187→### AD-09 — Database Naming
+   188→
+   189→**Context.** Database table and column names appear in queries, migrations, and documentation. They must be consistent and unambiguous.
+   190→
+   191→**Decision.** Rules (Postgres conventions):
+   192→- **Table names: `snake_case`, plural.** `users`, `history_entries`, `tool_manifests` (if persisted), `audit_entries`.
+   193→- **Column names: `snake_case`.** `created_at`, `user_id`, `tool_slug`, `is_active`.
+   194→- **Primary key: `id`.** Always `id`, never `user_id` as PK (use `user_id` as FK).
+   195→- **Foreign keys: `[table_singular]_id`.** `user_id` references `users.id`, `tool_slug` references `tools.slug` (if tools were a table — they're not, but the pattern holds).
+   196→- **Timestamps: `created_at`, `updated_at`, `deleted_at`.** Always these exact names.
+   197→- **Boolean columns: `is_` or `has_` prefix.** `is_active`, `has_premium`.
+   198→- **JSON columns: descriptive noun.** `metadata`, `preferences`, `seo_config`.
+   199→- **Indexes: `idx_[table]_[columns]`.** `idx_users_email`, `idx_history_entries_user_id`.
+   200→- **Unique constraints: `uq_[table]_[columns]`.** `uq_users_email`.
+   201→- **Foreign key constraints: `fk_[from_table]_[to_table]`.** `fk_history_entries_users`.
+   202→- **Check constraints: `ck_[table]_[description]`.** `ck_users_email_format`.
+   203→
+   204→**Schema names** (per bounded context): `identity`, `content`, `platform_ops`, `billing`, `analytics`. Tools Context has no schema (stateless per LOCK-06).
+   205→
+   206→**Implements:** Postgres ecosystem conventions, EC-02.
+   207→
+   208→### AD-10 — API Endpoint Naming
+   209→
+   210→**Context.** API URLs are part of the public contract. Once published, they're hard to change.
+   211→
+   212→**Decision.** Rules (RESTful conventions):
+   213→- **URLs: `kebab-case`, plural nouns for collections.** `/api/tools`, `/api/users`, `/api/history-entries`.
+   214→- **Single resource: `/api/[collection]/[id]`.** `/api/users/123`, `/api/history-entries/abc`.
+   215→- **Nested resources: `/api/[parent]/[id]/[child]`.** `/api/users/123/history-entries`.
+   216→- **Actions on resources: `/api/[collection]/[id]/[action]`.** `/api/users/123/deactivate`, `/api/tools/image-resize/execute`.
+   217→- **HTTP methods convey intent.** GET = read, POST = create, PATCH = update, DELETE = delete.
+   218→- **Query parameters: `kebab-case`.** `?page-size=20`, `?sort-by=created_at`.
+   219→- **Versioning: `/api/v1/...`.** Always versioned from day 1.
+   220→
+   221→**Implements:** REST ecosystem conventions.
+   222→
+   223→### AD-11 — Tool Slug Naming
+   224→
+   225→**Context.** Tool slugs are URL identifiers and must be unique, stable, and SEO-friendly.
+   226→
+   227→**Decision.** Rules:
+   228→- **`kebab-case`, URL-safe.** `image-resize`, `pdf-merge`, `json-formatter`.
+   229→- **Lowercase only.** No uppercase.
+   230→- **No special characters** except hyphens. No underscores, no dots, no slashes.
+   231→- **No reserved words.** Not `admin`, `api`, `auth`, `dashboard`, `settings`, `tools` (these are route prefixes).
+   232→- **Descriptive over abbreviated.** `image-resize` not `img-rsz`.
+   233→- **Action-oriented for transformation tools.** `image-resize`, `pdf-compress`, `json-format`.
+   234→- **Noun-oriented for generator tools.** `uuid-generator`, `password-generator`, `qr-generator`.
+   235→- **Unique within category.** Two tools in different categories can have similar slugs but not identical (e.g., `text-convert-case` and `image-convert-format`).
+   236→- **Globally unique recommended** to avoid confusion. `image-resize` not just `resize`.
+   237→
+   238→**Implements:** LOCK-05 (Plugin-Ready — slugs are stable identifiers), LOCK-08 (SEO — URLs are SEO-relevant).
+   239→
+   240→### AD-12 — Environment Variable Naming
+   241→
+   242→**Context.** Environment variables are the configuration interface. Their names must be self-documenting.
+   243→
+   244→**Decision.** Rules:
+   245→- **`SCREAMING_SNAKE_CASE`.**
+   246→- **`NEXT_PUBLIC_` prefix for client-accessible vars.** `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+   247→- **No prefix for server-only vars.** `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`.
+   248→- **Service name as prefix.** `SUPABASE_*`, `STRIPE_*`, `RESEND_*`, `SENTRY_*`.
+   249→- **Descriptive suffix.** `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`.
+   250→- **Boolean vars end with `_ENABLED` or are `true`/`false` strings.** `FEATURE_AI_TOOLS_ENABLED`.
+   251→- **Default values documented in `.env.example`.**
+   252→
+   253→**Implements:** Next.js conventions, EC-08 (Security — clear distinction between public and secret vars).
+   254→
+   255→### AD-13 — Constant Naming
+   256→
+   257→**Context.** Constants are values that don't change. Their naming must distinguish them from variables.
+   258→
+   259→**Decision.** Rules:
+   260→- **True constants: `SCREAMING_SNAKE_CASE`.** `MAX_FILE_SIZE_BYTES`, `DEFAULT_PAGE_SIZE`, `SUPPORTED_IMAGE_FORMATS`.
+   261→- **Configurable constants (could change per environment): `camelCase`.** `defaultPageSize`, `maxFileSizeBytes`. These read from env vars with defaults.
+   262→- **Constants grouped in `*.ts` files.** `src/shared/config/limits.ts`, `src/shared/config/timeouts.ts`.
+   263→- **No magic numbers in code.** Extract as named constant.
+   264→
+   265→**Implements:** EC-02 (One Source of Truth), AD-12 in `08_CodingStandards`.
+   266→
+   267→### AD-14 — Domain Event Naming
+   268→
+   269→**Context.** Domain events are published across bounded contexts. Their names must be unambiguous and self-documenting.
+   270→
+   271→**Decision.** Rules:
+   272→- **Past tense.** `UserRegistered`, `ToolExecutionCompleted`, `SubscriptionCancelled`. Events represent things that have happened.
+   273→- **PascalCase.**
+   274→- **`Event` suffix** to distinguish from other types. `UserRegisteredEvent`.
+   275→- **Subject + verb.** `UserRegistered` (user is subject, registered is verb), `ToolExecutionCompleted` (tool execution is subject, completed is verb).
+   276→- **File name: `[event-name].ts` in `domain/events/`.** `user-registered.ts`, `tool-execution-completed.ts`.
+   277→- **Event type string: `[context].[event-name]`.** `identity.user-registered`, `tools.tool-execution-completed`. Used for routing.
+   278→
+   279→**Implements:** `03_DDD` AD-05 (Context Integration via Domain Events).
+   280→
+   281→### AD-15 — CSS Class and Token Naming
+   282→
+   283→**Context.** Tailwind classes and CSS custom properties must follow consistent naming.
+   284→
+   285→**Decision.** Rules:
+   286→- **Tailwind classes: as-defined by Tailwind.** `bg-background`, `text-foreground`, `p-4`, `mt-8`, `rounded-lg`.
+   287→- **Custom CSS classes: `kebab-case`.** `.tool-card`, `.history-list`.
+   288→- **CSS custom properties (design tokens): `--kebab-case`.** `--color-background`, `--color-foreground`, `--spacing-unit`.
+   289→- **Token categories:** `--color-*`, `--spacing-*`, `--radius-*`, `--shadow-*`, `--font-*`, `--breakpoint-*`.
+   290→- **No `BEM` or other methodologies.** Tailwind utilities are sufficient; custom classes only for complex compositions.
+   291→
+   292→**Implements:** EC-10 (Design System Governance), LOCK-10.
+   293→
+   294→## 4. Design Principles
+   295→
+   296→### P1 — Names Communicate Intent
+   297→A reader should understand what an identifier does without reading its implementation. If they have to read the implementation, the name is wrong.
+   298→
+   299→### P2 — Consistency Over Creativity
+   300→Use the same word for the same concept everywhere. Don't alternate `get`/`fetch`/`retrieve` for the same action. Pick one and stick to it.
+   301→
+   302→### P3 — Ecosystem Conventions First
+   303→Follow TypeScript, React, Next.js, Postgres, and REST conventions. Deviating from ecosystem norms creates friction for new contributors.
+   304→
+   305→### P4 — Searchability
+   306→Names should be greppable. `getUserHistory` is greppable; `gh` is not. If you can't grep for it, it doesn't exist.
+   307→
+   308→### P5 — Stability
+   309→Once named, identifiers are hard to rename (especially public APIs, URLs, DB columns). Name things well the first time.
+   310→
+   311→### P6 — No Ambiguity
+   312→Don't use names that could mean multiple things. `data` is ambiguous; `userInputData` is clear. `process` is ambiguous; `processImage` is clear.
+   313→
+   314→## 5. Naming Reference Tables (Quick Lookup)
+   315→
+   316→### 5.1 Casing Reference
+   317→
+   318→| Convention | Used For |
+   319→|-----------|----------|
+   320→| `PascalCase` | Components, types, interfaces, enums, Zod schemas, domain events |
+   321→| `camelCase` | Variables, functions, parameters, props, hooks (with `use` prefix) |
+   322→| `kebab-case` | Files (non-component), folders, URLs, CSS classes, env vars |
+   323→| `SCREAMING_SNAKE_CASE` | Constants, environment variables |
+   324→| `snake_case` | Database tables, columns, indexes, constraints |
+   325→
+   326→### 5.2 Common Verb Reference
+   327→
+   328→| Verb | Use For |
+   329→|------|---------|
+   330→| `get` | Synchronous read from local source |
+   331→| `fetch` | Asynchronous read from remote source |
+   332→| `save` | Persist (create or update) |
+   333→| `create` | New entity creation |
+   334→| `update` | Modify existing entity |
+   335→| `delete` | Remove entity (hard delete) |
+   336→| `remove` | Remove from collection (soft delete or unlink) |
+   337→| `validate` | Check validity, return boolean or throw |
+   338→| `parse` | Convert string to structured data |
+   339→| `serialize` | Convert structured data to string |
+   340→| `format` | Convert data to display string |
+   341→| `transform` | Convert data from one shape to another |
+   342→| `process` | Run a multi-step operation (Tool Engine stage) |
+   343→| `generate` | Create new content (e.g., `generateUUID`) |
+   344→| `compute` | Calculate derived value |
+   345→
+   346→### 5.3 Common Suffix Reference
+   347→
+   348→| Suffix | Used For |
+   349→|--------|----------|
+   350→| `...Props` | React component prop types |
+   351→| `...State` | State types |
+   352→| `...Schema` | Zod schemas |
+   353→| `...Input` | Tool stage input types |
+   354→| `...Output` | Tool stage output types |
+   355→| `...Event` | Domain event types |
+   356→| `...Error` | Error types |
+   357→| `...Config` | Configuration types |
+   358→| `...Result` | Operation result types |
+   359→| `...Card`, `...List`, `...Item`, `...Button`, `...Form`, `...Field`, `...Modal`, `...Provider`, `...Layout`, `...Page` | Component type indicators |
+   360→
+   361→### 5.4 Common Prefix Reference
+   362→
+   363→| Prefix | Used For |
+   364→|--------|----------|
+   365→| `use` | Custom hooks (`useToolHistory`) |
+   366→| `is`, `has`, `can`, `should` | Boolean variables and props (`isLoading`, `hasPermission`) |
+   367→| `on` | Event handler props (`onComplete`, `onError`) |
+   368→| `with` | Higher-order components (`withAuth`) |
+   369→| `get`, `fetch`, `save`, `create`, `update`, `delete`, `remove`, `validate`, `parse`, `serialize`, `format`, `transform`, `process`, `generate`, `compute` | Function verb prefixes |
+   370→
+   371→## 6. Standards
+   372→
+   373→### 6.1 Identifier Length Standards
+   374→- Variables/functions: 1-4 words. `getUser`, `saveHistoryEntry`, `validateToolManifest`.
+   375→- Components: 1-3 words. `ToolCard`, `ImageUploader`, `Button`.
+   376→- Types: 1-3 words. `User`, `HistoryEntry`, `ToolManifest`.
+   377→- Files: 1-4 words kebab-case. `image-utils.ts`, `use-tool-history.ts`.
+   378→- Avoid single letters except loop counters.
+   379→
+   380→### 6.2 Acronym Standards
+   381→- Acronyms in PascalCase: capitalize first letter only. `Url`, not `URL`. `Json`, not `JSON`. `Pdf`, not `PDF`.
+   382→- Exception: well-established all-caps acronyms in code (e.g., `API` in URLs, `UUID` in tool names) may remain all-caps.
+   383→- Acronyms at start of camelCase: lowercase. `urlValidator`, not `URLValidator`.
+   384→
+   385→### 6.3 Boolean Naming Standards
+   386→- Prefix with `is`, `has`, `can`, `should`.
+   387→- `isLoading`, not `loading`.
+   388→- `hasPermission`, not `permission`.
+   389→- `canEdit`, not `editable` (the latter is ambiguous: is it "can be edited" or "is edited"?).
+   390→- Avoid negations. `isActive`, not `isNotInactive`.
+   391→
+   392→### 6.4 Function Naming Standards
+   393→- Verb prefix (see §5.2).
+   394→- Returns void: verb describing action. `saveUser`, `logEvent`.
+   395→- Returns value: noun describing result, prefixed with `get` or `fetch`. `getUser`, `fetchHistoryEntries`.
+   396→- Async functions: same naming; `async` keyword conveys async nature.
+   397→
+   398→### 6.5 Constants Standards
+   399→- `SCREAMING_SNAKE_CASE`.
+   400→- Grouped by domain in config files.
+   401→- Documented with JSDoc comment explaining the value and rationale.
+   402→
+   403→### 6.6 Reserved Names
+   404→The following names are reserved and must not be used as identifiers:
+   405→- `admin`, `api`, `auth`, `dashboard`, `settings`, `tools`, `users` — reserved for routes.
+   406→- `data` — too ambiguous; use specific name.
+   407→- `item`, `value`, `temp`, `foo`, `bar` — except in tests.
+   408→- `any`, `unknown`, `never`, `void` — reserved TypeScript keywords.
+   409→
+   410→## 7. Best Practices
+   411→
+   412→### 7.1 When Naming a Variable
+   413→1. Use a noun.
+   414→2. Be specific: `userEmailAddress` not `data`.
+   415→3. Avoid abbreviations unless widely accepted (`URL`, `ID`).
+   416→4. Use camelCase.
+   417→5. Boolean variables prefixed with `is`/`has`/`can`/`should`.
+   418→
+   419→### 7.2 When Naming a Function
+   420→1. Start with a verb (see §5.2).
+   421→2. Describe what the function does, not how.
+   422→3. Avoid `and` in names — split into two functions. `saveAndNotify` → `save()` + `notify()`.
+   423→4. Use camelCase.
+   424→5. Async functions don't need `Async` suffix; `async` keyword suffices.
+   425→
+   426→### 7.3 When Naming a Component
+   427→1. PascalCase.
+   428→2. Noun describing what it represents.
+   429→3. Suffix indicating type (Card, List, Button, etc.) when helpful.
+   430→4. Don't prefix with project name (`ProjectToolCard`) — context implies it.
+   431→
+   432→### 7.4 When Naming a Type
+   433→1. PascalCase.
+   434→2. Noun.
+   435→3. No `I` prefix, no `Type` suffix (unless disambiguating).
+   436→4. Suffix with `Props`, `State`, `Schema`, `Input`, `Output`, `Event`, `Error`, `Config`, `Result` where appropriate.
+   437→
+   438→### 7.5 When Naming a File
+   439→1. Match the file type convention (AD-02).
+   440→2. Use kebab-case (except components, which use PascalCase).
+   441→3. Name reflects primary export.
+   442→4. Avoid generic names like `utils.ts`, `helpers.ts`, `misc.ts`. Be specific: `image-utils.ts`, `format-bytes.ts`.
+   443→
+   444→### 7.6 When Naming a Database Table
+   445→1. Plural snake_case.
+   446→2. Descriptive noun.
+   447→3. Schema name as prefix when querying cross-schema.
+   448→
+   449→### 7.7 When Naming a Tool
+   450→1. Tool slug: kebab-case, URL-safe, unique within category.
+   451→2. Action-oriented for transformation tools (`image-resize`).
+   452→3. Noun-oriented for generator tools (`uuid-generator`).
+   453→4. Globally unique recommended.
+   454→
+   455→### 7.8 When Naming an Environment Variable
+   456→1. SCREAMING_SNAKE_CASE.
+   457→2. `NEXT_PUBLIC_` prefix for client-side.
+   458→3. Service prefix (`SUPABASE_*`, `STRIPE_*`).
+   459→4. Descriptive suffix.
+   460→
+   461→## 8. Future Scalability
+   462→
+   463→### 8.1 Scaling to New Identifier Types
+   464→- New identifier types (e.g., experiment names, feature flag keys) follow the conventions in this document.
+   465→- Add new identifier types to §5 reference tables when introduced.
+   466→
+   467→### 8.2 Scaling to Multiple Languages
+   468→- If mobile app (React Native) is added (Phase 3+), naming conventions remain consistent (TypeScript everywhere).
+   469→- API naming (RESTful) remains stable.
+   470→
+   471→### 8.3 Scaling to Plugin Marketplace (Phase 4)
+   472→- Plugin namespaces: `@publisher/plugin-name`.
+   473→- Plugin tool slugs: `[publisher].[tool-slug]` to avoid collisions.
+   474→- Plugin naming follows the same conventions as first-party tools.
+   475→
+   476→### 8.4 Internationalization
+   477→- Tool slugs remain in English (URL standard).
+   478→- Tool titles, descriptions, FAQ support multiple languages via manifest's `seo` field per `11_FBRD`.
+   479→
+   480→## 9. Dependencies
+   481→
+   482→### 9.1 Document Dependencies
+   483→- Depends on `00_Project_Charter` §3, §4 — LOCKs and ECs these conventions implement.
+   484→- Depends on `02_SAD` — Tool Engine contract names referenced here.
+   485→- Depends on `03_DDD` — Domain event naming follows DDD conventions.
+   486→- Depends on `04_TechStack` — TypeScript, React, Postgres ecosystem conventions.
+   487→- Depends on `05_ProjectStructure`, `07_FolderStructure` — folder names referenced here.
+   488→- `06_ArchitectureDecisionRecords` — records AD-01 through AD-15.
+   489→- `08_CodingStandards` — coding rules within files (this document defines names).
+   490→- `10_DesignSystem` — design token names.
+   491→- `11_FBRD` — ToolManifest field names.
+   492→- `14_DatabaseDesign` — database table/column naming.
+   493→- `15_APIConvention` — API endpoint naming.
+   494→- `16_SEOSpecification` — URL naming for SEO.
+   495→
+   496→### 9.2 External Dependencies
+   497→- TypeScript, React, Next.js, Postgres ecosystem conventions.
+   498→
+   499→### 9.3 Assumptions
+   500→- Naming conventions remain stable; changes require ADR.
+   501→- Team accepts the discipline of consistent naming.
+   502→
+   503→## 10. Revision History
+   504→
+   505→| Revision | Date | Author | Change |
+   506→|----------|------|--------|--------|
+   507→| 1.0.0 | 2026-06-28 | Chief Architect | Initial Naming Convention. Defined casing conventions, file/folder naming, variable/function/type/component/hook/props naming, database naming, API endpoint naming, tool slug naming, env var naming, constant naming, domain event naming, CSS class naming. |
+   508→
+   509→## 11. Cross References
+   510→
+   511→- `00_Project_Charter` §3, §4 — LOCKs and ECs implemented.
+   512→- `02_SAD` AD-02 — Tool Engine stage names follow conventions here.
+   513→- `03_DDD` §6 — Ubiquitous language glossary terms follow these conventions.
+   514→- `04_TechStack` — Ecosystem conventions (TypeScript, React, Postgres).
+   515→- `05_ProjectStructure` — Folder names referenced here.
+   516→- `06_ArchitectureDecisionRecords` — AD-01 through AD-15 record naming decisions.
+   517→- `07_FolderStructure` — File naming conventions (this document details the names).
+   518→- `08_CodingStandards` — Code style rules (this document defines identifiers).
+   519→- `10_DesignSystem` — Design token names.
+   520→- `11_FBRD` — ToolManifest field names.
+   521→- `14_DatabaseDesign` — Database naming in practice.
+   522→- `15_APIConvention` — API endpoint naming in practice.
+   523→- `16_SEOSpecification` — URL naming for SEO.
+   524→- `19_AdminSpecification` — Admin route naming.
+   525→- `23_AI_Guideline` — AI must follow naming conventions (LOCK-09, EC-11).
+   526→

@@ -3,15 +3,17 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.2.0
+> **Revision:** 1.3.0
 
 ---
 
 ## 1. Purpose
 
-This Project Charter formally authorizes the existence of **[PROJECT_NAME]** — a **browser-first productivity ecosystem that enables users to solve everyday digital tasks without installing software and without requiring an account.** The platform consolidates hundreds to thousands of utility tools under a single, scalable, privacy-respecting surface. The charter defines the project's mission, vision, scope, guiding principles, twelve **Architectural Locks** (§3), twelve **Engineering Constitution** articles (§4), and governance model. It serves as the foundational reference from which all subsequent architecture, business, and engineering decisions derive.
+This Project Charter formally authorizes the existence of **[PROJECT_NAME]** — a **browser-first productivity ecosystem that enables users to solve everyday digital tasks without installing software and without requiring an account.** The platform consolidates hundreds to thousands of utility tools under a single, scalable, privacy-respecting surface. The charter defines the project's mission, vision, scope, guiding principles, twelve **Architectural Locks** (§3), twelve **Engineering Constitution** articles (§4), ten **Product Constitution** articles (§5), and governance model. It serves as the foundational reference from which all subsequent architecture, business, engineering, and product decisions derive.
 
-Every downstream document in the `/docs` repository must remain consistent with this charter, the twelve Architectural Locks in §3, and the twelve Engineering Constitution articles in §4. Priority order: Architectural Locks > Engineering Constitution > rest of charter > all other documents. If any document conflicts, the higher-priority layer wins until formally amended through the revision process defined in §11. This rule exists because architectural drift is the leading cause of platform decay; without a single authoritative source, teams gradually make inconsistent micro-decisions that compound into structural incoherence.
+Every downstream document in the `/docs` repository must remain consistent with this charter, the twelve Architectural Locks in §3, the twelve Engineering Constitution articles in §4, and the ten Product Constitution articles in §5. Priority order: Architectural Locks > Engineering Constitution > Product Constitution > rest of charter > all other documents. If any document conflicts, the higher-priority layer wins until formally amended through the revision process defined in §12. This rule exists because architectural drift is the leading cause of platform decay; without a single authoritative source, teams gradually make inconsistent micro-decisions that compound into structural incoherence.
+
+**Product decisions are architectural decisions.** The Product Constitution binds every tool, present and future, with the same authority as the Architectural Locks and Engineering Constitution. A tool that violates PC-01 through PC-10 cannot be promoted to Stable (PC-04).
 
 The charter is intentionally short on implementation detail. It defines *what* and *why*, never *how*. The *how* lives in `02_SAD`, `05_ProjectStructure`, `13_DatabaseDesign`, and related technical documents.
 
@@ -290,13 +292,81 @@ When uncertainty exists: **ask before assuming.**
 
 Although the project begins on free infrastructure (Vercel Free, Supabase Free, GitHub), the architecture must remain capable of scaling to enterprise deployment without major redesign. No implementation should assume free-tier limitations as permanent.
 
-*Implements:* Supports LOCK-04, `00_Project_Charter` §9 Future Expansion. *Operationalized by:* `04_TechStack` §Upgrade Paths, `02_SAD` §Future Scalability, `22_DeploymentGuide` §Enterprise Migration.
+*Implements:* Supports LOCK-04, `00_Project_Charter` §10 Future Expansion. *Operationalized by:* `04_TechStack` §Upgrade Paths, `02_SAD` §Future Scalability, `24_DeploymentGuide` §Enterprise Migration.
 
 ---
 
-## 5. Scope
+## 5. Product Constitution (Mandatory Product Rules)
 
-### 5.1 In Scope
+The Architectural Locks in §3 define **what the platform is**. The Engineering Constitution in §4 defines **how engineering is done**. The Product Constitution defines **how every tool behaves as a product** — the binding rules that ensure 1,000+ tools feel like one cohesive ecosystem rather than a patchwork of independent utilities.
+
+**Product decisions are architectural decisions.** A tool that violates the Product Constitution cannot be promoted to Stable status (PC-04). These ten articles are binding on every tool, present and future, and supersede product preferences. The full text is expanded in `11_ProductConstitution`; this section establishes them as charter-level commitments.
+
+### PC-01 — Every Tool Solves One Problem
+
+Each tool MUST solve exactly one clearly defined user problem. Avoid feature creep. One page. One intent. One outcome.
+
+*Implements:* LOCK-01 (Platform Identity — ecosystem of single-purpose tools). *Operationalized by:* `11_ProductConstitution` §PC-01, `13_FBRD` §Tool Product Contract.
+
+### PC-02 — Every Tool Has a Product Contract
+
+Every tool MUST define: Purpose, User Problem, Inputs, Outputs, Validation Rules, Processing Steps, Success Criteria, Failure States, Empty States, Loading States, SEO Intent, Related Tools, Analytics Events. No tool exists without this contract.
+
+*Implements:* LOCK-03 (Tool Engine), LOCK-05 (Plugin-Ready — manifest encodes contract). *Operationalized by:* `11_ProductConstitution` §PC-02, `12_ToolManifestSpecification`, `13_FBRD` §Tool Product Contract.
+
+### PC-03 — Tool Completion Standard
+
+A tool is only considered complete if it provides: Upload/Input, Validation, Processing, Preview, Download/Copy, Error Handling, Success Feedback, Accessibility, Mobile Support, SEO, Analytics, Documentation, Tests. All 13 items mandatory.
+
+*Implements:* LOCK-03, EC-04, EC-06, EC-09. *Operationalized by:* `11_ProductConstitution` §PC-03, `22_DevelopmentGuideline` §Definition of Done, `23_TestingStrategy`.
+
+### PC-04 — Product Quality Gates
+
+A feature cannot reach Stable unless it passes: Functional review, Accessibility review, Performance review, SEO review, Security review, Documentation review, UX review. Quality gates are mandatory.
+
+*Implements:* LOCK-12 (Feature Lifecycle — Stable requires all gates). *Operationalized by:* `11_ProductConstitution` §PC-04, `22_DevelopmentGuideline` §Quality Gates, `21_AdminSpecification` §Feature Lifecycle.
+
+### PC-05 — UX Consistency
+
+Every tool page follows the same layout: Hero → Tool → Result → FAQ → Related Tools → Documentation → Feedback → Footer. Users should never relearn navigation between tools.
+
+*Implements:* LOCK-10 (Design Philosophy), EC-10 (Design System Governance). *Operationalized by:* `11_ProductConstitution` §PC-05, `15_UDS` §Tool Page Layout, `14_ACD` §Tool Page Components.
+
+### PC-06 — Monetization Philosophy
+
+Revenue MUST never interrupt task completion. Advertising or premium prompts may appear only after value has been demonstrated. Core functionality remains free. Premium provides convenience, not necessity.
+
+*Implements:* LOCK-07 (Guest-First UX), `01_BRD` §4.1 (Monetization Standards). *Operationalized by:* `11_ProductConstitution` §PC-06, `19_UserFlow` §Monetization Touchpoints.
+
+### PC-07 — Analytics Standard
+
+Every tool MUST emit consistent events. Minimum events: Tool Viewed, Tool Started, Validation Failed, Processing Started, Processing Completed, Download Attempted, Download Completed, Registration Prompt Viewed, Registration Completed, Tool Shared.
+
+*Implements:* LOCK-04 (Maintainable — consistent analytics). *Operationalized by:* `11_ProductConstitution` §PC-07, `12_ToolManifestSpecification` §Analytics Configuration, `21_AdminSpecification` §Analytics Module.
+
+### PC-08 — Error Experience
+
+Every error MUST: explain what happened, explain why, explain how to fix it. Never expose technical stack traces.
+
+*Implements:* EC-05 (Progressive Enhancement — graceful error UX). *Operationalized by:* `11_ProductConstitution` §PC-08, `15_UDS` §Error States, `14_ACD` §Error Components.
+
+### PC-09 — Feature Discoverability
+
+Every tool MUST help users discover additional tools. Methods: Related Tools, Suggested Workflows, Category Navigation, Search, Recently Used, Popular Tools. The ecosystem should naturally expand user engagement.
+
+*Implements:* LOCK-08 (SEO — internal linking). *Operationalized by:* `11_ProductConstitution` §PC-09, `12_ToolManifestSpecification` §Related Tools, `18_SEOSpecification` §Internal Linking.
+
+### PC-10 — Product Scalability
+
+Every new tool should require minimal engineering effort. The Tool Manifest MUST contain enough metadata to automatically generate: Navigation, SEO, Sitemap, Categories, Search Index, Admin Inventory, Analytics Configuration. Metadata-first development is mandatory.
+
+*Implements:* LOCK-05 (Plugin-Ready Architecture), EC-04 (Tool Template Standard). *Operationalized by:* `11_ProductConstitution` §PC-10, `12_ToolManifestSpecification`, `05_ProjectStructure` §Tool Registry Pattern.
+
+---
+
+## 6. Scope
+
+### 6.1 In Scope
 
 [PROJECT_NAME] covers the following tool categories, with explicit intent to expand to additional categories over time:
 
@@ -313,7 +383,7 @@ Although the project begins on free infrastructure (Vercel Free, Supabase Free, 
 
 The platform also includes a fully integrated admin panel at `/admin`, a content management layer for articles and SEO landing pages, and a user account system with freemium capabilities.
 
-### 5.2 Out of Scope (Phase 1)
+### 6.2 Out of Scope (Phase 1)
 
 - Native mobile applications (web is responsive and PWA-capable; native apps deferred to Phase 3+).
 - Real-time collaborative editing of documents.
@@ -321,13 +391,13 @@ The platform also includes a fully integrated admin panel at `/admin`, a content
 - Desktop installers / Electron builds.
 - Marketplaces for third-party tool developers.
 
-### 5.3 Long-Term Scope
+### 6.3 Long-Term Scope
 
 The architecture must support growth from 30 tools (Phase 1) to 1,000+ tools (Phase 4) without major restructuring. This is the single most important architectural constraint and shapes every downstream decision in `02_SAD`, `05_ProjectStructure`, and `07_FolderStructure`.
 
-## 6. Goals
+## 7. Goals
 
-### 6.1 Phase Goals
+### 7.1 Phase Goals
 
 | Phase | Tool Count | Primary Goal |
 |-------|------------|--------------|
@@ -336,7 +406,7 @@ The architecture must support growth from 30 tools (Phase 1) to 1,000+ tools (Ph
 | Phase 3 | 300 tools | Introduce premium tier, reach 500k MAU. |
 | Phase 4 | 1,000+ tools | Platform plays role of "developer infrastructure" — APIs, embeds, white-label. |
 
-### 6.2 Non-Numeric Goals
+### 7.2 Non-Numeric Goals
 
 1. **Architectural longevity.** No rewrite required between Phase 1 and Phase 4.
 2. **Sub-second tool load.** First interaction with any tool within 1 second on a mid-tier device over 4G.
@@ -344,47 +414,58 @@ The architecture must support growth from 30 tools (Phase 1) to 1,000+ tools (Ph
 4. **Guest-first UX.** Users complete core workflows without registration; registration prompted only at value-adding moments (download, save history, favorite).
 5. **SEO dominance.** Every tool is an indexable, schema-marked landing page.
 
-## 7. Standards
+## 8. Standards
 
-The project adheres to the following non-negotiable standards. Each is expanded in its dedicated document; this section establishes them as charter-level commitments. Where a standard implements an Architectural Lock (§3) or Engineering Constitution article (§4), the ID is cited.
+The project adheres to the following non-negotiable standards. Each is expanded in its dedicated document; this section establishes them as charter-level commitments. Where a standard implements an Architectural Lock (§3), Engineering Constitution article (§4), or Product Constitution article (§5), the ID is cited.
 
-### 7.1 Architectural Standards
-- **Feature-Based Architecture.** Every tool is a self-contained feature module. *Implements LOCK-04, LOCK-05, EC-04.* See `11_FBRD` and `05_ProjectStructure`.
+### 8.1 Architectural Standards
+- **Feature-Based Architecture.** Every tool is a self-contained feature module. *Implements LOCK-04, LOCK-05, EC-04.* See `13_FBRD` and `05_ProjectStructure`.
 - **Browser-first processing.** Tools that can run client-side MUST run client-side. Backend is reserved for auth, persistence, AI, and content. *Implements LOCK-02, LOCK-06, EC-07.* See `02_SAD`.
-- **Tool Engine lifecycle.** Every tool follows Input → Validation → Processing → Preview → Download → History → Share. *Implements LOCK-03, EC-04.* See `02_SAD` §Tool Engine.
+- **Tool Engine lifecycle.** Every tool follows Input → Validation → Processing → Preview → Download → History → Share. *Implements LOCK-03, EC-04, PC-02.* See `02_SAD` §Tool Engine.
 - **Type safety end-to-end.** TypeScript strict mode; Zod schemas at every IO boundary. *Implements EC-08.* See `08_CodingStandards`.
 - **No giant files.** Soft limit 300 lines per file; hard limit 500. *Implements EC-09.* See `08_CodingStandards`.
 
-### 7.2 Engineering Standards
+### 8.2 Engineering Standards
 - **Free-tier-first.** Initial budget is $0. Every dependency must have a viable free tier. *Implements EC-12.* See `04_TechStack`.
 - **DRY / KISS / SOLID.** Applied as default review criteria. *Implements EC-02, EC-03.* See `08_CodingStandards`.
-- **Documentation first.** No production code without prior docs. *Implements EC-01.* See `20_DevelopmentGuideline`.
-- **AI-assisted discipline.** AI must not duplicate, drift, or introduce unapproved dependencies. *Implements LOCK-09, EC-11.* See `23_AI_Guideline`.
-- **Testability.** Engines designed for independent testing. *Implements EC-09.* See `21_TestingStrategy`.
+- **Documentation first.** No production code without prior docs. *Implements EC-01.* See `22_DevelopmentGuideline`.
+- **AI-assisted discipline.** AI must not duplicate, drift, or introduce unapproved dependencies. *Implements LOCK-09, EC-11.* See `25_AI_Guideline`.
+- **Testability.** Engines designed for independent testing. *Implements EC-09.* See `23_TestingStrategy`.
 
-### 7.3 UX Standards
-- **Guest-first onboarding.** No registration before value demonstrated. *Implements LOCK-07, EC-05.* See `17_UserFlow`.
+### 8.3 UX Standards
+- **Guest-first onboarding.** No registration before value demonstrated. *Implements LOCK-07, EC-05, PC-06.* See `19_UserFlow`.
 - **Dark / Light mode ready from day 1.** Token-driven, no hardcoded colors. *Implements LOCK-10, EC-10.* See `10_DesignSystem`.
-- **Accessibility AA.** WCAG 2.1 AA conformance for every tool. *Implements EC-06.* See `13_UDS`.
-- **Mobile-first responsive.** Every tool usable on a 360px viewport.
+- **Accessibility AA.** WCAG 2.1 AA conformance for every tool. *Implements EC-06, PC-03.* See `15_UDS`.
+- **Mobile-first responsive.** Every tool usable on a 360px viewport. *Implements PC-03.* See `15_UDS`.
 - **Progressive enhancement.** Tools degrade gracefully when services fail. *Implements EC-05.* See `02_SAD` §Graceful Degradation.
+- **Consistent tool page layout.** Hero → Tool → Result → FAQ → Related → Docs → Feedback → Footer. *Implements PC-05.* See `15_UDS` §Tool Page Layout.
 
-### 7.4 SEO Standards
-- Every tool page has: unique URL, unique metadata, canonical URL, Open Graph, Twitter Card, JSON-LD structured data, breadcrumb, FAQ, related tools, internal linking, search intent mapping. *Implements LOCK-08.* See `16_SEOSpecification`.
+### 8.4 SEO Standards
+- Every tool page has: unique URL, unique metadata, canonical URL, Open Graph, Twitter Card, JSON-LD structured data, breadcrumb, FAQ, related tools, internal linking, search intent mapping. *Implements LOCK-08, PC-09.* See `18_SEOSpecification`.
 
-### 7.5 Security Standards
-- RBAC enforced from Phase 1. *Implements LOCK-11, EC-08.* See `18_RBAC`.
-- Audit trail mandatory from Phase 1. See `19_AdminSpecification`.
+### 8.5 Security Standards
+- RBAC enforced from Phase 1. *Implements LOCK-11, EC-08.* See `20_RBAC`.
+- Audit trail mandatory from Phase 1. See `21_AdminSpecification`.
 - No secrets in client bundles. Server-only env vars validated at boot. *Implements EC-08.*
 - All file uploads scanned and size-limited before processing.
 
-### 7.6 Admin Standards
-- Admin is the operational control center, not a CMS. *Implements LOCK-11.* See `19_AdminSpecification`.
-- Feature lifecycle status visible in admin. *Implements LOCK-12.* See `19_AdminSpecification` §Feature Lifecycle.
+### 8.6 Admin Standards
+- Admin is the operational control center, not a CMS. *Implements LOCK-11.* See `21_AdminSpecification`.
+- Feature lifecycle status visible in admin. *Implements LOCK-12.* See `21_AdminSpecification` §Feature Lifecycle.
 
-## 8. Examples
+### 8.7 Product Standards
+- Every tool solves one problem. *Implements PC-01.* See `11_ProductConstitution`.
+- Every tool has a Product Contract. *Implements PC-02.* See `12_ToolManifestSpecification`.
+- Every tool meets the Completion Standard (13 items). *Implements PC-03.* See `22_DevelopmentGuideline` §Definition of Done.
+- Every tool passes 7 quality gates before Stable. *Implements PC-04.* See `22_DevelopmentGuideline` §Quality Gates.
+- Every tool emits consistent analytics events. *Implements PC-07.* See `12_ToolManifestSpecification` §Analytics Configuration.
+- Every error explains what, why, how to fix. *Implements PC-08.* See `15_UDS` §Error States.
+- Every tool supports discoverability. *Implements PC-09.* See `12_ToolManifestSpecification` §Related Tools.
+- Every new tool requires minimal engineering effort (metadata-first). *Implements PC-10.* See `12_ToolManifestSpecification`.
 
-### 8.1 Reference Platforms
+## 9. Examples
+
+### 9.1 Reference Platforms
 
 The following platforms represent the target end state. We study their UX, SEO, and architecture; we do not copy their code.
 
@@ -396,7 +477,7 @@ The following platforms represent the target end state. We study their UX, SEO, 
 | **Vercel** | Design language, dark/light execution, dashboard patterns. |
 | **Stripe Docs** | Documentation structure, code-as-docs philosophy. |
 
-### 8.2 Reference Workflow — Passport Photo Maker
+### 9.2 Reference Workflow — Passport Photo Maker
 
 This canonical workflow (defined in the original brief) becomes a reusable pattern for any multi-step tool:
 
@@ -405,57 +486,57 @@ Upload → Face Detection → Auto Crop → Background Selection
        → Standard Size Selection → Preview → Download
 ```
 
-The pattern is generalized in `12_ACD` as the **Multi-Step Tool Workflow** component and reused by Image Resizer, Background Remover, Format Converter, and any future tool with similar shape.
+The pattern is generalized in `14_ACD` as the **Multi-Step Tool Workflow** component and reused by Image Resizer, Background Remover, Format Converter, and any future tool with similar shape.
 
-## 9. Best Practices
+## 10. Best Practices
 
-### 9.1 Decision-Making
+### 10.1 Decision-Making
 - **Always prefer long-term scalability over short-term convenience.** A 2-hour shortcut that costs 20 hours of refactoring later is a net loss.
 - **Never introduce a new dependency without justification.** Every dependency is a future maintenance liability. Justify in the PR description and link to the docs.
 - **Never change architecture without explaining the impact.** Architectural changes require a written impact analysis in the PR.
 
-### 9.2 Documentation
+### 10.2 Documentation
 - **Docs are the source of truth.** If a behavior is not in the docs, it does not exist.
 - **Update docs in the same PR as the code.** Code PRs without doc updates are blocked.
 - **Cross-references must be live.** Broken links are P1 bugs.
 
-### 9.3 Tool Development
+### 10.3 Tool Development
 - **Isolate every tool.** A bug in one tool must never affect another.
 - **Reuse the workflow pattern.** New tools should compose existing workflows, not invent new ones.
 - **Make tools discoverable.** Every tool links to related tools; internal linking is mandatory.
 
-### 9.4 Performance
+### 10.4 Performance
 - **Lazy-load every tool.** Tool code is code-split; only the tool being used loads.
 - **Cache aggressively.** Static assets immutable, HTML revalidated, tool outputs cached in IndexedDB when sensible.
 - **Measure before optimizing.** No premature optimization without a profile.
 
-## 10. Future Expansion
+## 11. Future Expansion
 
 The charter explicitly anticipates the following expansion paths. Architecture must not preclude them.
 
-### 10.1 Tool Expansion
-- **1,000+ tools.** Folder structure (`07_FolderStructure`) and feature registry (`11_FBRD`) must scale to thousands of entries without reorganization.
+### 11.1 Tool Expansion
+- **1,000+ tools.** Folder structure (`07_FolderStructure`) and feature registry (`13_FBRD`) must scale to thousands of entries without reorganization.
 - **New tool categories.** Adding a category must not require touching core modules.
 
-### 10.2 Platform Expansion
-- **Public API.** Expose tools as APIs in Phase 3+. Schema designed in `15_APIConvention` to be API-friendly from day 1.
+### 11.2 Platform Expansion
+- **Public API.** Expose tools as APIs in Phase 3+. Schema designed in `17_APIConvention` to be API-friendly from day 1.
 - **Embed widgets.** Allow third-party sites to embed [PROJECT_NAME] tools.
 - **White-label.** Allow partners to skin the platform.
 - **Marketplace.** Allow community-contributed tools (Phase 4).
 
-### 10.3 Business Expansion
+### 11.3 Business Expansion
 - **Premium tier.** Higher usage limits, batch processing, no ads, priority AI. See `01_BRD`.
 - **Enterprise tier.** SSO, audit logs, SLA. Phase 3+.
 - **API monetization.** Usage-based pricing on the public API.
 
-### 10.4 Technical Expansion
+### 11.4 Technical Expansion
 - **Multi-region deployment.** Vercel Edge + Supabase read replicas.
 - **WebAssembly tools.** Heavy compute tools (e.g., video transcoding) compile to WASM.
 - **Worker offloading.** Heavy file processing offloaded to Cloudflare Workers or Vercel Edge Functions.
 
-## 11. Dependencies
+## 12. Dependencies
 
-### 11.1 External Dependencies (Free Tier)
+### 12.1 External Dependencies (Free Tier)
 
 | Dependency | Purpose | Free Tier Adequate Through | Upgrade Path |
 |-----------|---------|---------------------------|--------------|
@@ -467,46 +548,52 @@ The charter explicitly anticipates the following expansion paths. Architecture m
 
 Full rationale in `04_TechStack`.
 
-### 11.2 Internal Dependencies
+### 12.2 Internal Dependencies
 
 - This document (`00_Project_Charter`) is the root. All other docs depend on it.
-- `01_BRD` defines business context required by `25_Roadmap` and `26_Backlog`.
-- `02_SAD` defines architecture required by `05_ProjectStructure`, `07_FolderStructure`, `14_DatabaseDesign`, `15_APIConvention`.
-- `06_ArchitectureDecisionRecords` records all architectural decisions from `02_SAD`, `03_DDD`, `04_TechStack`, `05_ProjectStructure`.
-- `10_DesignSystem` is required by `13_UDS` and every UI implementation.
+- `01_BRD` defines business context required by `27_Roadmap` and `28_Backlog`.
+- `02_SAD` defines architecture required by `05_ProjectStructure`, `07_FolderStructure`, `16_DatabaseDesign`, `17_APIConvention`.
+- `06_ArchitectureDecisionRecords` records all architectural decisions from `02_SAD`, `03_DDD`, `04_TechStack`, `05_ProjectStructure`, plus governance ADRs for LOCKs, ECs, and PCs.
+- `11_ProductConstitution` expands §5 with operational details; binds every tool.
+- `12_ToolManifestSpecification` defines the canonical schema that `13_FBRD`, `14_ACD`, `18_SEOSpecification`, `21_AdminSpecification` all derive from.
+- `10_DesignSystem` is required by `15_UDS` and every UI implementation.
 
-### 11.3 Assumptions
+### 12.3 Assumptions
 
 - Team size: 1–3 engineers through Phase 1, scaling to 5–10 by Phase 3.
 - Budget: $0 through Phase 1; ≤$100/mo through Phase 2; revenue-funded thereafter.
 - Domain expertise: at least one engineer comfortable with both frontend and Postgres.
 
-## 12. Revision History
+## 13. Revision History
 
 | Revision | Date | Author | Change |
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial charter. |
 | 1.1.0 | 2026-06-28 | Chief Architect | Added §2 Platform Identity and §3 Architectural Locks (12 locks: LOCK-01 through LOCK-12). Renumbered subsequent sections. Updated §5 Standards to cite lock IDs. Updated cross-references to reflect doc renumbering (04=TechStack, 05=ProjectStructure, 10=FBRD, 11=ACD, 12=UDS). |
 | 1.2.0 | 2026-06-28 | Chief Architect | Added §4 Engineering Constitution (12 articles: EC-01 through EC-12). Renumbered §5-§11 to §5-§12. Inserted `06_ArchitectureDecisionRecords` into the doc index, shifting docs 06-25 to 07-26. Updated all cross-references throughout. Standards section (§7) now cites both LOCK IDs and EC IDs. |
+| 1.3.0 | 2026-06-28 | Chief Architect | Added §5 Product Constitution (10 articles: PC-01 through PC-10). Renumbered §5-§12 to §6-§13. Inserted `11_ProductConstitution` and `12_ToolManifestSpecification` into the doc index, shifting docs 11-26 to 13-28. Established four-tier governance priority: Architectural Locks > Engineering Constitution > Product Constitution > Technical Documents. Updated all cross-references throughout. Added §8.7 Product Standards. |
 
-## 13. Cross References
+## 14. Cross References
 
-- `01_BRD` — Business context that shapes Phase goals (§6.1).
+- `01_BRD` — Business context that shapes Phase goals (§7.1).
 - `02_SAD` — Implements LOCK-02, LOCK-03, LOCK-04, LOCK-06; EC-05, EC-07 (architecture, Tool Engine, modularity, database-optional, progressive enhancement, performance).
 - `03_DDD` — Defines bounded contexts that align with LOCK-04, EC-02 (modularity, one source of truth).
-- `04_TechStack` — Justifies each dependency listed in §11.1; operationalizes LOCK-02, EC-08, EC-12 (browser-first tech, security, enterprise readiness).
-- `05_ProjectStructure` — Implements LOCK-04, LOCK-05, EC-03, EC-04 (modularity, plugin-ready registry, component reuse, tool template).
-- `06_ArchitectureDecisionRecords` — Permanent history of all architectural decisions; append-only.
-- `10_DesignSystem` — Implements LOCK-10, EC-06, EC-10 (developer-first minimalism, accessibility, design system governance).
-- `11_FBRD` — Defines the tool-as-feature pattern and tool manifest schema (LOCK-05, LOCK-12, EC-04).
-- `13_UDS` — Implements the UX standards in §7.3 (LOCK-07, EC-05, EC-06).
-- `16_SEOSpecification` — Implements LOCK-08 (SEO Constitution).
-- `17_UserFlow` — Implements LOCK-07, EC-05 (guest-first UX, progressive enhancement).
-- `18_RBAC` — Implements the Security standards in §7.5 (LOCK-11, EC-08).
-- `19_AdminSpecification` — Implements LOCK-11 (admin philosophy) and LOCK-12 (feature lifecycle in admin).
-- `20_DevelopmentGuideline` — Implements EC-01, EC-11 (documentation first, AI collaboration).
-- `21_TestingStrategy` — Implements EC-09 (testing philosophy).
-- `22_DeploymentGuide` — Implements EC-07, EC-08, EC-12 (performance monitoring, security headers, enterprise migration).
-- `23_AI_Guideline` — Implements LOCK-09, EC-11 (AI Development Constitution, AI collaboration rules).
-- `25_Roadmap` — Expands the Phase goals in §6.1.
-- `26_Backlog` — Operationalizes the Phase 1 tool priorities.
+- `04_TechStack` — Justifies each dependency listed in §12.1; operationalizes LOCK-02, EC-08, EC-12 (browser-first tech, security, enterprise readiness).
+- `05_ProjectStructure` — Implements LOCK-04, LOCK-05, EC-03, EC-04, PC-10 (modularity, plugin-ready registry, component reuse, tool template, product scalability).
+- `06_ArchitectureDecisionRecords` — Permanent history of all architectural decisions (LOCKs, ECs, PCs, technical ADs); append-only.
+- `10_DesignSystem` — Implements LOCK-10, EC-06, EC-10, PC-05 (developer-first minimalism, accessibility, design system governance, UX consistency).
+- `11_ProductConstitution` — Expands §5 with operational details for PC-01 through PC-10.
+- `12_ToolManifestSpecification` — Canonical schema for every tool (PC-02, PC-07, PC-09, PC-10); foundation for Registry, Admin, Search, SEO, Analytics.
+- `13_FBRD` — Defines the tool-as-feature pattern and tool product contract (LOCK-05, LOCK-12, EC-04, PC-01, PC-02).
+- `14_ACD` — Tool Engine component (LOCK-03, PC-03) and reusable component catalog (EC-03, EC-10).
+- `15_UDS` — Implements the UX standards in §8.3 (LOCK-07, LOCK-10, EC-05, EC-06, PC-05, PC-08).
+- `18_SEOSpecification` — Implements LOCK-08, PC-09 (SEO Constitution, feature discoverability).
+- `19_UserFlow` — Implements LOCK-07, EC-05, PC-06 (guest-first UX, progressive enhancement, monetization philosophy).
+- `20_RBAC` — Implements the Security standards in §8.5 (LOCK-11, EC-08).
+- `21_AdminSpecification` — Implements LOCK-11 (admin philosophy), LOCK-12 (feature lifecycle), PC-07 (analytics), PC-10 (admin inventory from manifest).
+- `22_DevelopmentGuideline` — Implements EC-01, EC-11, PC-03, PC-04 (documentation first, AI collaboration, completion standard, quality gates).
+- `23_TestingStrategy` — Implements EC-09, PC-03 (testing philosophy, completion standard).
+- `24_DeploymentGuide` — Implements EC-07, EC-08, EC-12 (performance monitoring, security headers, enterprise migration).
+- `25_AI_Guideline` — Implements LOCK-09, EC-11 (AI Development Constitution, AI collaboration rules).
+- `27_Roadmap` — Expands the Phase goals in §7.1.
+- `28_Backlog` — Operationalizes the Phase 1 tool priorities.

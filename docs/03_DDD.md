@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.1.0
-> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-02 (One Source of Truth)
+> **Revision:** 1.2.0
+> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-02 (One Source of Truth); PC-02 (Product Contract via ToolManifest aggregate)
 
 ---
 
@@ -30,10 +30,10 @@ This document is the authoritative source for: what counts as a Tool, what count
 ### 2.2 Out of Scope
 
 - Physical architecture (layers, runtimes) → `02_SAD`.
-- Folder layout → `05_ProjectStructure`, `06_FolderStructure`.
-- Database table schemas → `13_DatabaseDesign`.
-- API endpoint definitions → `14_APIConvention`.
-- UI flows between contexts → `16_UserFlow`.
+- Folder layout → `05_ProjectStructure`, `07_FolderStructure`.
+- Database table schemas → `16_DatabaseDesign`.
+- API endpoint definitions → `17_APIConvention`.
+- UI flows between contexts → `19_UserFlow`.
 
 ## 3. Architectural Decisions
 
@@ -120,7 +120,7 @@ ToolManifest (aggregate root)
 └── Versioning: manifest_version, tool_version
 ```
 
-The manifest schema is public (documented in `10_FBRD`) and versioned. Breaking changes require a manifest_version bump and a migration path for existing tools.
+The manifest schema is public (documented in `13_FBRD`) and versioned. Breaking changes require a manifest_version bump and a migration path for existing tools.
 
 **Consequences.**
 - ✅ Phase 4 plugin marketplace requires no architectural change — just a signing/sandboxing layer on top.
@@ -218,7 +218,7 @@ The ToolManifest is the only contract between a tool and the platform. Anything 
 - **Favorite** — bookmarked tool by user.
 
 **Invariants:**
-- A User has exactly one role at a time (per `17_RBAC`).
+- A User has exactly one role at a time (per `20_RBAC`).
 - HistoryEntries are immutable once created; deleted via soft-delete.
 - Favorites are unique per (userId, toolSlug).
 
@@ -306,7 +306,7 @@ Terms below have ONE meaning within their context. When a term is used in a diff
 | Term | Definition |
 |------|------------|
 | **Tool** | A discrete utility that follows the Tool Engine lifecycle (LOCK-03). Identified by slug within a category. Stateless. |
-| **ToolManifest** | The aggregate root describing a Tool. Self-contained, serializable. Defined in `10_FBRD`. |
+| **ToolManifest** | The aggregate root describing a Tool. Self-contained, serializable. Defined in `13_FBRD`. |
 | **ToolCategory** | A taxonomy node grouping related Tools (e.g., "image", "pdf"). |
 | **ToolExecution** | One run of a Tool from Input to Download. Ephemeral; not persisted by Tools Context. |
 | **ToolRegistry** | The build-time-generated map of all ToolManifests. Not a runtime DB table. |
@@ -320,7 +320,7 @@ Terms below have ONE meaning within their context. When a term is used in a diff
 |------|------------|
 | **User** | An authenticated identity. Has exactly one role. May be guest (null User). |
 | **Session** | An active authentication token scoped to a device. Expires or is revoked. |
-| **Role** | A label (guest, user, premium, editor, admin, super_admin) granting permissions per `17_RBAC`. |
+| **Role** | A label (guest, user, premium, editor, admin, super_admin) granting permissions per `20_RBAC`. |
 | **HistoryEntry** | A record of a ToolExecution saved by a User. References Tool by slug. |
 | **Favorite** | A User's bookmark of a Tool. |
 | **Guest** | An unauthenticated visitor. Treated as null User; tools still function (LOCK-06, LOCK-07). |
@@ -502,11 +502,13 @@ If a context grows too large (e.g., Identity grows to include team management, o
 - Depends on `02_SAD` — physical architecture that hosts the bounded contexts.
 - `05_ProjectStructure` — maps bounded contexts to folder structure.
 - `06_ArchitectureDecisionRecords` — records AD-01 through AD-05 as ADRs.
-- `11_FBRD` — defines ToolManifest aggregate (Tools Context root).
-- `14_DatabaseDesign` — implements each context's schema.
-- `15_APIConvention` — defines how contexts expose published APIs.
-- `18_RBAC` — defines Role aggregate in Identity Context.
-- `19_AdminSpecification` — operates Platform Ops Context.
+- `11_ProductConstitution` — expands PC-02 (Product Contract) which DDD's Tools Context implements.
+- `12_ToolManifestSpecification` — defines ToolManifest aggregate (referenced by AD-034).
+- `13_FBRD` — defines ToolManifest aggregate (Tools Context root).
+- `16_DatabaseDesign` — implements each context's schema.
+- `17_APIConvention` — defines how contexts expose published APIs.
+- `20_RBAC` — defines Role aggregate in Identity Context.
+- `21_AdminSpecification` — operates Platform Ops Context.
 
 ### 12.2 External Dependencies
 - Supabase Postgres — provides schema isolation per context.
@@ -522,21 +524,24 @@ If a context grows too large (e.g., Identity grows to include team management, o
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial DDD. Defined 6 bounded contexts, ubiquitous language glossary, context map, aggregate consistency rules. |
 | 1.1.0 | 2026-06-28 | Chief Architect | Linked bounded context design to EC-02 (One Source of Truth). Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords` (docs 06-25 shifted to 07-26). |
+| 1.2.0 | 2026-06-28 | Chief Architect | Linked ToolManifest aggregate to PC-02 (Product Contract). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
 
 ## 14. Cross References
 
-- `00_Project_Charter` §3, §4 — Source of LOCKs and ECs implemented by this document.
+- `00_Project_Charter` §3, §4, §5 — Source of LOCKs, ECs, and PCs implemented by this document.
 - `02_SAD` — Physical architecture hosting the bounded contexts.
 - `04_TechStack` — Technologies used to implement domain events and ACLs.
 - `05_ProjectStructure` — Folder layout mapping to bounded contexts.
 - `06_ArchitectureDecisionRecords` — Permanent record of DDD architectural decisions.
+- `11_ProductConstitution` — Expands PC-02 which DDD implements.
+- `12_ToolManifestSpecification` — ToolManifest aggregate (Tools Context root).
 - `07_FolderStructure` — Granular file conventions per context.
-- `11_FBRD` — ToolManifest aggregate (Tools Context root).
-- `12_ACD` — Tool Engine component (implementation of Tools Context aggregate).
-- `14_DatabaseDesign` — Schema per context.
-- `15_APIConvention` — Published APIs between contexts.
-- `16_SEOSpecification` — How Content Context supports SEO.
-- `17_UserFlow` — How user journeys cross context boundaries.
-- `18_RBAC` — Role aggregate in Identity Context.
-- `19_AdminSpecification` — Platform Ops Context operation.
-- `23_AI_Guideline` — Constrains AI's modification of domain model (LOCK-09, EC-11).
+- `13_FBRD` — ToolManifest aggregate (Tools Context root).
+- `14_ACD` — Tool Engine component (implementation of Tools Context aggregate).
+- `16_DatabaseDesign` — Schema per context.
+- `17_APIConvention` — Published APIs between contexts.
+- `18_SEOSpecification` — How Content Context supports SEO.
+- `19_UserFlow` — How user journeys cross context boundaries.
+- `20_RBAC` — Role aggregate in Identity Context.
+- `21_AdminSpecification` — Platform Ops Context operation.
+- `25_AI_Guideline` — Constrains AI's modification of domain model (LOCK-09, EC-11).

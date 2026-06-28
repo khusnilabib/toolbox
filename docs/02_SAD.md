@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.1.0
-> **Implements:** LOCK-02 (Browser-First), LOCK-03 (Tool Engine), LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-05 (Progressive Enhancement), EC-07 (Performance Budget), EC-08 (Security by Default)
+> **Revision:** 1.2.0
+> **Implements:** LOCK-02 (Browser-First), LOCK-03 (Tool Engine), LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-05 (Progressive Enhancement), EC-07 (Performance Budget), EC-08 (Security by Default); PC-02 (Product Contract), PC-03 (Completion Standard), PC-05 (UX Consistency), PC-10 (Product Scalability)
 
 ---
 
@@ -537,18 +537,19 @@ Adding a new category (e.g., "Video Tools" in Phase 3):
 ## 13. Dependencies
 
 ### 13.1 Document Dependencies
-- Depends on `00_Project_Charter` (Architectural Locks §3, Engineering Constitution §4) — source of authority.
+- Depends on `00_Project_Charter` (Architectural Locks §3, Engineering Constitution §4, Product Constitution §5) — source of authority.
 - Depends on `01_BRD` — business context for monetization and KPIs.
 - `03_DDD` depends on this SAD for bounded context boundaries.
 - `04_TechStack` operationalizes AD-01 through AD-06 with specific technologies.
 - `05_ProjectStructure` implements the layer and module boundaries defined here.
 - `06_ArchitectureDecisionRecords` records AD-01 through AD-06 as ADRs (append-only history).
-- `11_FBRD` defines the manifest schema referenced in AD-03.
-- `12_ACD` defines the Tool Engine component referenced in AD-02.
-- `14_DatabaseDesign` implements the Infrastructure Layer for persistence.
-- `15_APIConvention` implements the Infrastructure Layer for external APIs.
-- `18_RBAC` implements the authorization cross-cutting concern.
-- `22_DeploymentGuide` implements AD-06 deployment topology.
+- `11_ProductConstitution` expands PC-02, PC-03, PC-05, PC-10 which this SAD implements.
+- `12_ToolManifestSpecification` defines the manifest schema referenced in AD-03.
+- `14_ACD` defines the Tool Engine component referenced in AD-02.
+- `16_DatabaseDesign` implements the Infrastructure Layer for persistence.
+- `17_APIConvention` implements the Infrastructure Layer for external APIs.
+- `20_RBAC` implements the authorization cross-cutting concern.
+- `24_DeploymentGuide` implements AD-06 deployment topology.
 
 ### 13.2 External Dependencies
 - Vercel (Edge + Serverless) — deployment topology (AD-06).
@@ -566,23 +567,25 @@ Adding a new category (e.g., "Video Tools" in Phase 3):
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial SAD. Defined layered architecture (AD-01), Tool Engine (AD-02), Tool Registry (AD-03), browser-first decision matrix (AD-04), database-optional strategy (AD-05), deployment topology (AD-06). |
 | 1.1.0 | 2026-06-28 | Chief Architect | Mapped each AD to the Engineering Constitution articles it implements (EC-02, EC-04, EC-05, EC-07, EC-08, EC-09, EC-01). Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords` (docs 06-25 shifted to 07-26). |
+| 1.2.0 | 2026-06-28 | Chief Architect | Mapped AD-02 to PC-02 (Product Contract), PC-03 (Completion Standard); AD-03 to PC-10 (Product Scalability); deployment topology to PC-05 (UX Consistency). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
 
 ## 15. Cross References
 
-- `00_Project_Charter` §3, §4 — Source of LOCKs and ECs implemented by this document.
+- `00_Project_Charter` §3, §4, §5 — Source of LOCKs, ECs, and PCs implemented by this document.
 - `01_BRD` §4.1, §4.4 — Monetization and privacy standards that constrain architecture.
 - `03_DDD` — Bounded context boundaries that align with AD-01 layering.
 - `04_TechStack` — Specific technologies implementing AD-01 through AD-06.
 - `05_ProjectStructure` — Folder layout implementing AD-01 and AD-03.
 - `06_ArchitectureDecisionRecords` — Permanent record of AD-01 through AD-06 as ADRs.
 - `07_FolderStructure` — Granular file conventions for the layers defined here.
-- `11_FBRD` §Tool Manifest — Schema referenced by AD-03.
-- `12_ACD` §Tool Engine Component — Implementation of AD-02.
-- `14_DatabaseDesign` — Infrastructure Layer persistence implementation.
-- `15_APIConvention` — Infrastructure Layer external API implementation.
-- `16_SEOSpecification` — How AD-03 registry satisfies LOCK-08.
-- `17_UserFlow` — How AD-05 graceful degradation affects user journeys.
-- `18_RBAC` — Authorization enforcement points referenced in §9.2.
-- `19_AdminSpecification` — How admin interacts with Registry and Infrastructure.
-- `22_DeploymentGuide` — Operationalizes AD-06.
-- `23_AI_Guideline` — Constrains AI's interaction with this architecture (LOCK-09, EC-11).
+- `11_ProductConstitution` — Expands PC-02, PC-03, PC-05, PC-10.
+- `12_ToolManifestSpecification` — Schema referenced by AD-03.
+- `14_ACD` §Tool Engine Component — Implementation of AD-02.
+- `16_DatabaseDesign` — Infrastructure Layer persistence implementation.
+- `17_APIConvention` — Infrastructure Layer external API implementation.
+- `18_SEOSpecification` — How AD-03 registry satisfies LOCK-08.
+- `19_UserFlow` — How AD-05 graceful degradation affects user journeys.
+- `20_RBAC` — Authorization enforcement points referenced in §9.2.
+- `21_AdminSpecification` — How admin interacts with Registry and Infrastructure.
+- `24_DeploymentGuide` — Operationalizes AD-06.
+- `25_AI_Guideline` — Constrains AI's interaction with this architecture (LOCK-09, EC-11).

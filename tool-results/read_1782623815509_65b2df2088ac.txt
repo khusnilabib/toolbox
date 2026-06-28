@@ -1,0 +1,691 @@
+     1→# 08 — Coding Standards
+     2→
+     3→> **Status:** 🟢 Approved
+     4→> **Document Owner:** Chief Architect
+     5→> **Last Updated:** 2026-06-28
+     6→> **Revision:** 1.0.0
+     7→> **Implements:** LOCK-04 (Modular), LOCK-09 (AI Discipline); EC-01 (Documentation First), EC-02 (One Source of Truth), EC-03 (Component Reuse First), EC-07 (Performance Budget), EC-08 (Security by Default), EC-09 (Testing Philosophy), EC-10 (Design System Governance)
+     8→
+     9→---
+    10→
+    11→## 1. Purpose
+    12→
+    13→This Coding Standards document defines the mandatory rules for writing code in [PROJECT_NAME]. It operationalizes the Engineering Constitution articles that govern code quality: EC-01 (documentation first), EC-02 (one source of truth), EC-03 (component reuse first), EC-07 (performance budget), EC-08 (security by default), EC-09 (testing philosophy), and EC-10 (design system governance).
+    14→
+    15→Without explicit coding standards, a codebase accumulates inconsistency: one file uses `any`, another uses unknown; one team uses React Query, another uses raw fetch; one engineer adds a 50KB dependency for a one-liner. Over months, the codebase becomes a patchwork that resists change. Coding standards prevent this by making the right choice the default and the wrong choice a deliberate, documented exception.
+    16→
+    17→This document is enforced via ESLint, Prettier, TypeScript compiler options, Husky pre-commit hooks, and code review. Standards that cannot be enforced automatically are enforced via review checklist (§10). Every PR must pass automated checks AND satisfy the review checklist.
+    18→
+    19→## 2. Scope
+    20→
+    21→### 2.1 In Scope
+    22→
+    23→- TypeScript configuration and strict mode rules.
+    24→- ESLint rules and custom boundary enforcement.
+    25→- Prettier formatting configuration.
+    26→- Code style rules (naming within files, structure, patterns).
+    27→- Performance budget numbers and enforcement.
+    28→- Security coding rules (input validation, output sanitization, secrets handling).
+    29→- Testability requirements for engines and shared code.
+    30→- Design system compliance rules.
+    31→- Code review checklist.
+    32→- File size limits and refactoring triggers.
+    33→
+    34→### 2.2 Out of Scope
+    35→
+    36→- File and folder naming conventions → `07_FolderStructure`.
+    37→- Variable, function, type naming → `09_NamingConvention`.
+    38→- Design tokens and visual design → `10_DesignSystem`.
+    39→- Testing strategy and framework choices → `21_TestingStrategy`.
+    40→- PR workflow and branching → `20_DevelopmentGuideline`.
+    41→
+    42→## 3. Architectural Decisions
+    43→
+    44→### AD-01 — TypeScript Strict Configuration
+    45→
+    46→**Context.** TypeScript's default settings allow many unsafe patterns (implicit any, null indexing, unchecked optional access). Without strict mode, type safety is illusory.
+    47→
+    48→**Decision.** TypeScript configuration enforces:
+    49→
+    50→```json
+    51→{
+    52→  "compilerOptions": {
+    53→    "strict": true,
+    54→    "noUncheckedIndexedAccess": true,
+    55→    "noImplicitOverride": true,
+    56→    "exactOptionalPropertyTypes": true,
+    57→    "noFallthroughCasesInSwitch": true,
+    58→    "noUnusedLocals": true,
+    59→    "noUnusedParameters": true,
+    60→    "noImplicitReturns": true,
+    61→    "forceConsistentCasingInFileNames": true,
+    62→    "skipLibCheck": true
+    63→  }
+    64→}
+    65→```
+    66→
+    67→**Consequences.**
+    68→- ✅ Maximum type safety from the compiler.
+    69→- ✅ Many bugs caught at compile time.
+    70→- ⚠️ Slightly more verbose code; justified.
+    71→
+    72→**Implements:** EC-08 (Security by Default — type safety is a security property).
+    73→
+    74→### AD-02 — No `any` Type
+    75→
+    76→**Context.** `any` defeats TypeScript's purpose. Code with `any` is essentially JavaScript — type errors pass through silently.
+    77→
+    78→**Decision.** The `any` type is banned via ESLint rule `@typescript-eslint/no-explicit-any`. When the type is genuinely unknown, use `unknown` and narrow with type guards or Zod schemas.
+    79→
+    80→**Exceptions:** None. If you genuinely need `any`, propose an ADR.
+    81→
+    82→**Implements:** EC-08, EC-02 (one source of truth — types are the source).
+    83→
+    84→### AD-03 — Zod at Every IO Boundary
+    85→
+    86→**Context.** TypeScript types vanish at runtime. Data from external sources (user input, API responses, file metadata, environment variables) is not type-checked at runtime without explicit validation.
+    87→
+    88→**Decision.** Every IO boundary is validated with a Zod schema:
+    89→- API request bodies and query parameters.
+    90→- API response payloads (when from external services).
+    91→- Form submissions.
+    92→- Environment variables at boot.
+    93→- Tool manifest fields.
+    94→- File upload metadata.
+    95→- LocalStorage / IndexedDB reads.
+    96→
+    97→The Zod schema is the single source of truth; TypeScript types are inferred via `z.infer<typeof schema>`.
+    98→
+    99→**Consequences.**
+   100→- ✅ Runtime type safety at all trust boundaries.
+   101→- ✅ Single source of truth — no drift between types and validators.
+   102→- ⚠️ Small runtime cost; negligible.
+   103→
+   104→**Implements:** EC-08 (Security — input validation), EC-02 (One Source of Truth).
+   105→
+   106→### AD-04 — Boundary Enforcement via ESLint
+   107→
+   108→**Context.** `02_SAD` AD-01 and `05_ProjectStructure` AD-07 mandate strict layer boundaries. Without automated enforcement, engineers violate boundaries under deadline pressure.
+   109→
+   110→**Decision.** ESLint `no-restricted-imports` rules enforce:
+   111→- `presentation/` cannot import from `infrastructure/`.
+   112→- `domain/` cannot import from React, Next.js, or any context's `infrastructure/`.
+   113→- `src/tools/` cannot import from any context's `infrastructure/` (LOCK-06).
+   114→- Cross-context internal imports are blocked; only published APIs (server actions) are allowed.
+   115→
+   116→**Consequences.**
+   117→- ✅ Boundary violations fail lint, not review.
+   118→- ✅ LOCK-06 (database optional) enforced structurally.
+   119→- ⚠️ Some legitimate cross-boundary needs require server actions as indirection.
+   120→
+   121→**Implements:** LOCK-04 (Modular), LOCK-06 (Database Optional), EC-02.
+   122→
+   123→### AD-05 — File Size Limits
+   124→
+   125→**Context.** Large files are hard to navigate, hard to test, and often violate single responsibility. Without limits, files grow indefinitely.
+   126→
+   127→**Decision.** File size limits:
+   128→- **Soft limit:** 300 lines per file. Approaching this triggers refactor consideration.
+   129→- **Hard limit:** 500 lines per file. Exceeding this blocks PR merge (enforced via ESLint `max-lines`).
+   130→
+   131→**Exceptions:** Generated files (`src/generated/`) are exempt. Test files have a 500-line soft limit, 800-line hard limit.
+   132→
+   133→**Consequences.**
+   134→- ✅ Files remain navigable and testable.
+   135→- ✅ Single responsibility enforced structurally.
+   136→- ⚠️ Some refactor overhead; justified.
+   137→
+   138→**Implements:** `00_Project_Charter` §7.1 (architectural standards — no giant files).
+   139→
+   140→### AD-06 — Performance Budget
+   141→
+   142→**Context.** EC-07 mandates performance budgets. Without specific numbers, "performance budget" is aspirational, not enforceable.
+   143→
+   144→**Decision.** Performance budgets:
+   145→
+   146→| Metric | Budget | Enforcement |
+   147→|--------|--------|-------------|
+   148→| Tool landing page TTFB (Edge) | <500ms P95 | Vercel Analytics alert |
+   149→| Tool first interaction | <1s on 4G mid-tier | Lighthouse CI |
+   150→| Tool code chunk (gzipped) | <200KB | Bundle analyzer CI |
+   151→| Shared vendor chunk (gzipped) | <300KB | Bundle analyzer CI |
+   152→| Total JS for tool page (gzipped) | <500KB | Bundle analyzer CI |
+   153→| Image assets | <200KB each, optimized | next/image enforcement |
+   154→| Server-side tool cold start | <2s | Vercel logs |
+   155→| Lighthouse Performance score | ≥90 | Lighthouse CI |
+   156→| Lighthouse Accessibility score | ≥95 | Lighthouse CI |
+   157→| Lighthouse SEO score | ≥95 | Lighthouse CI |
+   158→
+   159→Performance regressions (exceeding budget by >10%) block PR merge.
+   160→
+   161→**Implements:** EC-07 (Performance Budget), LOCK-02 (Browser-First — performance angle).
+   162→
+   163→### AD-07 — Security Coding Rules
+   164→
+   165→**Context.** EC-08 mandates security by default. Specific coding rules make "secure by default" concrete.
+   166→
+   167→**Decision.** Security coding rules:
+   168→
+   169→1. **Validate every input.** All external data (user input, API responses, env vars, file uploads) validated with Zod.
+   170→2. **Sanitize every output.** HTML output escaped via React's automatic escaping. Dynamic HTML uses `dompurify`. SQL via Drizzle parameterized queries (never string concatenation).
+   171→3. **Principle of least privilege.** Server actions check RBAC permissions before executing. Database queries use RLS policies enforced at DB layer.
+   172→4. **Secure headers.** `next.config.ts` sets CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
+   173→5. **Strict TypeScript.** No `any`; strict mode enabled.
+   174→6. **Secrets never committed.** All secrets in env vars; `.env.local` gitignored; `secretlint` runs in pre-commit.
+   175→7. **Dependency review.** `pnpm audit` runs in CI. New dependencies require Chief Architect approval (LOCK-09).
+   176→8. **No `dangerouslySetInnerHTML`** without explicit review and DOMPurify sanitization.
+   177→9. **No `eval` or `new Function`** in any code.
+   178→10. **No inline event handlers** in JSX (use React event handlers).
+   179→
+   180→**Implements:** EC-08 (Security by Default).
+   181→
+   182→### AD-08 — Testability Requirements
+   183→
+   184→**Context.** EC-09 mandates testing. Code must be designed for testability; retrofitting tests to untestable code is expensive.
+   185→
+   186→**Decision.** Testability requirements:
+   187→
+   188→1. **Pure functions preferred.** Side effects isolated to specific modules (repositories, services).
+   189→2. **Dependency injection.** External dependencies (DB, APIs, time) injected via function parameters or context, not imported directly.
+   190→3. **No global mutable state.** Module-level constants are OK; module-level mutable state is not. Use Zustand stores for client state, server actions for server state.
+   191→4. **Tool Engine, Registry, Validators, Shared Utilities** designed for independent testing. They have no implicit dependencies on React, DB, or network.
+   192→5. **Mocks for external services.** Tests use mocks for Supabase, Stripe, external APIs. Mocks defined per test or in test setup.
+   193→
+   194→**Consequences.**
+   195→- ✅ Unit tests are fast and reliable.
+   196→- ✅ Refactoring enabled by tests.
+   197→- ⚠️ Requires discipline to inject dependencies rather than import directly.
+   198→
+   199→**Implements:** EC-09 (Testing Philosophy).
+   200→
+   201→### AD-09 — Design System Compliance
+   202→
+   203→**Context.** EC-10 mandates that every visual element originates from the Design System. Without enforcement, pages accumulate ad hoc styling.
+   204→
+   205→**Decision.** Design system compliance rules:
+   206→
+   207→1. **No inline styles.** Use Tailwind classes or design system components.
+   208→2. **No `style={{...}}` props** except for dynamic values that cannot be expressed in Tailwind (e.g., computed positions).
+   209→3. **No CSS files** except `globals.css` (Tailwind imports and CSS custom properties).
+   210→4. **Use design tokens.** Colors via `bg-background`, `text-foreground`, etc. Spacing via Tailwind scale. Never hardcoded `#fff` or `padding: 12px`.
+   211→5. **Use design system components.** `Button`, `Input`, `Card`, `Dialog`, etc. from `@packages/ui`. Don't reinvent.
+   212→6. **Icons from `lucide-react` only.** No SVG sprites, no icon fonts.
+   213→7. **Dark mode supported.** Every component works in both light and dark mode via token switching.
+   214→
+   215→**Implements:** EC-10 (Design System Governance), LOCK-10 (Design Philosophy).
+   216→
+   217→### AD-10 — DRY Enforcement
+   218→
+   219→**Context.** EC-02 mandates one source of truth. Without enforcement, duplication accumulates.
+   220→
+   221→**Decision.** DRY enforcement:
+   222→
+   223→1. **Constants in one place.** Shared constants live in `@packages/utils` or context's `domain/`. Never duplicated across files.
+   224→2. **Validation logic in Zod schemas.** Validation rules live in Zod schemas, not in if/else chains repeated per use.
+   225→3. **Business rules in domain layer.** Business logic lives in domain entities/aggregates, not in components or API routes.
+   226→4. **Components reused, not copied.** Before creating a component, search `@packages/ui` and `src/shared/components/` (EC-03).
+   227→5. **ESLint `no-duplicate-imports`** prevents duplicate imports within a file.
+   228→6. **Code review checklist** includes "Is this logic duplicated anywhere?" question.
+   229→
+   230→**Implements:** EC-02 (One Source of Truth), EC-03 (Component Reuse First).
+   231→
+   232→### AD-11 — Composition Over Inheritance
+   233→
+   234→**Context.** Deep inheritance hierarchies are hard to reason about and refactor. Composition (small, composable pieces) scales better.
+   235→
+   236→**Decision.** Prefer composition over inheritance:
+   237→- Components compose via props and children.
+   238→- Hooks compose via `useHookA()` calling `useHookB()`.
+   239→- Tools compose via Tool Engine stages (each stage is a function, not a class).
+   240→- No class inheritance deeper than 1 level. Prefer interfaces + composition.
+   241→
+   242→**Exceptions:** Domain entities MAY use limited inheritance for shared base behavior, documented per case.
+   243→
+   244→**Implements:** `00_Project_Charter` §9 (Coding Rules — prefer composition).
+   245→
+   246→### AD-12 — No Hardcoded Values
+   247→
+   248→**Context.** Hardcoded values (URLs, file size limits, timeouts, magic numbers) scattered across the codebase are impossible to update consistently.
+   249→
+   250→**Decision.** No hardcoded values:
+   251→- URLs in `src/shared/config/site-config.ts`.
+   252→- Limits (file size, rate limit) in `src/shared/config/limits.ts`.
+   253→- Timeouts in `src/shared/config/timeouts.ts`.
+   254→- Magic numbers extracted as named constants at the top of the file or in a config.
+   255→- Environment-specific values in env vars.
+   256→
+   257→**Exceptions:** Truly local constants (used once, never change) may be inline with a comment explaining the value.
+   258→
+   259→**Implements:** EC-02 (One Source of Truth).
+   260→
+   261→## 4. Design Principles
+   262→
+   263→### P1 — Type Safety Is Security
+   264→Strict TypeScript + Zod runtime validation = type errors caught at compile time AND runtime. This is a security property, not just a developer experience.
+   265→
+   266→### P2 — Pure Where Possible
+   267→Pure functions are easy to test, easy to reason about, and easy to refactor. Side effects are isolated to specific modules.
+   268→
+   269→### P3 — Fail Loud, Fail Early
+   270→Invalid input fails at the boundary (Zod validation), not deep in the call stack. Errors are typed and actionable, not generic "something went wrong."
+   271→
+   272→### P4 — Composition Scales
+   273→Small composable pieces (functions, hooks, components) scale better than monolithic inheritance hierarchies.
+   274→
+   275→### P5 — Performance Is a Feature
+   276→Performance budgets are enforced like functional requirements. Regressions are bugs.
+   277→
+   278→### P6 — Security Is Proactive
+   279→Security rules apply to all code, not just "security-sensitive" code. Defense in depth.
+   280→
+   281→### P7 — Tests Enable Refactoring
+   282→Code is written to be tested. Tests are written to enable future refactoring, not to achieve coverage metrics.
+   283→
+   284→## 5. TypeScript Standards
+   285→
+   286→### 5.1 Compiler Configuration
+   287→Per AD-01. Strict mode with additional safety flags.
+   288→
+   289→### 5.2 Path Aliases
+   290→```json
+   291→{
+   292→  "paths": {
+   293→    "@/*": ["./src/*"],
+   294→    "@tools/*": ["./src/tools/*"],
+   295→    "@shared/*": ["./src/shared/*"],
+   296→    "@packages/*": ["./packages/*"]
+   297→  }
+   298→}
+   299→```
+   300→
+   301→### 5.3 Type Definitions
+   302→- Shared types in `@packages/types`.
+   303→- Context-specific types in context's `domain/schemas/`.
+   304→- Tool-specific types in tool's `manifest.ts` (Zod schemas inferred to types).
+   305→- Never duplicate a type definition; if needed in multiple places, promote to shared.
+   306→
+   307→### 5.4 Generic Constraints
+   308→- Generics constrained with `extends` where possible.
+   309→- Avoid unbounded generics `<T>`; use `<T extends unknown>` or specific constraints.
+   310→
+   311→### 5.5 Union Types vs Enums
+   312→- Prefer union types (`type Status = 'active' | 'inactive'`) over enums (better tree-shaking, simpler runtime).
+   313→- Use enums only when values need to be iterated or reverse-mapped.
+   314→
+   315→### 5.6 Null vs Undefined
+   316→- Use `undefined` for "not set" (consistent with JavaScript defaults).
+   317→- Use `null` only for explicit "no value" (e.g., JSON from APIs).
+   318→- Never use both interchangeably.
+   319→
+   320→## 6. ESLint Configuration
+   321→
+   322→### 6.1 Base Rules
+   323→- `next/core-web-vitals` baseline.
+   324→- `@typescript-eslint/recommended` and `@typescript-eslint/recommended-type-checked`.
+   325→- `eslint-plugin-drizzle` for DB query linting.
+   326→- `eslint-plugin-jsx-a11y` for accessibility (EC-06).
+   327→
+   328→### 6.2 Custom Rules
+   329→- `no-restricted-imports` (AD-04) — boundary enforcement.
+   330→- `@typescript-eslint/no-explicit-any` — ban `any` (AD-02).
+   331→- `no-console` in production code — use structured logger.
+   332→- `max-lines` — 500 line hard limit (AD-05).
+   333→- `react/no-danger` — ban `dangerouslySetInnerHTML` (AD-07).
+   334→- `no-eval` — ban `eval` (AD-07).
+   335→- `prefer-const` — require `const` where possible.
+   336→- `no-unused-vars` — ban unused variables.
+   337→- `eqeqeq` — require strict equality.
+   338→
+   339→### 6.3 Rule Severity
+   340→- **Error:** Blocks PR merge. Used for security, boundary, type safety rules.
+   341→- **Warn:** Shows warning but doesn't block. Used for style preferences.
+   342→
+   343→## 7. Prettier Configuration
+   344→
+   345→```json
+   346→{
+   347→  "printWidth": 100,
+   348→  "tabWidth": 2,
+   349→  "semi": true,
+   350→  "singleQuote": true,
+   351→  "trailingComma": "all",
+   352→  "bracketSpacing": true,
+   353→  "arrowParens": "always",
+   354→  "endOfLine": "lf"
+   355→}
+   356→```
+   357→
+   358→Prettier runs on save (via VS Code workspace config) and on pre-commit (via Husky + lint-staged).
+   359→
+   360→## 8. Code Style Rules
+   361→
+   362→### 8.1 Function Standards
+   363→- Functions ≤50 lines preferred. Functions >100 lines require justification.
+   364→- Pure functions preferred; side effects isolated.
+   365→- Early return for invalid input (guard clauses), not nested if/else.
+   366→- Async functions use `async/await`, not `.then()/.catch()`.
+   367→
+   368→### 8.2 Component Standards
+   369→- Function components only (no class components).
+   370→- One component per file (AD-02 in `07_FolderStructure`).
+   371→- Props typed via interface, defined immediately above the component.
+   372→- Hooks called at top level, never in conditions or loops.
+   373→- Side effects in `useEffect`, with cleanup when needed.
+   374→
+   375→### 8.3 Hook Standards
+   376→- Custom hooks prefixed with `use` (e.g., `useToolHistory`).
+   377→- Hooks return typed values; never `any`.
+   378→- Hooks are pure given their inputs; side effects via `useEffect`.
+   379→
+   380→### 8.4 Server Action Standards
+   381→- Marked with `'use server'` directive.
+   382→- Input validated with Zod schema.
+   383→- RBAC permission check before execution.
+   384→- Return typed result; throw typed errors.
+   385→- No direct DB access bypassing repository layer.
+   386→
+   387→### 8.5 Error Handling
+   388→- Errors are typed (union of error kinds, not `Error`).
+   389→- Errors caught at stage boundaries (Tool Engine handles).
+   390→- No `try/catch` with empty `catch` block.
+   391→- No swallowing errors (catch must at least log).
+   392→
+   393→### 8.6 Import Standards
+   394→- Imports sorted: external → internal → relative (enforced via `eslint-plugin-import`).
+   395→- No circular imports (detected via `madge` in CI).
+   396→- No unused imports (auto-removed via ESLint).
+   397→- Named imports preferred over default imports (except for components).
+   398→
+   399→## 9. Performance Standards
+   400→
+   401→### 9.1 Bundle Size
+   402→- Per AD-06. Tool chunks <200KB gzipped; total JS per page <500KB gzipped.
+   403→- Bundle analyzer runs in CI; regressions block merge.
+   404→
+   405→### 9.2 Lazy Loading
+   406→- Tool code lazy-loaded via dynamic import.
+   407→- Heavy libraries (pdf-lib, tesseract.js) lazy-loaded only when tool is used.
+   408→- Below-the-fold components lazy-loaded via `next/dynamic`.
+   409→
+   410→### 9.3 Image Optimization
+   411→- All images via `next/image` (automatic optimization, responsive sizes, lazy loading).
+   412→- No `<img>` tags directly.
+   413→- SVGs inlined when small (<5KB); otherwise as image files.
+   414→
+   415→### 9.4 Font Loading
+   416→- Fonts via `next/font` (automatic optimization, no layout shift).
+   417→- Maximum 2 font families loaded.
+   418→- Variable fonts preferred (one file, multiple weights).
+   419→
+   420→### 9.5 Caching
+   421→- Static assets: immutable cache (1 year).
+   422→- HTML: revalidate (1 hour for tool pages, 24 hours for blog).
+   423→- API responses: cache explicitly with `Cache-Control` headers.
+   424→
+   425→### 9.6 Render Performance
+   426→- Avoid unnecessary re-renders via `useMemo`, `useCallback`, `React.memo`.
+   427→- Don't optimize prematurely; measure first with React DevTools profiler.
+   428→
+   429→## 10. Security Standards (Detailed)
+   430→
+   431→### 10.1 Input Validation
+   432→- All external input validated with Zod.
+   433→- Validation at the boundary (server action entry, API route handler, form submit handler).
+   434→- Invalid input returns typed error, never proceeds.
+   435→
+   436→### 10.2 Output Encoding
+   437→- React escapes HTML by default; never bypass.
+   438→- Dynamic HTML uses `dompurify.sanitize()`.
+   439→- SQL via Drizzle parameterized queries; never string concatenation.
+   440→- URLs validated before redirect (prevent open redirect).
+   441→
+   442→### 10.3 Authentication
+   443→- JWT verified at Edge Middleware (no DB call per request).
+   444→- Session refresh automatic via Supabase client.
+   445→- Logout invalidates session server-side.
+   446→
+   447→### 10.4 Authorization
+   448→- RBAC enforced at server action entry.
+   449→- Database RLS policies enforce row-level access.
+   450→- Admin actions require admin role; super-admin actions require super-admin.
+   451→
+   452→### 10.5 Secrets Management
+   453→- All secrets in env vars (`.env.local` for dev, Vercel env vars for prod).
+   454→- `.env.local` in `.gitignore`.
+   455→- `secretlint` runs in pre-commit hook.
+   456→- No secrets in client bundles; only `NEXT_PUBLIC_*` vars accessible client-side.
+   457→
+   458→### 10.6 HTTP Headers
+   459→- Content-Security-Policy configured in `next.config.ts`.
+   460→- X-Frame-Options: DENY.
+   461→- X-Content-Type-Options: nosniff.
+   462→- Referrer-Policy: strict-origin-when-cross-origin.
+   463→- Permissions-Policy: restricts camera, microphone, geolocation.
+   464→
+   465→### 10.7 File Upload Security
+   466→- File type validated (MIME + extension).
+   467→- File size limited per tool (declared in manifest).
+   468→- Server-side tools: files stored in temp bucket with 1h TTL.
+   469→- No executable file types accepted.
+   470→
+   471→## 11. Testability Requirements (Detailed)
+   472→
+   473→### 11.1 Pure Functions
+   474→- Business logic in pure functions, no side effects.
+   475→- Side effects (DB, API, file system) isolated to infrastructure layer.
+   476→
+   477→### 11.2 Dependency Injection
+   478→- External dependencies passed as parameters or via context.
+   479→- No direct imports of `supabase-client` in domain/application layers.
+   480→- Use factory functions or context providers.
+   481→
+   482→### 11.3 Mocking Strategy
+   483→- Vitest mocks for Supabase, Stripe, external APIs.
+   484→- Mocks defined in test setup files per context.
+   485→- No real network calls in unit tests.
+   486→
+   487→### 11.4 Test Data
+   488→- Test fixtures in `tests/fixtures/`.
+   489→- Factory functions for creating test entities.
+   490→- No shared mutable test state.
+   491→
+   492→### 11.5 Coverage Targets
+   493→- Domain layer: ≥90% line coverage.
+   494→- Application layer: ≥80% line coverage.
+   495→- Tool stages: ≥85% line coverage.
+   496→- Presentation layer: ≥60% line coverage (focus on interaction logic).
+   497→- Infrastructure layer: ≥70% line coverage.
+   498→
+   499→Coverage is tracked but not enforced as a hard gate; the gate is "tests exist for critical paths."
+   500→
+   501→## 12. Design System Compliance (Detailed)
+   502→
+   503→### 12.1 Token Usage
+   504→- Colors: `bg-background`, `text-foreground`, `bg-primary`, `text-primary-foreground`, etc.
+   505→- Spacing: Tailwind scale (`p-4`, `mt-8`, `gap-2`).
+   506→- Typography: `text-sm`, `text-base`, `text-lg`, `font-medium`, `font-semibold`.
+   507→- Radius: `rounded-md`, `rounded-lg`, `rounded-full`.
+   508→- Shadows: `shadow-sm`, `shadow-md`, `shadow-lg`.
+   509→
+   510→### 12.2 Component Usage
+   511→- Use `@packages/ui` components for all primitives.
+   512→- Compose primitives into higher-level components in `src/shared/components/`.
+   513→- Tool-specific components in tool's `components/` folder.
+   514→- No reinventing Button, Input, Select, etc.
+   515→
+   516→### 12.3 Dark Mode
+   517→- Every component works in light and dark mode.
+   518→- Test both modes in Storybook (Phase 2+) or via dev tools toggle.
+   519→- No hardcoded colors; everything via tokens.
+   520→
+   521→### 12.4 Accessibility
+   522→- WCAG 2.1 AA conformance (EC-06).
+   523→- Semantic HTML (`<button>`, `<nav>`, `<main>`, `<article>`).
+   524→- ARIA attributes only when semantic HTML insufficient.
+   525→- Keyboard navigation tested per component.
+   526→- Focus visibility via Tailwind `focus-visible:` classes.
+   527→- Reduced motion via `motion-reduce:` classes.
+   528→
+   529→## 13. Code Review Checklist
+   530→
+   531→Every PR must satisfy this checklist before approval:
+   532→
+   533→### 13.1 Architecture & Boundaries
+   534→- [ ] No boundary violations (ESLint passes).
+   535→- [ ] No `any` types introduced.
+   536→- [ ] File size within limits (300 soft, 500 hard).
+   537→- [ ] No new dependencies without ADR approval (LOCK-09).
+   538→
+   539→### 13.2 Type Safety & Validation
+   540→- [ ] All IO boundaries validated with Zod.
+   541→- [ ] No `as` type assertions without justification.
+   542→- [ ] No `!` non-null assertions without justification.
+   543→- [ ] Types inferred from Zod schemas, not duplicated.
+   544→
+   545→### 13.3 Security
+   546→- [ ] Input validated.
+   547→- [ ] Output escaped/sanitized.
+   548→- [ ] No secrets in code.
+   549→- [ ] RBAC checks in server actions.
+   550→- [ ] No `dangerouslySetInnerHTML` without DOMPurify.
+   551→
+   552→### 13.4 Performance
+   553→- [ ] Bundle size within budget.
+   554→- [ ] Lazy loading where appropriate.
+   555→- [ ] No unnecessary re-renders.
+   556→- [ ] Images via `next/image`.
+   557→- [ ] Lighthouse scores within budget (if UI change).
+   558→
+   559→### 13.5 Testing
+   560→- [ ] Tests added for new logic.
+   561→- [ ] Tests pass locally.
+   562→- [ ] Coverage maintained or improved.
+   563→- [ ] E2E tests added for user-facing flows.
+   564→
+   565→### 13.6 Design System
+   566→- [ ] No inline styles (except dynamic values).
+   567→- [ ] No hardcoded colors/spacing.
+   568→- [ ] Components from `@packages/ui`.
+   569→- [ ] Dark mode supported.
+   570→- [ ] Accessibility verified (keyboard, screen reader).
+   571→
+   572→### 13.7 Documentation
+   573→- [ ] Docs updated if behavior changed (EC-01).
+   574→- [ ] ADR added/updated if architectural decision changed.
+   575→- [ ] Tool README updated if tool behavior changed.
+   576→- [ ] JSDoc added for public APIs.
+   577→
+   578→### 13.8 DRY & Reuse
+   579→- [ ] No duplicated logic (EC-02).
+   580→- [ ] Existing components extended rather than duplicated (EC-03).
+   581→- [ ] Constants extracted to config (AD-12).
+   582→
+   583→## 14. Best Practices
+   584→
+   585→### 14.1 When Writing a New Function
+   586→1. Make it pure if possible.
+   587→2. Type all inputs and outputs.
+   588→3. Validate inputs at the boundary.
+   589→4. Keep it under 50 lines.
+   590→5. Write a test alongside it.
+   591→
+   592→### 14.2 When Writing a New Component
+   593→1. Check `@packages/ui` for existing (EC-03).
+   594→2. One component per file.
+   595→3. Props typed via interface.
+   596→4. Use design tokens, not hardcoded values.
+   597→5. Verify dark mode and accessibility.
+   598→6. Write a component test.
+   599→
+   600→### 14.3 When Adding a Server Action
+   601→1. Mark with `'use server'`.
+   602→2. Validate input with Zod.
+   603→3. Check RBAC permissions.
+   604→4. Use repository pattern for DB access.
+   605→5. Return typed result; throw typed error.
+   606→6. Write integration test.
+   607→
+   608→### 14.4 When Adding a Tool Stage
+   609→1. Follow Tool Engine contract (`02_SAD` §6).
+   610→2. Pure function where possible.
+   611→3. Type input/output via Zod schemas.
+   612→4. No side effects except in `history` stage (best-effort).
+   613→5. Write unit test for the stage.
+   614→
+   615→### 14.5 When Refactoring
+   616→1. Tests must pass before and after.
+   617→2. One refactoring per PR (don't mix with feature changes).
+   618→3. Update docs if behavior changes.
+   619→4. Use TypeScript to find all call sites.
+   620→
+   621→### 14.6 When Fixing a Bug
+   622→1. Write a failing test that reproduces the bug.
+   623→2. Fix the bug.
+   624→3. Verify test passes.
+   625→4. Run full test suite to ensure no regression.
+   626→
+   627→## 15. Future Scalability
+   628→
+   629→### 15.1 Scaling Standards to New Contexts
+   630→- New contexts inherit these standards automatically.
+   631→- Context-specific standards (if any) added as appendix to this document.
+   632→
+   633→### 15.2 Scaling to Multiple Teams
+   634→- Each team adopts these standards.
+   635→- Cross-team code review ensures consistency.
+   636→- Standards changes require ADR.
+   637→
+   638→### 15.3 Automation Roadmap
+   639→- Phase 1: ESLint, Prettier, TypeScript, Husky, lint-staged.
+   640→- Phase 2: Bundle analyzer in CI, Lighthouse CI, accessibility CI.
+   641→- Phase 3: Type coverage tracking, performance regression detection.
+   642→
+   643→## 16. Dependencies
+   644→
+   645→### 16.1 Document Dependencies
+   646→- Depends on `00_Project_Charter` §3, §4 — LOCKs and ECs these standards implement.
+   647→- Depends on `02_SAD` — architectural decisions enforced via ESLint.
+   648→- Depends on `04_TechStack` — TypeScript, ESLint, Prettier configurations.
+   649→- Depends on `05_ProjectStructure`, `07_FolderStructure` — boundary rules.
+   650→- `06_ArchitectureDecisionRecords` — records AD-01 through AD-12.
+   651→- `09_NamingConvention` — naming rules within files.
+   652→- `10_DesignSystem` — design tokens used in code.
+   653→- `20_DevelopmentGuideline` — PR workflow enforcing these standards.
+   654→- `21_TestingStrategy` — testing standards complement these.
+   655→
+   656→### 16.2 External Dependencies
+   657→- TypeScript 5+, ESLint, Prettier, Husky, lint-staged.
+   658→- `eslint-plugin-drizzle`, `eslint-plugin-jsx-a11y`, `eslint-plugin-import`.
+   659→- `secretlint` for secrets detection.
+   660→- `madge` for circular dependency detection.
+   661→
+   662→### 16.3 Assumptions
+   663→- Team accepts the discipline of strict TypeScript, Zod validation, and boundary enforcement.
+   664→- CI infrastructure can run all checks within reasonable time (<10 minutes per PR).
+   665→
+   666→## 17. Revision History
+   667→
+   668→| Revision | Date | Author | Change |
+   669→|----------|------|--------|--------|
+   670→| 1.0.0 | 2026-06-28 | Chief Architect | Initial Coding Standards. Defined TypeScript strict config, no-any rule, Zod-at-boundaries rule, boundary enforcement via ESLint, file size limits, performance budget, security coding rules, testability requirements, design system compliance, code review checklist. |
+   671→
+   672→## 18. Cross References
+   673→
+   674→- `00_Project_Charter` §3, §4 — LOCKs and ECs implemented.
+   675→- `02_SAD` AD-01 — Layered architecture enforced via ESLint here.
+   676→- `04_TechStack` AD-02, §9 — TypeScript and ESLint configurations.
+   677→- `05_ProjectStructure` AD-07 — Database-optional layout enforced here.
+   678→- `06_ArchitectureDecisionRecords` — ADR-013 through ADR-024 (ECs), ADR-025 through ADR-053 (technical ADs).
+   679→- `07_FolderStructure` — File and folder conventions complementing these standards.
+   680→- `09_NamingConvention` — Naming rules within files.
+   681→- `10_DesignSystem` — Design tokens used in code.
+   682→- `11_FBRD` — Tool manifest schema validated via Zod.
+   683→- `12_ACD` — Reusable components from `@packages/ui`.
+   684→- `14_DatabaseDesign` — RLS policies complement security rules.
+   685→- `15_APIConvention` — API-specific coding rules.
+   686→- `18_RBAC` — Authorization rules enforced in server actions.
+   687→- `20_DevelopmentGuideline` — PR workflow including this checklist.
+   688→- `21_TestingStrategy` — Testing standards referenced in §11.
+   689→- `22_DeploymentGuide` — CI pipeline runs these checks.
+   690→- `23_AI_Guideline` — AI must follow these standards (LOCK-09, EC-11).
+   691→

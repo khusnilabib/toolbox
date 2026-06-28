@@ -3,8 +3,8 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.0.0
-> **Implements:** LOCK-10 (Design Philosophy); EC-06 (Accessibility First), EC-10 (Design System Governance)
+> **Revision:** 1.1.0
+> **Implements:** LOCK-10 (Design Philosophy); EC-06 (Accessibility First), EC-10 (Design System Governance); PC-05 (UX Consistency), PC-08 (Error Experience)
 
 ---
 
@@ -22,7 +22,7 @@ This document is enforced via Tailwind configuration (tokens mapped to Tailwind 
 
 - Design tokens: colors, typography, spacing, radius, shadows, motion, z-index.
 - Light/dark mode theming strategy.
-- Component patterns (Button, Input, Card, etc. — high-level; details in `12_ACD`).
+- Component patterns (Button, Input, Card, etc. — high-level; details in `14_ACD`).
 - Accessibility standards (WCAG AA, keyboard, focus, screen reader, reduced motion).
 - Icon system (lucide-react).
 - Layout grid and breakpoints.
@@ -31,9 +31,9 @@ This document is enforced via Tailwind configuration (tokens mapped to Tailwind 
 
 ### 2.2 Out of Scope
 
-- Detailed component APIs and props → `12_ACD`.
-- User flows and interaction patterns → `13_UDS`.
-- Specific page layouts → per-page specs in `11_FBRD` and beyond.
+- Detailed component APIs and props → `14_ACD`.
+- User flows and interaction patterns → `15_UDS`.
+- Specific page layouts → per-page specs in `13_FBRD` and beyond.
 - Brand voice and tone → `01_BRD` §3.3.
 - Logo design → brand assets in `/public/images/`.
 
@@ -567,7 +567,7 @@ Per AD-12.
 
 ## 6. Component Patterns (Overview)
 
-Detailed component APIs in `12_ACD`. This section lists the components in the design system and their purposes.
+Detailed component APIs in `14_ACD`. This section lists the components in the design system and their purposes.
 
 ### 6.1 Primitives (in `@packages/ui`)
 
@@ -793,7 +793,7 @@ export default config;
 ### 10.2 Adding New Components
 - New primitives added to `@packages/ui`.
 - New composites added to `src/shared/components/`.
-- Documented in `12_ACD`.
+- Documented in `14_ACD`.
 
 ### 10.3 Brand Customization (Phase 4)
 - White-label: change CSS custom properties per tenant.
@@ -814,8 +814,8 @@ export default config;
 - Depends on `04_TechStack` — Tailwind, shadcn/ui, lucide-react.
 - Depends on `08_CodingStandards` — Design system compliance rules.
 - `06_ArchitectureDecisionRecords` — records AD-01 through AD-12.
-- `12_ACD` — Detailed component APIs.
-- `13_UDS` — User flows and interaction patterns.
+- `14_ACD` — Detailed component APIs.
+- `15_UDS` — User flows and interaction patterns.
 
 ### 11.2 External Dependencies
 - Tailwind CSS 4+.
@@ -832,22 +832,25 @@ export default config;
 | Revision | Date | Author | Change |
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial Design System. Defined token-driven theming via CSS custom properties, monochrome palette with single accent, typography scale, spacing scale, radius scale, shadow scale, motion standards, layout grid, icon system, accessibility standards (WCAG AA), dark mode strategy, z-index scale. Listed component patterns and Tailwind configuration. |
+| 1.1.0 | 2026-06-28 | Chief Architect | Linked design system to PC-05 (UX Consistency) and PC-08 (Error Experience). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
 
 ## 13. Cross References
 
-- `00_Project_Charter` §3 LOCK-10, §4 EC-06, EC-10 — Implemented.
+- `00_Project_Charter` §3 LOCK-10, §4 EC-06, EC-10, §5 PC-05, PC-08 — Implemented.
 - `01_BRD` §3.3 — Brand trust goal supported by consistent design.
 - `02_SAD` — Components align with architectural layers.
 - `04_TechStack` AD-05, AD-06 — shadcn/ui and Tailwind power this system.
 - `06_ArchitectureDecisionRecords` — ADR-010 (Design Philosophy), ADR-018 (Accessibility), ADR-022 (Design System Governance), ADR-040 (shadcn/ui), ADR-041 (Tailwind).
+- `11_ProductConstitution` — Expands PC-05 (UX Consistency), PC-08 (Error Experience).
+- `12_ToolManifestSpecification` — Manifest references design system components.
 - `07_FolderStructure` — Component file locations.
 - `08_CodingStandards` §12 — Design system compliance rules.
 - `09_NamingConvention` — CSS class and token naming.
-- `11_FBRD` — Tool manifests reference design system components.
-- `12_ACD` — Detailed component APIs and contracts.
-- `13_UDS` — User flows using these components.
-- `16_SEOSpecification` — Open Graph image standards use design tokens.
-- `19_AdminSpecification` — Admin UI uses same design system.
-- `21_TestingStrategy` — Accessibility and visual testing.
-- `22_DeploymentGuide` — Performance monitoring of design choices.
-- `23_AI_Guideline` — AI must use design system (LOCK-09, EC-11).
+- `13_FBRD` — Tool manifests reference design system components.
+- `14_ACD` — Detailed component APIs and contracts.
+- `15_UDS` — User flows using these components.
+- `18_SEOSpecification` — Open Graph image standards use design tokens.
+- `21_AdminSpecification` — Admin UI uses same design system.
+- `23_TestingStrategy` — Accessibility and visual testing.
+- `24_DeploymentGuide` — Performance monitoring of design choices.
+- `25_AI_Guideline` — AI must use design system (LOCK-09, EC-11).
