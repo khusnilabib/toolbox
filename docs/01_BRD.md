@@ -3,26 +3,27 @@
 > **Status:** 🟢 Approved
 > **Document Owner:** Chief Architect (acting PM)
 > **Last Updated:** 2026-06-28
-> **Revision:** 1.0.0
+> **Revision:** 1.1.0
 
 ---
 
 ## 1. Purpose
 
-This Business Requirements Document translates the mission and vision established in `00_Project_Charter` into concrete business requirements: who the product serves, what value it delivers, how success is measured, and how it sustains itself financially while remaining free-tier-first. It is the authoritative reference for product prioritization, monetization decisions, and KPI definition.
+This Business Requirements Document translates the mission, vision, and Architectural Locks established in `00_Project_Charter` into concrete business requirements for **[PROJECT_NAME]** — a **browser-first productivity ecosystem that enables users to solve everyday digital tasks without installing software and without requiring an account.** This document defines who the product serves, what value it delivers, how success is measured, and how it sustains itself financially while remaining free-tier-first.
 
 Every feature in the backlog (`25_Backlog`) must trace back to a business requirement in this document. Features that cannot trace back are out of scope until the BRD is amended. This traceability rule prevents scope creep — the single most common failure mode for productivity-tool platforms, where the temptation to "just add one more tool" is constant.
 
-The BRD is intentionally separate from the SAD (`02_SAD`). Business requirements drive architecture; architecture never drives business requirements. When the two conflict, business wins, and architecture is refactored to support it.
+The BRD is intentionally separate from the SAD (`02_SAD`). Business requirements drive architecture; architecture never drives business requirements. When the two conflict, business wins, and architecture is refactored to support it. The single exception is the Architectural Locks in `00_Project_Charter` §3 — those locks have priority over both business and architecture, because they encode the platform's permanent identity (LOCK-01) and the constraints that make the identity sustainable (LOCK-02 through LOCK-12).
 
 ## 2. Scope
 
 ### 2.1 Business In Scope
 
-- A free, guest-accessible, browser-first productivity tools platform.
+- A free, guest-accessible, **browser-first** productivity tools ecosystem — the platform's permanent identity per LOCK-01.
+- Browser-side processing as the default execution model (LOCK-02). This is both a technical commitment and a marketing claim: "Your files never leave your device."
 - Freemium monetization: free tier with usage limits and ads; premium tier with higher limits, no ads, and AI features.
 - SEO-driven organic acquisition as the primary growth channel through Phase 2.
-- Integrated admin panel for content, users, analytics, and configuration.
+- Integrated admin panel (LOCK-11) for content, users, analytics, and configuration.
 - A content layer (articles, guides, comparison pages) that supports SEO and funnels users to tools.
 
 ### 2.2 Business Out of Scope (Phase 1)
@@ -77,17 +78,19 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 
 ### 4.1 Monetization Standards
 
-- **Never block core tool completion behind paywall.** A user must always be able to complete the primary workflow for free.
+- **Never block core tool completion behind paywall.** A user must always be able to complete the primary workflow for free. This is a direct implementation of LOCK-07 (guest-first UX).
 - **Paywall only value-adds**: download in batch, save to cloud, AI features, remove ads, higher file size limits.
 - **Ads are non-intrusive**: max 1 ad per tool page, never inside the workflow area, never auto-playing audio/video.
 - **Premium pricing is transparent**: pricing page public, no hidden tiers, cancel-anytime.
+- **Browser-first processing is a marketing claim, not a cost-saving measure.** Every browser-first tool must visibly communicate to the user that their files stay on their device. This builds trust and differentiates from competitors (LOCK-02).
 
-### 4.2 Onboarding Standards (from Charter §4.3)
+### 4.2 Onboarding Standards (LOCK-07)
 
 - Guest can: browse, use tools, upload, convert, preview — without registration.
 - Registration is prompted ONLY when user wants: download, save history, favorite, cloud sync, premium features.
 - Registration must take ≤30 seconds (email or OAuth).
 - No forced tour, no forced profile completion, no email verification gate before first tool use.
+- **No mandatory registration before demonstrating value.** This is locked in `00_Project_Charter` §3 LOCK-07 and cannot be relaxed without charter amendment.
 
 ### 4.3 Content Standards
 
@@ -97,9 +100,10 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 
 ### 4.4 Privacy & Data Standards
 
-- Uploaded files for browser-side tools never leave the user's device. This is a marketing claim and a technical commitment.
+- Uploaded files for browser-side tools never leave the user's device. This is a marketing claim, a technical commitment, and an architectural lock (LOCK-02). Any tool that violates this rule must be clearly labeled as server-side and require explicit user consent.
 - Server-side tools (AI utilities, OCR) clearly disclose that files are processed server-side and deleted within 1 hour.
 - GDPR/CCPA compliant from Phase 1: cookie consent, data export, account deletion.
+- **Database optional (LOCK-06):** Core tool processing must not depend on database availability. If the database is down, tools still work — only account features (history, favorites) degrade gracefully.
 
 ## 5. Examples
 
@@ -213,16 +217,18 @@ Phase 1 focus: serve Casual Guest and Power Guest excellently. Free Registered a
 | Revision | Date | Author | Change |
 |----------|------|--------|--------|
 | 1.0.0 | 2026-06-28 | Chief Architect | Initial BRD. |
+| 1.1.0 | 2026-06-28 | Chief Architect | Integrated the 12 Architectural Locks from `00_Project_Charter` §3. Strengthened browser-first as a marketing commitment (LOCK-02). Elevated guest-first UX and database-optional philosophy to lock-referenced standards. Updated cross-references to reflect doc renumbering. |
 
 ## 10. Cross References
 
-- `00_Project_Charter` — Source of mission, vision, and phase scope.
-- `02_SAD` — Architecture that supports the technical business commitments (browser-first, free-tier).
-- `04_FBRD` — Tool feature template; every tool must trace to a business requirement here.
-- `15_SEOSpecification` — Implements the SEO acquisition strategy in §6.1.
-- `16_UserFlow` — Implements the onboarding standards in §4.2.
-- `17_RBAC` — Implements admin/editor role separation in §2.3.
-- `18_AdminSpecification` — Operates the content layer in §4.3.
-- `22_AI_Guideline` — Constrains AI usage to align with §4.3 content standards.
+- `00_Project_Charter` — Source of mission, vision, scope, and the 12 Architectural Locks (§3). Locks have priority over this document.
+- `02_SAD` — Architecture that supports the technical business commitments (browser-first, free-tier, database-optional).
+- `04_TechStack` — Operationalizes LOCK-02 (browser-first technology choices).
+- `10_FBRD` — Tool feature template; every tool must trace to a business requirement here.
+- `15_SEOSpecification` — Implements the SEO acquisition strategy in §6.1 and LOCK-08.
+- `16_UserFlow` — Implements the onboarding standards in §4.2 and LOCK-07.
+- `17_RBAC` — Implements admin/editor role separation in §2.3 and LOCK-11.
+- `18_AdminSpecification` — Operates the content layer in §4.3 and implements LOCK-11.
+- `22_AI_Guideline` — Constrains AI usage to align with §4.3 content standards and LOCK-09.
 - `24_Roadmap` — Phase plan operationalizing §3.1.
 - `25_Backlog` — Phase 1 tool list satisfying §3.1 (30 tools).
