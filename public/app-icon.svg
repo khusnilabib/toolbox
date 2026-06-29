@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+  <!-- App icon — full bleed version for PWA -->
+  <rect width="256" height="256" fill="#0A0A0A"/>
+  <path d="M64 80 L192 80 L192 104 L136 104 L136 192 L120 192 L120 104 L64 104 Z" fill="#FAFAFA"/>
+  <circle cx="192" cy="80" r="10" fill="#3B82F6"/>
+</svg>

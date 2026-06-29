@@ -12,7 +12,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "hash-generator",
@@ -22,7 +22,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "json-formatter",
@@ -32,7 +32,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "jwt-decoder",
@@ -42,7 +42,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "url-encoder",
@@ -52,7 +52,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "uuid-generator",
@@ -62,7 +62,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "image-compress",
@@ -72,7 +72,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "image-crop",
@@ -82,7 +82,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "image-format-convert",
@@ -92,7 +92,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "image-resize",
@@ -102,7 +102,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "image-rotate",
@@ -112,7 +112,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "pdf-compress",
@@ -122,7 +122,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "pdf-extract-pages",
@@ -132,7 +132,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "pdf-merge",
@@ -142,7 +142,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "pdf-protect",
@@ -152,7 +152,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "0.1.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "pdf-rotate",
@@ -162,7 +162,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "pdf-split",
@@ -172,7 +172,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "pdf-unlock",
@@ -182,7 +182,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "0.1.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "case-converter",
@@ -192,7 +192,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "remove-duplicate-lines",
@@ -202,7 +202,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "sort-lines",
@@ -212,7 +212,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "text-diff",
@@ -222,7 +222,7 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
   {
     slug: "word-counter",
@@ -232,6 +232,6 @@ export const adminInventory: AdminInventoryEntry[] = [
     version: "1.0.0",
     requiresAuth: false,
     premiumOnly: false,
-    lastUpdated: "2026-06-29T15:00:39.627Z",
+    lastUpdated: "2026-06-29T16:06:40.553Z",
   },
 ];

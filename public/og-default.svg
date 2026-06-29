@@ -1,8 +1,44 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#0a0a0a"/>
-  <rect x="60" y="60" width="1080" height="510" fill="none" stroke="#222" stroke-width="2"/>
-  <text x="600" y="280" font-family="Inter, system-ui, sans-serif" font-size="72" font-weight="700" fill="#fafafa" text-anchor="middle">Toolbox</text>
-  <text x="600" y="350" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="400" fill="#a3a3a3" text-anchor="middle">Browser-first productivity tools. Private by default.</text>
-  <rect x="540" y="430" width="120" height="6" fill="#3b82f6"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <!-- OpenGraph default image -->
+  <rect width="1200" height="630" fill="#0A0A0A"/>
+
+  <!-- Background grid pattern -->
+  <g opacity="0.04">
+    <path d="M0 0 L1200 0 M0 60 L1200 60 M0 120 L1200 120 M0 180 L1200 180 M0 240 L1200 240 M0 300 L1200 300 M0 360 L1200 360 M0 420 L1200 420 M0 480 L1200 480 M0 540 L1200 540 M0 600 L1200 600" stroke="#FAFAFA" stroke-width="1"/>
+    <path d="M0 0 L0 630 M60 0 L60 630 M120 0 L120 630 M180 0 L180 630 M240 0 L240 630 M300 0 L300 630 M360 0 L360 630 M420 0 L420 630 M480 0 L480 630 M540 0 L540 630 M600 0 L600 630 M660 0 L660 630 M720 0 L720 630 M780 0 L780 630 M840 0 L840 630 M900 0 L900 630 M960 0 L960 630 M1020 0 L1020 630 M1080 0 L1080 630 M1140 0 L1140 630 M1200 0 L1200 630" stroke="#FAFAFA" stroke-width="1"/>
+  </g>
+
+  <!-- Accent glow -->
+  <circle cx="600" cy="200" r="200" fill="#3B82F6" opacity="0.08"/>
+
+  <!-- Logo mark -->
+  <g transform="translate(540, 120)">
+    <rect x="0" y="0" width="120" height="120" rx="28" fill="#FAFAFA"/>
+    <path d="M30 40 L90 40 L90 52 L64 52 L64 88 L56 88 L56 52 L30 52 Z" fill="#0A0A0A"/>
+    <circle cx="90" cy="40" r="5" fill="#3B82F6"/>
+  </g>
+
+  <!-- Title -->
+  <text x="600" y="340" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="56" font-weight="700" fill="#FAFAFA" letter-spacing="-1">
+    Toolbox
+  </text>
+
+  <!-- Tagline -->
+  <text x="600" y="400" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="24" font-weight="400" fill="#A1A1A1" letter-spacing="0">
+    Browser-first productivity tools. Private by default.
+  </text>
+
+  <!-- Feature badges -->
+  <g transform="translate(300, 480)">
+    <rect x="0" y="0" width="180" height="44" rx="22" fill="#FAFAFA" opacity="0.08"/>
+    <text x="90" y="28" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#A1A1A1">23+ Tools</text>
+  </g>
+  <g transform="translate(510, 480)">
+    <rect x="0" y="0" width="180" height="44" rx="22" fill="#FAFAFA" opacity="0.08"/>
+    <text x="90" y="28" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#A1A1A1">100% Private</text>
+  </g>
+  <g transform="translate(720, 480)">
+    <rect x="0" y="0" width="180" height="44" rx="22" fill="#FAFAFA" opacity="0.08"/>
+    <text x="90" y="28" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#A1A1A1">No Sign-up</text>
+  </g>
 </svg>

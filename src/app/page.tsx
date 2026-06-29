@@ -1,14 +1,22 @@
-// src/app/page.tsx — Landing page (hero, brand values, featured categories).
+// src/app/page.tsx — Premium landing page (Sprint UI 2.0).
 
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { Hero } from '@/shared/components/hero';
-import { PageContainer } from '@/shared/components/page-container';
-import { SectionHeading } from '@/shared/components/section-heading';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { categories } from '@/shared/config/categories';
-import { routes } from '@/shared/config/routes';
 import { organizationJsonLd, websiteJsonLd } from '@/shared/lib/json-ld';
+import { HomeHero } from '@/shared/components/home/home-hero';
+import { AnimatedStats } from '@/shared/components/home/animated-stats';
+import { TrustedBy } from '@/shared/components/home/trusted-by';
+import { FeaturedTools } from '@/shared/components/home/featured-tools';
+import { PopularCategories } from '@/shared/components/home/popular-categories';
+import { WhyChooseUs } from '@/shared/components/home/why-choose-us';
+import { HowItWorks } from '@/shared/components/home/how-it-works';
+import { ToolCollections } from '@/shared/components/home/tool-collections';
+import { CategoryExplorer } from '@/shared/components/home/category-explorer';
+import { TrendingTools } from '@/shared/components/home/trending-tools';
+import { RecentlyAdded } from '@/shared/components/home/recently-added';
+import { PopularSearches } from '@/shared/components/home/popular-searches';
+import { ComparisonTable } from '@/shared/components/home/comparison-table';
+import { Testimonials } from '@/shared/components/home/testimonials';
+import { FaqSection } from '@/shared/components/home/faq-section';
+import { Newsletter } from '@/shared/components/home/newsletter';
 
 export default function HomePage() {
   const orgLd = organizationJsonLd();
@@ -19,94 +27,62 @@ export default function HomePage() {
       {/* JSON-LD: Organization + WebSite with SearchAction */}
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }}
       />
       <script
         type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(siteLd) }}
       />
 
-      <Hero />
-      <section aria-labelledby="categories-heading" className="border-b border-border">
-        <PageContainer className="py-14">
-          <SectionHeading
-            eyebrow="Catalogue"
-            title="Browse by category"
-            description="A growing collection of focused tools. Each tool solves exactly one problem."
-          />
-          <ul
-            id="categories-heading"
-            className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-          >
-            {categories.map((c) => (
-              <li key={c.slug}>
-                <Link
-                  href={routes.category(c.slug)}
-                  className="group block rounded-lg border border-border bg-card p-5 transition-colors hover:bg-muted"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{c.name}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">{c.description}</p>
-                    </div>
-                    <ArrowRight
-                      className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground"
-                      aria-hidden
-                    />
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </PageContainer>
-      </section>
+      {/* 1. Hero with headline, subheadline, CTA, quick search */}
+      <HomeHero />
 
-      <section aria-labelledby="values-heading" className="bg-muted/30">
-        <PageContainer className="py-14">
-          <SectionHeading
-            eyebrow="Principles"
-            title="Built for trust"
-            description="Privacy, speed, and accessibility are architectural locks — not features."
-          />
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Privacy by default</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">
-                  Core tools run client-side. Your data never touches a server unless the tool
-                  explicitly requires it.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">No accounts required</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">
-                  Get value instantly. Registration is only suggested when it adds clear value to
-                  your workflow.
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm">Accessible & fast</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">
-                  WCAG AA, keyboard-first navigation, reduced-motion support, and minimal JS payload
-                  on every page.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </PageContainer>
-      </section>
+      {/* 2. Animated statistics */}
+      <AnimatedStats />
+
+      {/* 3. Trusted by */}
+      <TrustedBy />
+
+      {/* 4. Featured Tools */}
+      <FeaturedTools />
+
+      {/* 5. Popular Categories */}
+      <PopularCategories />
+
+      {/* 6. Why Choose Us */}
+      <WhyChooseUs />
+
+      {/* 7. How It Works */}
+      <HowItWorks />
+
+      {/* 8. Tool Collections */}
+      <ToolCollections />
+
+      {/* 9. Category Explorer */}
+      <CategoryExplorer />
+
+      {/* 10. Trending Tools */}
+      <TrendingTools />
+
+      {/* 11. Recently Added */}
+      <RecentlyAdded />
+
+      {/* 12. Popular Searches */}
+      <PopularSearches />
+
+      {/* 13. Comparison Table */}
+      <ComparisonTable />
+
+      {/* 14. Testimonials */}
+      <Testimonials />
+
+      {/* 15. FAQ */}
+      <FaqSection />
+
+      {/* 16. Newsletter */}
+      <Newsletter />
+
+      {/* 17. Footer (rendered by root layout) */}
     </>
   );
 }

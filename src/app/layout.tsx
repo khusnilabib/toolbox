@@ -1,4 +1,4 @@
-// src/app/layout.tsx — Root layout (Inter + JetBrains Mono, providers, header/footer).
+// src/app/layout.tsx — Root layout with premium design system.
 
 import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
@@ -6,6 +6,8 @@ import './globals.css';
 import { PlatformProvider } from '@/shared/providers/platform-provider';
 import { SiteHeader } from '@/shared/components/site-header';
 import { SiteFooter } from '@/shared/components/site-footer';
+import { SearchOverlay } from '@/shared/components/search-overlay';
+import { ToastProviders } from '@/shared/components/toast-providers';
 import { siteConfig } from '@/shared/config/site-config';
 
 const inter = Inter({
@@ -28,22 +30,58 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
-  keywords: ['productivity tools', 'image tools', 'pdf tools', 'developer tools', 'text tools'],
+  keywords: [
+    'productivity tools',
+    'image tools',
+    'pdf tools',
+    'developer tools',
+    'text tools',
+    'browser tools',
+    'online tools',
+    'free tools',
+    'no signup',
+  ],
   authors: [{ name: siteConfig.name }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    apple: '/app-icon.svg',
   },
+  manifest: '/manifest.webmanifest',
   openGraph: {
     title: siteConfig.name,
     description: siteConfig.description,
     url: siteConfig.url,
     siteName: siteConfig.name,
     type: 'website',
+    images: [{ url: '/og-default.svg', width: 1200, height: 630, alt: siteConfig.name }],
   },
   twitter: {
     card: 'summary_large_image',
     title: siteConfig.name,
     description: siteConfig.description,
+    images: ['/og-default.svg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  alternates: {
+    canonical: siteConfig.url,
+    types: {
+      'application/rss+xml': `${siteConfig.url}/feed.xml`,
+    },
   },
 };
 
@@ -54,12 +92,10 @@ export const viewport: Viewport = {
   ],
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 5,
+  colorScheme: 'light dark',
 };
 
-/**
- * No-FOUC theme bootstrap — applied before hydration so the correct theme
- * class is present on <html> from the very first paint.
- */
 const noFoucScript = `(function(){try{var t=localStorage.getItem('theme');var m=window.matchMedia('(prefers-color-scheme: dark)').matches;if(t==='dark'||(!t&&m)){document.documentElement.classList.add('dark')}}catch(e){}})();`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -83,6 +119,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </div>
             <SiteFooter />
           </div>
+          <SearchOverlay />
+          <ToastProviders />
         </PlatformProvider>
       </body>
     </html>

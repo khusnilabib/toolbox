@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+  <!-- Light variant for dark backgrounds -->
+  <rect width="256" height="256" rx="56" fill="#FAFAFA"/>
+  <path d="M64 80 L192 80 L192 104 L136 104 L136 192 L120 192 L120 104 L64 104 Z" fill="#0A0A0A"/>
+  <circle cx="192" cy="80" r="8" fill="#3B82F6"/>
+  <rect x="64" y="208" width="128" height="4" rx="2" fill="#3B82F6" opacity="0.6"/>
+</svg>
