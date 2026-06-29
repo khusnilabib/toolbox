@@ -12,10 +12,27 @@ const envSchema = z.object({
     .string()
     .default('false')
     .transform((v) => v === 'true'),
+  // Public (browser-safe) Supabase credentials.
+  NEXT_PUBLIC_SUPABASE_URL: z.string().optional(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
+  // Server-only Supabase credentials (service role).
   SUPABASE_URL: z.string().url().optional(),
   SUPABASE_ANON_KEY: z.string().optional(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
 });
+
+/**
+ * A Supabase URL/value is considered "configured" when it is present and not a
+ * placeholder. This lets the platform boot and render even when auth is not
+ * wired up (guest-first principle).
+ */
+function looksConfigured(url?: string, key?: string): boolean {
+  if (!url || !key) return false;
+  if (!/^https?:\/\//.test(url)) return false;
+  if (url.includes('placeholder') || url.includes('example')) return false;
+  if (key.length < 20) return false;
+  return true;
+}
 
 export type Env = z.infer<typeof envSchema>;
 
@@ -54,6 +71,9 @@ export function getPublicEnv(): {
   ga4MeasurementId?: string;
   plausibleDomain?: string;
   analyticsConsentDefault: boolean;
+  supabaseUrl?: string;
+  supabaseAnonKey?: string;
+  supabaseConfigured: boolean;
 } {
   const env = getEnv();
   return {
@@ -62,5 +82,21 @@ export function getPublicEnv(): {
     ga4MeasurementId: env.NEXT_PUBLIC_GA4_MEASUREMENT_ID,
     plausibleDomain: env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN,
     analyticsConsentDefault: env.NEXT_PUBLIC_ANALYTICS_CONSENT_DEFAULT,
+    supabaseUrl: env.NEXT_PUBLIC_SUPABASE_URL,
+    supabaseAnonKey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    supabaseConfigured: looksConfigured(
+      env.NEXT_PUBLIC_SUPABASE_URL,
+      env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    ),
   };
+}
+
+/**
+ * Whether Supabase auth is configured with non-placeholder credentials.
+ * Safe to call on both server and client (reads NEXT_PUBLIC_ vars).
+ */
+export function isSupabaseConfigured(): boolean {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  return looksConfigured(url, key);
 }

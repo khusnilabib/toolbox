@@ -1,8 +1,12 @@
 // src/shared/hooks/use-analytics.ts — React bindings for the analytics client.
-import type { AnalyticsAdapter } from '@packages/analytics';
+//
+// NOTE: the `'use client'` directive MUST be the first statement in this file
+// (only comments may precede it). Moving any import above it silently breaks
+// the client boundary.
 
 'use client';
 
+import type { AnalyticsAdapter } from '@packages/analytics';
 import { useCallback, useEffect, useState } from 'react';
 import {
   AnalyticsClient,

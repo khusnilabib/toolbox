@@ -7,6 +7,10 @@ export const routes = {
   tool: (category: string, slug: string) => `/tools/${category}/${slug}`,
   category: (category: string) => `/tools/${category}`,
   tools: '/tools',
+  // Identity
+  login: '/login',
+  register: '/register',
+  dashboard: '/dashboard',
 } as const;
 
 export type RouteKey = keyof typeof routes;

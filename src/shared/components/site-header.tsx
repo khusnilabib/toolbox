@@ -1,21 +1,55 @@
-// src/shared/components/site-header.tsx — Top-level site header with nav + search + theme toggle.
+// src/shared/components/site-header.tsx — Top-level site header with nav + search + theme toggle + auth menu.
 
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
-import { Menu, Search, X, Wrench } from 'lucide-react';
+import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
+import { LayoutDashboard, Loader2, LogOut, Menu, Search, User, X, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Avatar,
+  AvatarFallback,
+} from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { PageContainer } from './page-container';
 import { ThemeToggle } from './theme-toggle';
 import { routes } from '@/shared/config/routes';
 import { categories } from '@/shared/config/categories';
+import { useCurrentUser } from '@/identity/hooks/use-current-user';
+import { signOut } from '@/identity/actions/auth-actions';
+import { notificationService } from '@/shared/lib/notification-service';
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const { user, loading } = useCurrentUser();
+  const router = useRouter();
+  const [signingOut, startSignOut] = useTransition();
+
+  const onSignOut = () => {
+    startSignOut(async () => {
+      const result = await signOut();
+      if (!result.success) {
+        notificationService.error(result.error ?? 'Could not sign out.');
+        return;
+      }
+      notificationService.success('Signed out');
+      router.push(routes.login);
+      router.refresh();
+    });
+  };
+
+  const initials = user?.email ? initialsFromEmail(user.email) : 'U';
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur">
@@ -103,8 +137,64 @@ export function SiteHeader() {
             ) : null}
           </form>
           <ThemeToggle />
+
+          {loading ? (
+            <Button variant="ghost" size="sm" disabled aria-busy>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+              <span className="sr-only">Loading account</span>
+            </Button>
+          ) : user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2 pr-2" aria-label="Account menu">
+                  <Avatar className="h-7 w-7">
+                    <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+                  </Avatar>
+                  <span className="hidden text-sm font-medium sm:inline-block">
+                    {user.email.split('@')[0]}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href={routes.dashboard}>
+                    <LayoutDashboard className="mr-2 h-4 w-4" aria-hidden />
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onSelect={(e) => { e.preventDefault(); onSignOut(); }}
+                  disabled={signingOut}
+                >
+                  {signingOut ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+                  ) : (
+                    <LogOut className="mr-2 h-4 w-4" aria-hidden />
+                  )}
+                  {signingOut ? 'Signing out…' : 'Sign out'}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button asChild size="sm" variant="ghost">
+              <Link href={routes.login}>
+                <User className="mr-2 h-4 w-4" aria-hidden />
+                Sign in
+              </Link>
+            </Button>
+          )}
         </div>
       </PageContainer>
     </header>
   );
+}
+
+function initialsFromEmail(email: string): string {
+  const local = email.split('@')[0] ?? email;
+  if (!local) return 'U';
+  if (local.length <= 2) return local.toUpperCase();
+  return local.slice(0, 2).toUpperCase();
 }
