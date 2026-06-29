@@ -126,18 +126,19 @@ export class ToolEngine<TInput, TOutput> {
 
   /**
    * Run input → validation → processing. Returns the validated output.
+   *
+   * The input stage is typically a placeholder that throws (since input is
+   * collected by the UI form). When `input` is already provided by the caller,
+   * we skip the input stage and pass `input` directly to validation.
    */
   async execute(input: TInput): Promise<TOutput> {
     this.setState({ phase: 'input', error: null, progress: 0 });
     if (this.options.autoAnalytics) emitAnalytics('tool_started', { phase: 'input' });
 
-    const inputCtx = this.makeContext(input);
-    let resolvedInput: TInput;
-    try {
-      resolvedInput = await this.withRetries('input', inputCtx, () => this.stages.input(inputCtx));
-    } catch (err) {
-      return this.fail('input', err);
-    }
+    // The input stage is a placeholder that throws "Input stage is handled by the UI form component".
+    // When input is already provided by the caller (UI form), we skip the input stage entirely
+    // and pass the input directly to validation.
+    const resolvedInput: TInput = input;
 
     this.setState({ phase: 'validation' });
     const validation = await this.stages.validation(resolvedInput);

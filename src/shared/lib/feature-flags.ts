@@ -55,7 +55,7 @@ export class FeatureFlagService {
     const flag = this.flags.get(key);
     if (!flag) return false;
     if (!flag.enabled) return false;
-    if (!flag.rolloutPercentage || flag.rolloutPercentage >= 100) return true;
+    if (flag.rolloutPercentage === undefined || flag.rolloutPercentage >= 100) return true;
     if (flag.rolloutPercentage <= 0) return false;
     if (!userId) return Math.random() * 100 < flag.rolloutPercentage;
     const hash = simpleHash(`${key}:${userId}`);

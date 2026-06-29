@@ -125,7 +125,34 @@ const eslintConfig = [
       'skills/**',
       'src/generated/**',
       'mini-services/**',
+      'coverage/**',
+      'lighthouse-reports/**',
+      'playwright-report/**',
+      'test-results.*',
     ],
+  },
+  // Allow console.log in scripts, db seed, API routes (for log drain), and test setup
+  {
+    files: ['scripts/**/*', 'db/**/*', 'tests/setup.ts', 'src/app/api/**/*'],
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
+  // Test files: allow unused vars prefixed with _, allow require imports
+  {
+    files: ['tests/**/*', 'src/**/*.test.ts', 'src/**/*.test.tsx'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+      'no-console': 'off',
+    },
+  },
+  // Allow console.warn in shared lib (legitimate warnings)
+  {
+    files: ['src/shared/lib/**/*'],
+    rules: {
+      'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+    },
   },
 ];
 

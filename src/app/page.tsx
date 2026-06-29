@@ -8,10 +8,26 @@ import { SectionHeading } from '@/shared/components/section-heading';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { categories } from '@/shared/config/categories';
 import { routes } from '@/shared/config/routes';
+import { organizationJsonLd, websiteJsonLd } from '@/shared/lib/json-ld';
 
 export default function HomePage() {
+  const orgLd = organizationJsonLd();
+  const siteLd = websiteJsonLd();
+
   return (
     <>
+      {/* JSON-LD: Organization + WebSite with SearchAction */}
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }}
+      />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteLd) }}
+      />
+
       <Hero />
       <section aria-labelledby="categories-heading" className="border-b border-border">
         <PageContainer className="py-14">

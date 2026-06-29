@@ -4,8 +4,6 @@
 
 import { readdir, stat, writeFile, mkdir } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
-import { validateManifest } from '@packages/tool-engine';
 import type {
   AdminInventoryEntry,
   AnalyticsConfigEntry,
@@ -204,8 +202,8 @@ function header(): string {
 async function emitRegistry(manifests: ToolManifest[]): Promise<void> {
   const lines: string[] = [header(), ''];
   for (const m of manifests) {
-    const rel = relative(join(ROOT, 'src'), join('tools', m.category, m.slug, 'manifest'));
-    lines.push(`import ${importName(m)} from '@/${rel.replace(/\\/g, '/')}';`);
+    const manifestPath = join('tools', m.category, m.slug, 'manifest');
+    lines.push(`import ${importName(m)} from '@/${manifestPath.replace(/\\/g, '/')}';`);
   }
   lines.push('');
   lines.push('import type { ToolManifest } from "@packages/types";');
@@ -309,8 +307,8 @@ async function emitSeoMeta(manifests: ToolManifest[]): Promise<void> {
     '  description: string;',
     '  keywords: string[];',
     '  canonicalUrl: string;',
-    '  openGraph: { title: string; description: string; image: string };',
-    '  twitterCard: { title: string; description: string; image: string };',
+    '  openGraph: { title: string; description: string; image: string; type: string };',
+    '  twitterCard: { card: string; title: string; description: string; image: string };',
     '  faq: { question: string; answer: string }[];',
     '  breadcrumb: { name: string; url: string }[];',
     '}',

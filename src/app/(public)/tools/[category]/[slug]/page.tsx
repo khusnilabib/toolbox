@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { ToolLayout } from '@/shared/components/tool-layout';
 import { allManifests, registry } from '@/generated/registry';
-import { buildMetadata } from '@/shared/lib/seo';
+import { buildMetadata, buildToolStructuredData } from '@/shared/lib/seo';
 import { ToolRuntime } from './tool-runtime';
 import { categories } from '@/shared/config/categories';
 
@@ -38,9 +38,22 @@ export default async function ToolPage({ params }: PageProps) {
   }
   const related = registry.relatedTo(slug);
 
+  // Build JSON-LD structured data blocks for SEO (Phase 7)
+  const structuredData = buildToolStructuredData(manifest);
+
   return (
-    <ToolLayout manifest={manifest} related={related}>
-      <ToolRuntime category={category} slug={slug} />
-    </ToolLayout>
+    <>
+      {structuredData.map((sd, idx) => (
+        <script
+          key={`json-ld-${idx}`}
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(sd) }}
+        />
+      ))}
+      <ToolLayout manifest={manifest} related={related}>
+        <ToolRuntime category={category} slug={slug} />
+      </ToolLayout>
+    </>
   );
 }

@@ -10,8 +10,8 @@ export interface SeoMetaEntry {
   description: string;
   keywords: string[];
   canonicalUrl: string;
-  openGraph: { title: string; description: string; image: string };
-  twitterCard: { title: string; description: string; image: string };
+  openGraph: { title: string; description: string; image: string; type: string };
+  twitterCard: { card: string; title: string; description: string; image: string };
   faq: { question: string; answer: string }[];
   breadcrumb: { name: string; url: string }[];
 }
