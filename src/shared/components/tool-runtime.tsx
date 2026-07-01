@@ -18,10 +18,13 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   AlertTriangle,
+  Copy,
   Download,
   FileBox,
   Loader2,
   RotateCcw,
+  Share2,
+  ShieldCheck,
   Star,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -204,6 +207,7 @@ export function ToolRuntime({ category, slug }: ToolRuntimeProps) {
   const onToggleFavorite = () => {
     if (!manifest) return;
     toggleFavorite({ slug, category, title: manifest.title });
+    trackStandard('favorite_toggled', { slug, action: favorited ? 'removed' : 'added' }, { tool: slug, category });
   };
 
   // ─── Render states ─────────────────────────────────────────
@@ -273,15 +277,63 @@ export function ToolRuntime({ category, slug }: ToolRuntimeProps) {
               </CardContent>
             </Card>
           )}
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={handleDownload}>
-              <Download className="mr-2 h-4 w-4" aria-hidden />
-              Download
-            </Button>
-            <Button variant="outline" onClick={handleReset}>
-              <RotateCcw className="mr-2 h-4 w-4" aria-hidden />
-              Modify
-            </Button>
+          <div className="flex flex-col gap-3 border-t border-border pt-4">
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={handleDownload} size="lg" className="h-11 flex-1 sm:flex-none">
+                <Download className="mr-2 h-4 w-4" aria-hidden />
+                Download
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="h-11 flex-1 sm:flex-none"
+                onClick={async () => {
+                  try {
+                    const text = typeof output === 'object' && output !== null
+                      ? (output as Record<string, unknown>).result as string
+                        || (output as Record<string, unknown>).output as string
+                        || JSON.stringify(output, null, 2)
+                      : String(output);
+                    await navigator.clipboard.writeText(text);
+                    notificationService.success('Copied to clipboard');
+                    trackStandard('result_copied', { slug }, { tool: slug, category });
+                  } catch {
+                    notificationService.error('Could not copy to clipboard');
+                  }
+                }}
+              >
+                <Copy className="mr-2 h-4 w-4" aria-hidden />
+                Copy Result
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={async () => {
+                  if (typeof navigator !== 'undefined' && navigator.share) {
+                    try {
+                      await navigator.share({ title: manifest.title, url: window.location.href });
+                      trackStandard('result_shared', { slug, method: 'native' }, { tool: slug, category });
+                    } catch { /* user cancelled */ }
+                  } else {
+                    try {
+                      await navigator.clipboard.writeText(window.location.href);
+                      notificationService.success('Link copied to clipboard');
+                      trackStandard('result_shared', { slug, method: 'link' }, { tool: slug, category });
+                    } catch { /* ignore */ }
+                  }
+                }}
+                className="gap-1.5"
+              >
+                <Share2 className="h-3.5 w-3.5" aria-hidden />
+                Share
+              </Button>
+              <Button variant="ghost" size="sm" onClick={handleReset} className="gap-1.5">
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden />
+                Modify Input
+              </Button>
+            </div>
           </div>
         </div>
       ) : null}
