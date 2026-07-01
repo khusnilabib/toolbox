@@ -19,6 +19,7 @@ const NAV_ITEMS = [
   { href: '/admin/tools', label: 'Tools', icon: 'tools' },
   { href: '/admin/seo', label: 'SEO', icon: 'seo' },
   { href: '/admin/analytics', label: 'Analytics', icon: 'analytics' },
+  { href: '/admin/revenue', label: 'Revenue', icon: 'analytics' },
   { href: '/admin/audit', label: 'Audit Trail', icon: 'audit' },
   { href: '/admin/flags', label: 'Feature Flags', icon: 'flags' },
   { href: '/admin/monitoring', label: 'Monitoring', icon: 'monitoring' },

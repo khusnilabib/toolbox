@@ -17,6 +17,8 @@ export async function GET(): Promise<Response> {
     priority: number;
   }> = [
     { loc: siteConfig.url, lastmod: now, changefreq: 'weekly', priority: 1.0 },
+    { loc: `${siteConfig.url}/roadmap`, lastmod: now, changefreq: 'weekly', priority: 0.7 },
+    { loc: `${siteConfig.url}/changelog`, lastmod: now, changefreq: 'weekly', priority: 0.7 },
     { loc: `${siteConfig.url}/login`, lastmod: now, changefreq: 'monthly', priority: 0.3 },
     { loc: `${siteConfig.url}/register`, lastmod: now, changefreq: 'monthly', priority: 0.3 },
     { loc: `${siteConfig.url}/dashboard`, lastmod: now, changefreq: 'weekly', priority: 0.5 },

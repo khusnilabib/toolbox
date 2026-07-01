@@ -81,6 +81,16 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/roadmap" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  Roadmap
+                </Link>
+              </li>
+              <li>
+                <Link href="/changelog" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  Changelog
+                </Link>
+              </li>
+              <li>
                 <Link href={routes.dashboard} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
                   Dashboard
                 </Link>

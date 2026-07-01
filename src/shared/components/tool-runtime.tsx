@@ -39,6 +39,7 @@ import { Progress } from '@/components/ui/progress';
 import { FileDropzone } from '@/shared/components/file-dropzone';
 import { EmptyState } from '@/shared/components/empty-state';
 import { ErrorState } from '@/shared/components/error-state';
+import { FeedbackWidget } from '@/shared/components/feedback-widget';
 import { toolBundles } from '@/generated/tool-bundles';
 import { useAnalytics } from '@/shared/hooks/use-analytics';
 import { useRecentTools } from '@/shared/hooks/use-recent-tools';
@@ -335,6 +336,8 @@ export function ToolRuntime({ category, slug }: ToolRuntimeProps) {
               </Button>
             </div>
           </div>
+          {/* Feedback widget — appears after successful execution */}
+          <FeedbackWidget toolSlug={slug} toolCategory={category} />
         </div>
       ) : null}
     </div>
