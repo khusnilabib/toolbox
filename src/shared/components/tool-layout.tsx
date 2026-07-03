@@ -27,6 +27,8 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { PageContainer } from './page-container';
 import { SectionHeading } from './section-heading';
+import { ToolContentRenderer } from '@/shared/components/tool-content-renderer';
+import { getToolContent } from '@/shared/lib/tool-content';
 import type { ToolManifest } from '@packages/types';
 import { routes } from '@/shared/config/routes';
 
@@ -220,32 +222,35 @@ export function ToolLayout({ manifest, children, result, related }: ToolLayoutPr
         </PageContainer>
       </section>
 
-      {/* 3. SEO intro */}
-      <section aria-labelledby="intro-heading" className="border-b border-border bg-muted/30">
-        <PageContainer className="py-12">
-          <div className="mx-auto max-w-3xl">
-            <SectionHeading
-              eyebrow="About"
-              title={`About ${manifest.title}`}
-            />
-            <div className="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground text-pretty">
-              <p>
-                {manifest.description} This tool runs entirely in your browser using modern Web APIs,
-                which means your data never leaves your device. There's no server-side processing,
-                no upload, and no tracking of your input or output.
-              </p>
-              <p>
-                {manifest.userProblem} {manifest.successCriteria}
-              </p>
-              <p>
-                The tool follows our standardized 7-stage lifecycle: Input → Validation → Processing →
-                Preview → Download → History → Share. This ensures consistent behavior across all
-                tools in the platform.
-              </p>
-            </div>
-          </div>
-        </PageContainer>
-      </section>
+      {/* 3. Knowledge base content (if available) */}
+      {(() => {
+        const content = getToolContent(manifest.slug);
+        if (!content) {
+          // Fallback to old static intro
+          return (
+            <section aria-labelledby="intro-heading" className="border-b border-border bg-muted/30">
+              <PageContainer className="py-12">
+                <div className="mx-auto max-w-3xl">
+                  <SectionHeading eyebrow="About" title={`About ${manifest.title}`} />
+                  <div className="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground text-pretty">
+                    <p>{manifest.description} This tool runs entirely in your browser.</p>
+                  </div>
+                </div>
+              </PageContainer>
+            </section>
+          );
+        }
+        return (
+          <section aria-labelledby="content-heading" className="border-b border-border bg-muted/30">
+            <PageContainer className="py-12 sm:py-16">
+              <div className="mx-auto max-w-4xl">
+                <h2 id="content-heading" className="sr-only">{manifest.title} guide</h2>
+                <ToolContentRenderer content={content} />
+              </div>
+            </PageContainer>
+          </section>
+        );
+      })()}
 
       {/* 4. FAQ */}
       {manifest.seo.faq.length > 0 ? (
