@@ -1,0 +1,10 @@
+node_modules/
+.next/
+out/
+build/
+bun.lock
+docs/
+examples/
+skills/
+mini-services/
+*.md

@@ -371,3 +371,124 @@ create policy "user_uploads_delete_own" on storage.objects
   for delete using (
     bucket_id = 'user-uploads' and auth.uid() = (storage.foldername(name))[1]::uuid
   );
+
+-- ─── Newsletter Subscribers ────────────────────────────────────────────────
+-- Sprint 13 Phase 7 — Newsletter platform
+create table if not exists public.newsletter_subscribers (
+  id uuid primary key default uuid_generate_v4(),
+  email text not null unique,
+  country text,
+  source text,
+  tool text,
+  verified boolean not null default false,
+  unsubscribed boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists newsletter_email_idx on public.newsletter_subscribers(email);
+create index if not exists newsletter_created_idx on public.newsletter_subscribers(created_at desc);
+
+-- Newsletter is public (anyone can subscribe), but only service role can read
+alter table public.newsletter_subscribers enable row level security;
+drop policy if exists "newsletter_public_insert" on public.newsletter_subscribers;
+create policy "newsletter_public_insert" on public.newsletter_subscribers
+  for insert with check (true);
+drop policy if exists "newsletter_public_unsubscribe" on public.newsletter_subscribers;
+create policy "newsletter_public_unsubscribe" on public.newsletter_subscribers
+  for update using (true) with check (true);
+
+-- ─── Feedback ──────────────────────────────────────────────────────────────
+-- Sprint 13 Phase 8 — Feedback persistence
+create table if not exists public.feedback (
+  id uuid primary key default uuid_generate_v4(),
+  tool_slug text not null,
+  rating text not null check (rating in ('helpful', 'not-helpful')),
+  comment text,
+  browser text,
+  country text,
+  user_id uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists feedback_tool_idx on public.feedback(tool_slug);
+create index if not exists feedback_created_idx on public.feedback(created_at desc);
+
+-- Feedback: anyone can submit, only service role reads
+alter table public.feedback enable row level security;
+drop policy if exists "feedback_public_insert" on public.feedback;
+create policy "feedback_public_insert" on public.feedback
+  for insert with check (true);
+drop policy if exists "feedback_user_select_own" on public.feedback;
+create policy "feedback_user_select_own" on public.feedback
+  for select using (auth.uid() = user_id);
+
+-- ─── Premium Waitlist ──────────────────────────────────────────────────────
+-- Sprint 13 Phase 9 — Waitlist for future premium tier
+create table if not exists public.waitlist (
+  id uuid primary key default uuid_generate_v4(),
+  email text not null unique,
+  company text,
+  requested_feature text,
+  tool text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists waitlist_email_idx on public.waitlist(email);
+create index if not exists waitlist_created_idx on public.waitlist(created_at desc);
+
+-- Waitlist: anyone can join, only service role reads
+alter table public.waitlist enable row level security;
+drop policy if exists "waitlist_public_insert" on public.waitlist;
+create policy "waitlist_public_insert" on public.waitlist
+  for insert with check (true);
+
+-- ─── User Preferences ──────────────────────────────────────────────────────
+-- Sprint 13 Phase 6 — Persisted user preferences
+create table if not exists public.preferences (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  theme text default 'system',
+  language text default 'en',
+  default_category text,
+  keyboard_shortcuts jsonb not null default '{}'::jsonb,
+  search_preferences jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (user_id)
+);
+
+create index if not exists preferences_user_idx on public.preferences(user_id);
+
+-- Preferences: users can CRUD their own
+alter table public.preferences enable row level security;
+drop policy if exists "preferences_select_own" on public.preferences;
+create policy "preferences_select_own" on public.preferences
+  for select using (auth.uid() = user_id);
+drop policy if exists "preferences_insert_own" on public.preferences;
+create policy "preferences_insert_own" on public.preferences
+  for insert with check (auth.uid() = user_id);
+drop policy if exists "preferences_update_own" on public.preferences;
+create policy "preferences_update_own" on public.preferences
+  for update using (auth.uid() = user_id);
+
+-- ─── API Keys (future) ────────────────────────────────────────────────────
+create table if not exists public.api_keys (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  key_hash text not null unique,
+  name text not null,
+  last_used_at timestamptz,
+  created_at timestamptz not null default now(),
+  revoked_at timestamptz
+);
+
+create index if not exists api_keys_user_idx on public.api_keys(user_id);
+create index if not exists api_keys_hash_idx on public.api_keys(key_hash);
+
+alter table public.api_keys enable row level security;
+drop policy if exists "api_keys_select_own" on public.api_keys;
+create policy "api_keys_select_own" on public.api_keys
+  for select using (auth.uid() = user_id);
+drop policy if exists "api_keys_delete_own" on public.api_keys;
+create policy "api_keys_delete_own" on public.api_keys
+  for delete using (auth.uid() = user_id);

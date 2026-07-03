@@ -41,7 +41,7 @@ export function FeedbackWidget({ toolSlug, toolCategory }: FeedbackWidgetProps) 
   );
 
   const handleSubmitComment = useCallback(() => {
-    // Store locally if no backend
+    // Store locally as backup
     try {
       const existing = JSON.parse(localStorage.getItem('nexori:feedback') ?? '[]');
       existing.push({ slug: toolSlug, feedback, comment, timestamp: Date.now() });
@@ -49,6 +49,15 @@ export function FeedbackWidget({ toolSlug, toolCategory }: FeedbackWidgetProps) 
     } catch {
       // localStorage might be unavailable
     }
+    // Sync to server (fire-and-forget)
+    import('@/identity/actions/newsletter-actions').then(({ submitFeedback }) => {
+      void submitFeedback({
+        toolSlug,
+        rating: feedback === 'helpful' ? 'helpful' : 'not-helpful',
+        comment: comment || undefined,
+        browser: typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 200) : undefined,
+      });
+    });
     setSubmitted(true);
     setShowComment(false);
   }, [toolSlug, feedback, comment]);

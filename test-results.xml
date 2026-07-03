@@ -1,1021 +1,1021 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="452" failures="0" errors="0" time="0.752535045">
-    <testsuite name="tests/unit/dev-utils.test.ts" timestamp="2026-07-01T10:48:49.166Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="7" failures="0" errors="0" skipped="0" time="0.011355737">
-        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; Base64 &gt; encodes" time="0.002924154">
+<testsuites name="vitest tests" tests="452" failures="0" errors="0" time="0.760043673">
+    <testsuite name="tests/unit/dev-utils.test.ts" timestamp="2026-07-03T13:04:32.233Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="7" failures="0" errors="0" skipped="0" time="0.006938461">
+        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; Base64 &gt; encodes" time="0.001471972">
         </testcase>
-        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; Base64 &gt; decodes" time="0.000602255">
+        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; Base64 &gt; decodes" time="0.00037013">
         </testcase>
-        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; Base64 &gt; round-trips" time="0.000459665">
+        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; Base64 &gt; round-trips" time="0.000225409">
         </testcase>
-        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; URL encode/decode &gt; encodes" time="0.000379884">
+        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; URL encode/decode &gt; encodes" time="0.000227068">
         </testcase>
-        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; URL encode/decode &gt; decodes" time="0.0003431">
+        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; URL encode/decode &gt; decodes" time="0.000224057">
         </testcase>
-        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; generateUuid &gt; generates a string" time="0.001098332">
+        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; generateUuid &gt; generates a string" time="0.000554795">
         </testcase>
-        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; generateUuid &gt; generates unique" time="0.001171926">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/errors.test.ts" timestamp="2026-07-01T10:48:49.173Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="5" failures="0" errors="0" skipped="0" time="0.004935934">
-        <testcase classname="tests/unit/errors.test.ts" name="Error System &gt; creates ValidationError" time="0.001456238">
-        </testcase>
-        <testcase classname="tests/unit/errors.test.ts" name="Error System &gt; creates ProcessingError" time="0.000360744">
-        </testcase>
-        <testcase classname="tests/unit/errors.test.ts" name="Error System &gt; creates PlatformError" time="0.000268019">
-        </testcase>
-        <testcase classname="tests/unit/errors.test.ts" name="Error System &gt; serializes error" time="0.000248211">
-        </testcase>
-        <testcase classname="tests/unit/errors.test.ts" name="Error System &gt; returns friendly message" time="0.000160304">
+        <testcase classname="tests/unit/dev-utils.test.ts" name="dev-utils &gt; generateUuid &gt; generates unique" time="0.000736512">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/image-utils.test.ts" timestamp="2026-07-01T10:48:49.176Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.016378159">
-        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; getExtensionFromMime" time="0.001387019">
+    <testsuite name="tests/unit/errors.test.ts" timestamp="2026-07-03T13:04:32.235Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="5" failures="0" errors="0" skipped="0" time="0.005300061">
+        <testcase classname="tests/unit/errors.test.ts" name="Error System &gt; creates ValidationError" time="0.00145575">
         </testcase>
-        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; formatFileSize" time="0.000463392">
+        <testcase classname="tests/unit/errors.test.ts" name="Error System &gt; creates ProcessingError" time="0.000369237">
         </testcase>
-        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; compressionRatio" time="0.000231405">
+        <testcase classname="tests/unit/errors.test.ts" name="Error System &gt; creates PlatformError" time="0.000287443">
         </testcase>
-        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; validateImageFile accepts valid type" time="0.000827765">
+        <testcase classname="tests/unit/errors.test.ts" name="Error System &gt; serializes error" time="0.000255974">
         </testcase>
-        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; validateImageFile rejects invalid type" time="0.000423704">
-        </testcase>
-        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; ACCEPTED_IMAGE_TYPES contains expected types" time="0.000881655">
+        <testcase classname="tests/unit/errors.test.ts" name="Error System &gt; returns friendly message" time="0.000203398">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/manifest-validation.test.ts" timestamp="2026-07-01T10:48:49.179Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="4" failures="0" errors="0" skipped="0" time="0.007823187">
-        <testcase classname="tests/unit/manifest-validation.test.ts" name="Manifest Validation &gt; validates tool category" time="0.002110876">
+    <testsuite name="tests/unit/image-utils.test.ts" timestamp="2026-07-03T13:04:32.236Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.007355414">
+        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; getExtensionFromMime" time="0.001600008">
         </testcase>
-        <testcase classname="tests/unit/manifest-validation.test.ts" name="Manifest Validation &gt; validates lifecycle" time="0.000810745">
+        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; formatFileSize" time="0.000454087">
         </testcase>
-        <testcase classname="tests/unit/manifest-validation.test.ts" name="Manifest Validation &gt; validates limits" time="0.001660345">
+        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; compressionRatio" time="0.000239898">
         </testcase>
-        <testcase classname="tests/unit/manifest-validation.test.ts" name="Manifest Validation &gt; rejects negative limits" time="0.00046756">
+        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; validateImageFile accepts valid type" time="0.000788216">
         </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/pdf-utils.test.ts" timestamp="2026-07-01T10:48:49.180Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="3" failures="0" errors="0" skipped="0" time="0.004849333">
-        <testcase classname="tests/unit/pdf-utils.test.ts" name="pdf-utils &gt; parsePageRange single" time="0.001288264">
+        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; validateImageFile rejects invalid type" time="0.000416205">
         </testcase>
-        <testcase classname="tests/unit/pdf-utils.test.ts" name="pdf-utils &gt; parsePageRange range" time="0.000249706">
-        </testcase>
-        <testcase classname="tests/unit/pdf-utils.test.ts" name="pdf-utils &gt; parsePageRange throws for invalid" time="0.000814388">
+        <testcase classname="tests/unit/image-utils.test.ts" name="image-utils &gt; ACCEPTED_IMAGE_TYPES contains expected types" time="0.000984584">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/registry.test.ts" timestamp="2026-07-01T10:48:49.182Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="5" failures="0" errors="0" skipped="0" time="0.006659133">
-        <testcase classname="tests/unit/registry.test.ts" name="Tool Registry &gt; contains tools" time="0.001571476">
+    <testsuite name="tests/unit/manifest-validation.test.ts" timestamp="2026-07-03T13:04:32.238Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="4" failures="0" errors="0" skipped="0" time="0.00693393">
+        <testcase classname="tests/unit/manifest-validation.test.ts" name="Manifest Validation &gt; validates tool category" time="0.001959994">
         </testcase>
-        <testcase classname="tests/unit/registry.test.ts" name="Tool Registry &gt; finds tool by slug" time="0.000517857">
+        <testcase classname="tests/unit/manifest-validation.test.ts" name="Manifest Validation &gt; validates lifecycle" time="0.000450407">
         </testcase>
-        <testcase classname="tests/unit/registry.test.ts" name="Tool Registry &gt; returns undefined for unknown slug" time="0.00042433">
+        <testcase classname="tests/unit/manifest-validation.test.ts" name="Manifest Validation &gt; validates limits" time="0.001524925">
         </testcase>
-        <testcase classname="tests/unit/registry.test.ts" name="Tool Registry &gt; filters by category" time="0.000444699">
-        </testcase>
-        <testcase classname="tests/unit/registry.test.ts" name="Tool Registry &gt; finds related tools" time="0.00043814">
+        <testcase classname="tests/unit/manifest-validation.test.ts" name="Manifest Validation &gt; rejects negative limits" time="0.000413774">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/text-utils.test.ts" timestamp="2026-07-01T10:48:49.184Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="5" failures="0" errors="0" skipped="0" time="0.013578762">
-        <testcase classname="tests/unit/text-utils.test.ts" name="text-utils &gt; convertCase" time="0.001686246">
+    <testsuite name="tests/unit/pdf-utils.test.ts" timestamp="2026-07-03T13:04:32.239Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="3" failures="0" errors="0" skipped="0" time="0.006234129">
+        <testcase classname="tests/unit/pdf-utils.test.ts" name="pdf-utils &gt; parsePageRange single" time="0.001765239">
         </testcase>
-        <testcase classname="tests/unit/text-utils.test.ts" name="text-utils &gt; removeDuplicateLines" time="0.000519475">
+        <testcase classname="tests/unit/pdf-utils.test.ts" name="pdf-utils &gt; parsePageRange range" time="0.000332107">
         </testcase>
-        <testcase classname="tests/unit/text-utils.test.ts" name="text-utils &gt; sortLines" time="0.007499728">
-        </testcase>
-        <testcase classname="tests/unit/text-utils.test.ts" name="text-utils &gt; countText" time="0.000608751">
-        </testcase>
-        <testcase classname="tests/unit/text-utils.test.ts" name="text-utils &gt; diffText" time="0.000468757">
+        <testcase classname="tests/unit/pdf-utils.test.ts" name="pdf-utils &gt; parsePageRange throws for invalid" time="0.001004036">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/shared/event-bus.test.ts" timestamp="2026-07-01T10:48:49.187Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.009077315">
-        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; subscribes and receives events with full BaseEvent shape" time="0.003088149">
+    <testsuite name="tests/unit/registry.test.ts" timestamp="2026-07-03T13:04:32.239Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="5" failures="0" errors="0" skipped="0" time="0.007850011">
+        <testcase classname="tests/unit/registry.test.ts" name="Tool Registry &gt; contains tools" time="0.002094929">
         </testcase>
-        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; supports multiple subscribers" time="0.000441786">
+        <testcase classname="tests/unit/registry.test.ts" name="Tool Registry &gt; finds tool by slug" time="0.000724644">
         </testcase>
-        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; unsubscribe function returned by on() works" time="0.00029265">
+        <testcase classname="tests/unit/registry.test.ts" name="Tool Registry &gt; returns undefined for unknown slug" time="0.000393384">
         </testcase>
-        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; listeners that throw do not break the bus" time="0.000816095">
+        <testcase classname="tests/unit/registry.test.ts" name="Tool Registry &gt; filters by category" time="0.000367741">
         </testcase>
-        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; clear() removes all subscribers" time="0.000479691">
-        </testcase>
-        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; wildcard listener receives all events" time="0.000313439">
+        <testcase classname="tests/unit/registry.test.ts" name="Tool Registry &gt; finds related tools" time="0.000390508">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/shared/feature-flags.test.ts" timestamp="2026-07-01T10:48:49.190Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="10" failures="0" errors="0" skipped="0" time="0.009552148">
-        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; isEnabled returns the configured value" time="0.001783212">
+    <testsuite name="tests/unit/text-utils.test.ts" timestamp="2026-07-03T13:04:32.241Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="5" failures="0" errors="0" skipped="0" time="0.013680172">
+        <testcase classname="tests/unit/text-utils.test.ts" name="text-utils &gt; convertCase" time="0.001706599">
         </testcase>
-        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; isEnabled returns false for unknown keys" time="0.000351726">
+        <testcase classname="tests/unit/text-utils.test.ts" name="text-utils &gt; removeDuplicateLines" time="0.000474155">
         </testcase>
-        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; register() adds a new flag and notifies subscribers" time="0.002626835">
+        <testcase classname="tests/unit/text-utils.test.ts" name="text-utils &gt; sortLines" time="0.007699392">
         </testcase>
-        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; setEnabled() updates an existing flag" time="0.000341924">
+        <testcase classname="tests/unit/text-utils.test.ts" name="text-utils &gt; countText" time="0.000507707">
         </testcase>
-        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; setEnabled() on unknown flag is a no-op" time="0.000167725">
-        </testcase>
-        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; all() returns every registered flag" time="0.000369521">
-        </testcase>
-        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; evaluate() respects 100% rollout" time="0.000305991">
-        </testcase>
-        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; evaluate() respects 0% rollout" time="0.000133241">
-        </testcase>
-        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; evaluate() returns false when flag is disabled" time="0.000140476">
-        </testcase>
-        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; subscribe() returns an unsubscribe function" time="0.000296616">
+        <testcase classname="tests/unit/text-utils.test.ts" name="text-utils &gt; diffText" time="0.00043046">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/shared/seo.test.ts" timestamp="2026-07-01T10:48:49.195Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="4" failures="0" errors="0" skipped="0" time="0.012382317">
-        <testcase classname="tests/unit/shared/seo.test.ts" name="SEO metadata generation &gt; every tool has an SeoMetaEntry" time="0.00564658">
+    <testsuite name="tests/unit/shared/event-bus.test.ts" timestamp="2026-07-03T13:04:32.242Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.013876996">
+        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; subscribes and receives events with full BaseEvent shape" time="0.005271224">
         </testcase>
-        <testcase classname="tests/unit/shared/seo.test.ts" name="SEO metadata generation &gt; every canonical URL is absolute" time="0.000909069">
+        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; supports multiple subscribers" time="0.001101184">
         </testcase>
-        <testcase classname="tests/unit/shared/seo.test.ts" name="SEO metadata generation &gt; openGraph has required fields" time="0.001153543">
+        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; unsubscribe function returned by on() works" time="0.000753913">
         </testcase>
-        <testcase classname="tests/unit/shared/seo.test.ts" name="SEO metadata generation &gt; twitterCard has required fields" time="0.001695526">
+        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; listeners that throw do not break the bus" time="0.001580739">
         </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/shared/storage-service.test.ts" timestamp="2026-07-01T10:48:49.198Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.004628784">
-        <testcase classname="tests/unit/shared/storage-service.test.ts" name="StorageService with MemoryStorageAdapter &gt; put + get round-trips a string" time="0.001265878">
+        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; clear() removes all subscribers" time="0.000700368">
         </testcase>
-        <testcase classname="tests/unit/shared/storage-service.test.ts" name="StorageService with MemoryStorageAdapter &gt; returns null for missing keys" time="0.000338936">
-        </testcase>
-        <testcase classname="tests/unit/shared/storage-service.test.ts" name="StorageService with MemoryStorageAdapter &gt; deletes a value" time="0.000218241">
-        </testcase>
-        <testcase classname="tests/unit/shared/storage-service.test.ts" name="StorageService with MemoryStorageAdapter &gt; clears all values" time="0.000191608">
-        </testcase>
-        <testcase classname="tests/unit/shared/storage-service.test.ts" name="StorageService with MemoryStorageAdapter &gt; can swap adapters via setAdapter" time="0.000165923">
-        </testcase>
-        <testcase classname="tests/unit/shared/storage-service.test.ts" name="MemoryStorageAdapter &gt; isolates data per instance" time="0.000198817">
+        <testcase classname="tests/unit/shared/event-bus.test.ts" name="EventBus &gt; wildcard listener receives all events" time="0.000645609">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/developer/base64-encoder.test.ts" timestamp="2026-07-01T10:48:49.201Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.00824549">
-        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; manifest is well-formed" time="0.001784295">
+    <testsuite name="tests/unit/shared/feature-flags.test.ts" timestamp="2026-07-03T13:04:32.244Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="10" failures="0" errors="0" skipped="0" time="0.01355012">
+        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; isEnabled returns the configured value" time="0.001615588">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; stages are wired in manifest" time="0.000275996">
+        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; isEnabled returns false for unknown keys" time="0.000338131">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; inputSchema is callable" time="0.001093819">
+        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; register() adds a new flag and notifies subscribers" time="0.006672811">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; validation stage returns structured result" time="0.000579019">
+        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; setEnabled() updates an existing flag" time="0.000396271">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; processing stage is async" time="0.000554692">
+        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; setEnabled() on unknown flag is a no-op" time="0.000248629">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; download stage is callable" time="0.000189299">
+        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; all() returns every registered flag" time="0.000422438">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; seo has required fields" time="0.000263724">
+        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; evaluate() respects 100% rollout" time="0.000327139">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; structured data is SoftwareApplication" time="0.00017027">
+        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; evaluate() respects 0% rollout" time="0.000187825">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; related tools is array" time="0.000163083">
+        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; evaluate() returns false when flag is disabled" time="0.00015758">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; analytics has funnel steps" time="0.000192895">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000118717">
+        <testcase classname="tests/unit/shared/feature-flags.test.ts" name="FeatureFlagService &gt; subscribe() returns an unsubscribe function" time="0.00040682">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/developer/hash-generator.test.ts" timestamp="2026-07-01T10:48:49.206Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.017172624">
-        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; manifest is well-formed" time="0.003857671">
+    <testsuite name="tests/unit/shared/seo.test.ts" timestamp="2026-07-03T13:04:32.246Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="4" failures="0" errors="0" skipped="0" time="0.011123384">
+        <testcase classname="tests/unit/shared/seo.test.ts" name="SEO metadata generation &gt; every tool has an SeoMetaEntry" time="0.004547748">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; stages are wired in manifest" time="0.000870435">
+        <testcase classname="tests/unit/shared/seo.test.ts" name="SEO metadata generation &gt; every canonical URL is absolute" time="0.000850182">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; inputSchema is callable" time="0.002565583">
+        <testcase classname="tests/unit/shared/seo.test.ts" name="SEO metadata generation &gt; openGraph has required fields" time="0.001286621">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; validation stage returns structured result" time="0.002398442">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; processing stage is async" time="0.000604943">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; download stage is callable" time="0.000179267">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; seo has required fields" time="0.000416363">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; structured data is SoftwareApplication" time="0.00051468">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; related tools is array" time="0.000476453">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; analytics has funnel steps" time="0.000168424">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000191165">
+        <testcase classname="tests/unit/shared/seo.test.ts" name="SEO metadata generation &gt; twitterCard has required fields" time="0.001526979">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/developer/json-formatter.test.ts" timestamp="2026-07-01T10:48:49.210Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.00741616">
-        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; manifest is well-formed" time="0.001629628">
+    <testsuite name="tests/unit/shared/storage-service.test.ts" timestamp="2026-07-03T13:04:32.247Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.007989035">
+        <testcase classname="tests/unit/shared/storage-service.test.ts" name="StorageService with MemoryStorageAdapter &gt; put + get round-trips a string" time="0.001994995">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; stages are wired in manifest" time="0.000279691">
+        <testcase classname="tests/unit/shared/storage-service.test.ts" name="StorageService with MemoryStorageAdapter &gt; returns null for missing keys" time="0.000617179">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; inputSchema is callable" time="0.001014875">
+        <testcase classname="tests/unit/shared/storage-service.test.ts" name="StorageService with MemoryStorageAdapter &gt; deletes a value" time="0.000445853">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; validation stage returns structured result" time="0.000691683">
+        <testcase classname="tests/unit/shared/storage-service.test.ts" name="StorageService with MemoryStorageAdapter &gt; clears all values" time="0.000556795">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; processing stage is async" time="0.000418257">
+        <testcase classname="tests/unit/shared/storage-service.test.ts" name="StorageService with MemoryStorageAdapter &gt; can swap adapters via setAdapter" time="0.000518301">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; download stage is callable" time="0.00015096">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; seo has required fields" time="0.00023255">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; structured data is SoftwareApplication" time="0.000222045">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; related tools is array" time="0.000111563">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; analytics has funnel steps" time="0.000167601">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000118205">
+        <testcase classname="tests/unit/shared/storage-service.test.ts" name="MemoryStorageAdapter &gt; isolates data per instance" time="0.000534796">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/developer/jwt-decoder.test.ts" timestamp="2026-07-01T10:48:49.213Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.007817094">
-        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; manifest is well-formed" time="0.001909751">
+    <testsuite name="tests/integration/tools/developer/base64-encoder.test.ts" timestamp="2026-07-03T13:04:32.248Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.009065728">
+        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; manifest is well-formed" time="0.002049388">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; stages are wired in manifest" time="0.000316904">
+        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; stages are wired in manifest" time="0.000305571">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; inputSchema is callable" time="0.001021545">
+        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; inputSchema is callable" time="0.001172457">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; validation stage returns structured result" time="0.000621295">
+        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; validation stage returns structured result" time="0.001081827">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; processing stage is async" time="0.000486402">
+        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; processing stage is async" time="0.000484348">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; download stage is callable" time="0.000130864">
+        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; download stage is callable" time="0.000137836">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; seo has required fields" time="0.000184655">
+        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; seo has required fields" time="0.00024223">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; structured data is SoftwareApplication" time="0.000143327">
+        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; structured data is SoftwareApplication" time="0.000167856">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; related tools is array" time="0.000144151">
+        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; related tools is array" time="0.000129792">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; analytics has funnel steps" time="0.000140288">
+        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; analytics has funnel steps" time="0.000243877">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000120713">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/integration/tools/developer/url-encoder.test.ts" timestamp="2026-07-01T10:48:49.215Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.008334023">
-        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; manifest is well-formed" time="0.00189137">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; stages are wired in manifest" time="0.000256045">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; inputSchema is callable" time="0.00130576">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; validation stage returns structured result" time="0.00121692">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; processing stage is async" time="0.000352356">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; download stage is callable" time="0.000174054">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; seo has required fields" time="0.00024137">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; structured data is SoftwareApplication" time="0.00013709">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; related tools is array" time="0.000100635">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; analytics has funnel steps" time="0.000135598">
-        </testcase>
-        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000090128">
+        <testcase classname="tests/integration/tools/developer/base64-encoder.test.ts" name="base64-encoder — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000158834">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/developer/uuid-generator.test.ts" timestamp="2026-07-01T10:48:49.220Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.007321451">
-        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; manifest is well-formed" time="0.001748278">
+    <testsuite name="tests/integration/tools/developer/hash-generator.test.ts" timestamp="2026-07-03T13:04:32.251Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.008504457">
+        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; manifest is well-formed" time="0.00189645">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; stages are wired in manifest" time="0.000375788">
+        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; stages are wired in manifest" time="0.000392324">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; inputSchema is callable" time="0.000565176">
+        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; inputSchema is callable" time="0.001161107">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; validation stage returns structured result" time="0.000630009">
+        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; validation stage returns structured result" time="0.00096718">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; processing stage is async" time="0.000411494">
+        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; processing stage is async" time="0.000449987">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; download stage is callable" time="0.000163959">
+        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; download stage is callable" time="0.000146865">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; seo has required fields" time="0.000217318">
+        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; seo has required fields" time="0.000236701">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; structured data is SoftwareApplication" time="0.000212727">
+        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; structured data is SoftwareApplication" time="0.000181997">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; related tools is array" time="0.000190401">
+        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; related tools is array" time="0.000125291">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; analytics has funnel steps" time="0.000161717">
+        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; analytics has funnel steps" time="0.000165465">
         </testcase>
-        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000151591">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/integration/tools/image/image-compress.test.ts" timestamp="2026-07-01T10:48:49.222Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.008472608">
-        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; manifest is well-formed" time="0.001811235">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; stages are wired in manifest" time="0.000349523">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; inputSchema is callable" time="0.001212815">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; validation stage returns structured result" time="0.000812993">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; processing stage is async" time="0.000498294">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; download stage is callable" time="0.00012111">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; seo has required fields" time="0.000347097">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; structured data is SoftwareApplication" time="0.000191462">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; related tools is array" time="0.000165117">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; analytics has funnel steps" time="0.000172231">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000094724">
+        <testcase classname="tests/integration/tools/developer/hash-generator.test.ts" name="hash-generator — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000117574">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/image/image-crop.test.ts" timestamp="2026-07-01T10:48:49.225Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.01161376">
-        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; manifest is well-formed" time="0.002678509">
+    <testsuite name="tests/integration/tools/developer/json-formatter.test.ts" timestamp="2026-07-03T13:04:32.253Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.008914596">
+        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; manifest is well-formed" time="0.001984037">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; stages are wired in manifest" time="0.000492514">
+        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; stages are wired in manifest" time="0.000442785">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; inputSchema is callable" time="0.001359744">
+        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; inputSchema is callable" time="0.001414634">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; validation stage returns structured result" time="0.001982734">
+        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; validation stage returns structured result" time="0.000746384">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; processing stage is async" time="0.000784434">
+        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; processing stage is async" time="0.00047365">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; download stage is callable" time="0.000111113">
+        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; download stage is callable" time="0.000151134">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; seo has required fields" time="0.00021719">
+        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; seo has required fields" time="0.000278665">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; structured data is SoftwareApplication" time="0.000379604">
+        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; structured data is SoftwareApplication" time="0.000196349">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; related tools is array" time="0.000502611">
+        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; related tools is array" time="0.000209487">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; analytics has funnel steps" time="0.000174161">
+        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; analytics has funnel steps" time="0.000227506">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000193822">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/integration/tools/image/image-format-convert.test.ts" timestamp="2026-07-01T10:48:49.228Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.008592997">
-        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; manifest is well-formed" time="0.001915105">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; stages are wired in manifest" time="0.000329407">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; inputSchema is callable" time="0.001155461">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; validation stage returns structured result" time="0.000803162">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; processing stage is async" time="0.000732806">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; download stage is callable" time="0.000156858">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; seo has required fields" time="0.000236534">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; structured data is SoftwareApplication" time="0.000169141">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; related tools is array" time="0.000210286">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; analytics has funnel steps" time="0.000251668">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000094066">
+        <testcase classname="tests/integration/tools/developer/json-formatter.test.ts" name="json-formatter — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000134301">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/image/image-resize.test.ts" timestamp="2026-07-01T10:48:49.231Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.008703801">
-        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; manifest is well-formed" time="0.001914746">
+    <testsuite name="tests/integration/tools/developer/jwt-decoder.test.ts" timestamp="2026-07-03T13:04:32.255Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.008182285">
+        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; manifest is well-formed" time="0.001819514">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; stages are wired in manifest" time="0.000333579">
+        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; stages are wired in manifest" time="0.000369892">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; inputSchema is callable" time="0.001109101">
+        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; inputSchema is callable" time="0.001025595">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; validation stage returns structured result" time="0.00101261">
+        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; validation stage returns structured result" time="0.000926973">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; processing stage is async" time="0.000535201">
+        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; processing stage is async" time="0.000523602">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; download stage is callable" time="0.000140204">
+        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; download stage is callable" time="0.00013314">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; seo has required fields" time="0.000258831">
+        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; seo has required fields" time="0.000238104">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; structured data is SoftwareApplication" time="0.000270347">
+        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; structured data is SoftwareApplication" time="0.000162167">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; related tools is array" time="0.000126478">
+        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; related tools is array" time="0.000114791">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; analytics has funnel steps" time="0.000148205">
+        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; analytics has funnel steps" time="0.000191832">
         </testcase>
-        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.00008641">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/integration/tools/image/image-rotate.test.ts" timestamp="2026-07-01T10:48:49.233Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.009291754">
-        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; manifest is well-formed" time="0.002141304">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; stages are wired in manifest" time="0.000441653">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; inputSchema is callable" time="0.001188155">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; validation stage returns structured result" time="0.001126012">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; processing stage is async" time="0.000660558">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; download stage is callable" time="0.000129291">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; seo has required fields" time="0.000210894">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; structured data is SoftwareApplication" time="0.000192489">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; related tools is array" time="0.000147375">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; analytics has funnel steps" time="0.000186733">
-        </testcase>
-        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000090745">
+        <testcase classname="tests/integration/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000138622">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/pdf/pdf-compress.test.ts" timestamp="2026-07-01T10:48:49.235Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.007811969">
-        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; manifest is well-formed" time="0.00187165">
+    <testsuite name="tests/integration/tools/developer/url-encoder.test.ts" timestamp="2026-07-03T13:04:32.257Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.013376697">
+        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; manifest is well-formed" time="0.003089388">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; stages are wired in manifest" time="0.000252183">
+        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; stages are wired in manifest" time="0.00057218">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; inputSchema is callable" time="0.001193468">
+        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; inputSchema is callable" time="0.001817557">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; validation stage returns structured result" time="0.000723356">
+        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; validation stage returns structured result" time="0.001666314">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; processing stage is async" time="0.000443137">
+        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; processing stage is async" time="0.000567058">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; download stage is callable" time="0.00015492">
+        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; download stage is callable" time="0.000227296">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; seo has required fields" time="0.000201898">
+        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; seo has required fields" time="0.000414874">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; structured data is SoftwareApplication" time="0.000150845">
+        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; structured data is SoftwareApplication" time="0.00032484">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; related tools is array" time="0.000096775">
+        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; related tools is array" time="0.000252993">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; analytics has funnel steps" time="0.000201124">
+        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; analytics has funnel steps" time="0.000375215">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000108581">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/integration/tools/pdf/pdf-extract-pages.test.ts" timestamp="2026-07-01T10:48:49.257Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.00821299">
-        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; manifest is well-formed" time="0.001681621">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; stages are wired in manifest" time="0.000306484">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; inputSchema is callable" time="0.001297825">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; validation stage returns structured result" time="0.000950331">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; processing stage is async" time="0.000621115">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; download stage is callable" time="0.000134292">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; seo has required fields" time="0.000194146">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; structured data is SoftwareApplication" time="0.000165702">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; related tools is array" time="0.000154252">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; analytics has funnel steps" time="0.000172082">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000088598">
+        <testcase classname="tests/integration/tools/developer/url-encoder.test.ts" name="url-encoder — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000227459">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/pdf/pdf-merge.test.ts" timestamp="2026-07-01T10:48:49.262Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.00786751">
-        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; manifest is well-formed" time="0.001673832">
+    <testsuite name="tests/integration/tools/developer/uuid-generator.test.ts" timestamp="2026-07-03T13:04:32.259Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.006945052">
+        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; manifest is well-formed" time="0.001770324">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; stages are wired in manifest" time="0.000311318">
+        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; stages are wired in manifest" time="0.00031252">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; inputSchema is callable" time="0.001053955">
+        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; inputSchema is callable" time="0.000390463">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; validation stage returns structured result" time="0.00065099">
+        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; validation stage returns structured result" time="0.000301638">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; processing stage is async" time="0.000441329">
+        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; processing stage is async" time="0.000405232">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; download stage is callable" time="0.000143555">
+        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; download stage is callable" time="0.00013576">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; seo has required fields" time="0.000344725">
+        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; seo has required fields" time="0.000261442">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; structured data is SoftwareApplication" time="0.000298057">
+        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; structured data is SoftwareApplication" time="0.000165663">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; related tools is array" time="0.000192005">
+        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; related tools is array" time="0.000135342">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; analytics has funnel steps" time="0.000142756">
+        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; analytics has funnel steps" time="0.000189632">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000081627">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/integration/tools/pdf/pdf-protect.test.ts" timestamp="2026-07-01T10:48:49.264Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.007939136">
-        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; manifest is well-formed" time="0.001811589">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; stages are wired in manifest" time="0.000326752">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; inputSchema is callable" time="0.001171866">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; validation stage returns structured result" time="0.000911344">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; processing stage is async" time="0.000329124">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; download stage is callable" time="0.000115288">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; seo has required fields" time="0.000228762">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; structured data is SoftwareApplication" time="0.000189813">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; related tools is array" time="0.000098106">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; analytics has funnel steps" time="0.000140578">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.00008215">
+        <testcase classname="tests/integration/tools/developer/uuid-generator.test.ts" name="uuid-generator — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000108605">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/pdf/pdf-rotate.test.ts" timestamp="2026-07-01T10:48:49.267Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.009712594">
-        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; manifest is well-formed" time="0.001985037">
+    <testsuite name="tests/integration/tools/pdf/pdf-compress.test.ts" timestamp="2026-07-03T13:04:32.261Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.008728278">
+        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; manifest is well-formed" time="0.00187879">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; stages are wired in manifest" time="0.00045673">
+        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; stages are wired in manifest" time="0.000315942">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; inputSchema is callable" time="0.001211686">
+        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; inputSchema is callable" time="0.001286359">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; validation stage returns structured result" time="0.001369308">
+        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; validation stage returns structured result" time="0.000935443">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; processing stage is async" time="0.000739194">
+        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; processing stage is async" time="0.000498013">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; download stage is callable" time="0.000160008">
+        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; download stage is callable" time="0.000173491">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; seo has required fields" time="0.000227644">
+        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; seo has required fields" time="0.000266207">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; structured data is SoftwareApplication" time="0.000296444">
+        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; structured data is SoftwareApplication" time="0.000180909">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; related tools is array" time="0.000275499">
+        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; related tools is array" time="0.000124535">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; analytics has funnel steps" time="0.000149404">
+        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; analytics has funnel steps" time="0.000213688">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000083739">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/integration/tools/pdf/pdf-split.test.ts" timestamp="2026-07-01T10:48:49.269Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.009085084">
-        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; manifest is well-formed" time="0.001557903">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; stages are wired in manifest" time="0.000299408">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; inputSchema is callable" time="0.001130574">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; validation stage returns structured result" time="0.001717879">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; processing stage is async" time="0.000713127">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; download stage is callable" time="0.000228133">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; seo has required fields" time="0.000216965">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; structured data is SoftwareApplication" time="0.000151386">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; related tools is array" time="0.000100113">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; analytics has funnel steps" time="0.000134364">
-        </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000084816">
+        <testcase classname="tests/integration/tools/pdf/pdf-compress.test.ts" name="pdf-compress — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000127764">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/pdf/pdf-unlock.test.ts" timestamp="2026-07-01T10:48:49.273Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.007989498">
-        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; manifest is well-formed" time="0.001626383">
+    <testsuite name="tests/integration/tools/pdf/pdf-extract-pages.test.ts" timestamp="2026-07-03T13:04:32.264Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.009600758">
+        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; manifest is well-formed" time="0.002121806">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; stages are wired in manifest" time="0.000372187">
+        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; stages are wired in manifest" time="0.000418331">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; inputSchema is callable" time="0.001366839">
+        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; inputSchema is callable" time="0.001381293">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; validation stage returns structured result" time="0.000743363">
+        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; validation stage returns structured result" time="0.001186215">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; processing stage is async" time="0.000341038">
+        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; processing stage is async" time="0.00059545">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; download stage is callable" time="0.000141741">
+        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; download stage is callable" time="0.000174821">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; seo has required fields" time="0.00021789">
+        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; seo has required fields" time="0.000241551">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; structured data is SoftwareApplication" time="0.000151996">
+        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; structured data is SoftwareApplication" time="0.000187444">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; related tools is array" time="0.000101735">
+        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; related tools is array" time="0.000140175">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; analytics has funnel steps" time="0.000134324">
+        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; analytics has funnel steps" time="0.000252272">
         </testcase>
-        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000137966">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/integration/tools/text/case-converter.test.ts" timestamp="2026-07-01T10:48:49.276Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.009179241">
-        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; manifest is well-formed" time="0.002029276">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; stages are wired in manifest" time="0.000442089">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; inputSchema is callable" time="0.001092599">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; validation stage returns structured result" time="0.000983953">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; processing stage is async" time="0.000406243">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; download stage is callable" time="0.00011191">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; seo has required fields" time="0.000245503">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; structured data is SoftwareApplication" time="0.00030053">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; related tools is array" time="0.000443282">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; analytics has funnel steps" time="0.000248043">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000217018">
+        <testcase classname="tests/integration/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000186713">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/text/remove-duplicate-lines.test.ts" timestamp="2026-07-01T10:48:49.280Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.009165001">
-        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; manifest is well-formed" time="0.001941079">
+    <testsuite name="tests/integration/tools/pdf/pdf-merge.test.ts" timestamp="2026-07-03T13:04:32.265Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.008132784">
+        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; manifest is well-formed" time="0.001718578">
         </testcase>
-        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; stages are wired in manifest" time="0.000347234">
+        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; stages are wired in manifest" time="0.000309377">
         </testcase>
-        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; inputSchema is callable" time="0.00122468">
+        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; inputSchema is callable" time="0.001036568">
         </testcase>
-        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; validation stage returns structured result" time="0.000719429">
+        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; validation stage returns structured result" time="0.000997021">
         </testcase>
-        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; processing stage is async" time="0.00056834">
+        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; processing stage is async" time="0.000434456">
         </testcase>
-        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; download stage is callable" time="0.000153196">
+        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; download stage is callable" time="0.000133462">
         </testcase>
-        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; seo has required fields" time="0.000287638">
+        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; seo has required fields" time="0.00027224">
         </testcase>
-        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; structured data is SoftwareApplication" time="0.000302201">
+        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; structured data is SoftwareApplication" time="0.000170538">
         </testcase>
-        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; related tools is array" time="0.000232692">
+        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; related tools is array" time="0.000122977">
         </testcase>
-        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; analytics has funnel steps" time="0.000220888">
+        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; analytics has funnel steps" time="0.000185691">
         </testcase>
-        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000176411">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/integration/tools/text/sort-lines.test.ts" timestamp="2026-07-01T10:48:49.283Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.007690006">
-        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; manifest is well-formed" time="0.001612322">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; stages are wired in manifest" time="0.00028188">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; inputSchema is callable" time="0.001050827">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; validation stage returns structured result" time="0.000816217">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; processing stage is async" time="0.000527039">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; download stage is callable" time="0.000114723">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; seo has required fields" time="0.000247515">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; structured data is SoftwareApplication" time="0.000145308">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; related tools is array" time="0.000133547">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; analytics has funnel steps" time="0.000189881">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.00012289">
+        <testcase classname="tests/integration/tools/pdf/pdf-merge.test.ts" name="pdf-merge — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000223535">
         </testcase>
     </testsuite>
-    <testsuite name="tests/integration/tools/text/text-diff.test.ts" timestamp="2026-07-01T10:48:49.285Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.013539977">
-        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; manifest is well-formed" time="0.002365638">
+    <testsuite name="tests/integration/tools/pdf/pdf-protect.test.ts" timestamp="2026-07-03T13:04:32.267Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.008736505">
+        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; manifest is well-formed" time="0.001796398">
         </testcase>
-        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; stages are wired in manifest" time="0.000270145">
+        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; stages are wired in manifest" time="0.000322381">
         </testcase>
-        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; inputSchema is callable" time="0.001020997">
+        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; inputSchema is callable" time="0.001187071">
         </testcase>
-        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; validation stage returns structured result" time="0.001721992">
+        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; validation stage returns structured result" time="0.00139953">
         </testcase>
-        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; processing stage is async" time="0.000853848">
+        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; processing stage is async" time="0.000360704">
         </testcase>
-        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; download stage is callable" time="0.00024204">
+        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; download stage is callable" time="0.000128907">
         </testcase>
-        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; seo has required fields" time="0.0004872">
+        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; seo has required fields" time="0.000238745">
         </testcase>
-        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; structured data is SoftwareApplication" time="0.000431425">
+        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; structured data is SoftwareApplication" time="0.000251862">
         </testcase>
-        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; related tools is array" time="0.00058314">
+        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; related tools is array" time="0.000141905">
         </testcase>
-        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; analytics has funnel steps" time="0.000321716">
+        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; analytics has funnel steps" time="0.000180868">
         </testcase>
-        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000317212">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/integration/tools/text/word-counter.test.ts" timestamp="2026-07-01T10:48:49.287Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="11" failures="0" errors="0" skipped="0" time="0.007834512">
-        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; manifest is well-formed" time="0.001785275">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; stages are wired in manifest" time="0.000278816">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; inputSchema is callable" time="0.000998526">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; validation stage returns structured result" time="0.00078125">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; processing stage is async" time="0.000438544">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; download stage is callable" time="0.000111321">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; seo has required fields" time="0.00025794">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; structured data is SoftwareApplication" time="0.000156859">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; related tools is array" time="0.000106596">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; analytics has funnel steps" time="0.000138174">
-        </testcase>
-        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000085356">
+        <testcase classname="tests/integration/tools/pdf/pdf-protect.test.ts" name="pdf-protect — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000113577">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/developer/base64-encoder.test.ts" timestamp="2026-07-01T10:48:49.290Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.006753122">
-        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; has a processing stage that is a function" time="0.001204732">
+    <testsuite name="tests/integration/tools/pdf/pdf-rotate.test.ts" timestamp="2026-07-03T13:04:32.269Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.010850144">
+        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; manifest is well-formed" time="0.001983291">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; has a validation stage that accepts input" time="0.001234914">
+        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; stages are wired in manifest" time="0.000424446">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; inputSchema is a Zod schema" time="0.000270158">
+        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; inputSchema is callable" time="0.001651796">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; validation returns structured errors when input is insufficient" time="0.000585832">
+        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; validation stage returns structured result" time="0.001460566">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; processing stage is async and returns a value or throws" time="0.000342807">
+        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; processing stage is async" time="0.000872423">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; base64-encoder — has valid slug/category/lifecycle" time="0.000948436">
+        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; download stage is callable" time="0.000209439">
         </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/tools/developer/hash-generator.test.ts" timestamp="2026-07-01T10:48:49.293Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.007217165">
-        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; has a processing stage that is a function" time="0.001260951">
+        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; seo has required fields" time="0.000272204">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; has a validation stage that accepts input" time="0.001166128">
+        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; structured data is SoftwareApplication" time="0.000283485">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; inputSchema is a Zod schema" time="0.000269237">
+        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; related tools is array" time="0.00051048">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; validation returns structured errors when input is insufficient" time="0.000592846">
+        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; analytics has funnel steps" time="0.000236627">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; processing stage is async and returns a value or throws" time="0.000295478">
-        </testcase>
-        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; hash-generator — has valid slug/category/lifecycle" time="0.000822108">
+        <testcase classname="tests/integration/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000205309">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/developer/json-formatter.test.ts" timestamp="2026-07-01T10:48:49.294Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.009076362">
-        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; has a processing stage that is a function" time="0.001497605">
+    <testsuite name="tests/integration/tools/pdf/pdf-split.test.ts" timestamp="2026-07-03T13:04:32.271Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.009951908">
+        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; manifest is well-formed" time="0.002089577">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; has a validation stage that accepts input" time="0.001298793">
+        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; stages are wired in manifest" time="0.000499064">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; inputSchema is a Zod schema" time="0.000312063">
+        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; inputSchema is callable" time="0.001346844">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; validation returns structured errors when input is insufficient" time="0.000769992">
+        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; validation stage returns structured result" time="0.001170236">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; processing stage is async and returns a value or throws" time="0.000402824">
+        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; processing stage is async" time="0.000761046">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; json-formatter — has valid slug/category/lifecycle" time="0.001171035">
+        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; download stage is callable" time="0.000238224">
         </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/tools/developer/jwt-decoder.test.ts" timestamp="2026-07-01T10:48:49.295Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.007815684">
-        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; has a processing stage that is a function" time="0.001606222">
+        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; seo has required fields" time="0.000292276">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; has a validation stage that accepts input" time="0.001159548">
+        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; structured data is SoftwareApplication" time="0.000300368">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; inputSchema is a Zod schema" time="0.000351141">
+        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; related tools is array" time="0.000146165">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; validation returns structured errors when input is insufficient" time="0.000661502">
+        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; analytics has funnel steps" time="0.000196301">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; processing stage is async and returns a value or throws" time="0.000448588">
-        </testcase>
-        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; jwt-decoder — has valid slug/category/lifecycle" time="0.001036852">
+        <testcase classname="tests/integration/tools/pdf/pdf-split.test.ts" name="pdf-split — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000135231">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/developer/url-encoder.test.ts" timestamp="2026-07-01T10:48:49.297Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.008265438">
-        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; has a processing stage that is a function" time="0.001507124">
+    <testsuite name="tests/integration/tools/pdf/pdf-unlock.test.ts" timestamp="2026-07-03T13:04:32.272Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.009639495">
+        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; manifest is well-formed" time="0.002750704">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; has a validation stage that accepts input" time="0.001317913">
+        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; stages are wired in manifest" time="0.000457143">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; inputSchema is a Zod schema" time="0.000257586">
+        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; inputSchema is callable" time="0.001308728">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; validation returns structured errors when input is insufficient" time="0.0006183">
+        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; validation stage returns structured result" time="0.001101028">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; processing stage is async and returns a value or throws" time="0.000209121">
+        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; processing stage is async" time="0.000408917">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; url-encoder — has valid slug/category/lifecycle" time="0.000933452">
+        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; download stage is callable" time="0.000124441">
         </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/tools/developer/uuid-generator.test.ts" timestamp="2026-07-01T10:48:49.299Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.006064265">
-        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; has a processing stage that is a function" time="0.001249513">
+        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; seo has required fields" time="0.000263313">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; has a validation stage that accepts input" time="0.000503222">
+        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; structured data is SoftwareApplication" time="0.000165551">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; inputSchema is a Zod schema" time="0.000250117">
+        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; related tools is array" time="0.000127829">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; validation returns structured errors when input is insufficient" time="0.000190677">
+        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; analytics has funnel steps" time="0.000218557">
         </testcase>
-        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; processing stage is async and returns a value or throws" time="0.000252906">
-        </testcase>
-        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; uuid-generator — has valid slug/category/lifecycle" time="0.00090058">
+        <testcase classname="tests/integration/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000145314">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/image/image-compress.test.ts" timestamp="2026-07-01T10:48:49.300Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.008132626">
-        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; has a processing stage that is a function" time="0.002025893">
+    <testsuite name="tests/unit/tools/developer/base64-encoder.test.ts" timestamp="2026-07-03T13:04:32.275Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.008742456">
+        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; has a processing stage that is a function" time="0.001672827">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; has a validation stage that accepts input" time="0.001284711">
+        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; has a validation stage that accepts input" time="0.001709825">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; inputSchema is a Zod schema" time="0.000283327">
+        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; inputSchema is a Zod schema" time="0.000289509">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; validation returns structured errors when input is insufficient" time="0.000680552">
+        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; validation returns structured errors when input is insufficient" time="0.000700772">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; processing stage is async and returns a value or throws" time="0.00054923">
+        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; processing stage is async and returns a value or throws" time="0.000426875">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; image-compress — has valid slug/category/lifecycle" time="0.001014105">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/tools/image/image-crop.test.ts" timestamp="2026-07-01T10:48:49.302Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.008803263">
-        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; has a processing stage that is a function" time="0.00137393">
-        </testcase>
-        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; has a validation stage that accepts input" time="0.001755312">
-        </testcase>
-        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; inputSchema is a Zod schema" time="0.000262111">
-        </testcase>
-        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; validation returns structured errors when input is insufficient" time="0.001153423">
-        </testcase>
-        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; processing stage is async and returns a value or throws" time="0.000664765">
-        </testcase>
-        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; image-crop — has valid slug/category/lifecycle" time="0.001056223">
+        <testcase classname="tests/unit/tools/developer/base64-encoder.test.ts" name="base64-encoder — unit &gt; base64-encoder — has valid slug/category/lifecycle" time="0.001150729">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/image/image-format-convert.test.ts" timestamp="2026-07-01T10:48:49.303Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.008056175">
-        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; has a processing stage that is a function" time="0.001113219">
+    <testsuite name="tests/unit/tools/developer/hash-generator.test.ts" timestamp="2026-07-03T13:04:32.276Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.011730238">
+        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; has a processing stage that is a function" time="0.002119826">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; has a validation stage that accepts input" time="0.001332987">
+        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; has a validation stage that accepts input" time="0.002081621">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; inputSchema is a Zod schema" time="0.000189942">
+        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; inputSchema is a Zod schema" time="0.000479849">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; validation returns structured errors when input is insufficient" time="0.00079768">
+        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; validation returns structured errors when input is insufficient" time="0.001060115">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; processing stage is async and returns a value or throws" time="0.000526135">
+        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; processing stage is async and returns a value or throws" time="0.000566218">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; image-format-convert — has valid slug/category/lifecycle" time="0.001017186">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/tools/image/image-resize.test.ts" timestamp="2026-07-01T10:48:49.304Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.00711376">
-        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; has a processing stage that is a function" time="0.001260976">
-        </testcase>
-        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; has a validation stage that accepts input" time="0.001265758">
-        </testcase>
-        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; inputSchema is a Zod schema" time="0.000247376">
-        </testcase>
-        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; validation returns structured errors when input is insufficient" time="0.000577115">
-        </testcase>
-        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; processing stage is async and returns a value or throws" time="0.000542701">
-        </testcase>
-        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; image-resize — has valid slug/category/lifecycle" time="0.000970883">
+        <testcase classname="tests/unit/tools/developer/hash-generator.test.ts" name="hash-generator — unit &gt; hash-generator — has valid slug/category/lifecycle" time="0.001601194">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/image/image-rotate.test.ts" timestamp="2026-07-01T10:48:49.305Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.009338363">
-        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; has a processing stage that is a function" time="0.001499304">
+    <testsuite name="tests/unit/tools/developer/json-formatter.test.ts" timestamp="2026-07-03T13:04:32.277Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.011546976">
+        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; has a processing stage that is a function" time="0.002041487">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; has a validation stage that accepts input" time="0.00158891">
+        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; has a validation stage that accepts input" time="0.001939628">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; inputSchema is a Zod schema" time="0.000303725">
+        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; inputSchema is a Zod schema" time="0.000469917">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; validation returns structured errors when input is insufficient" time="0.000801112">
+        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; validation returns structured errors when input is insufficient" time="0.001087555">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; processing stage is async and returns a value or throws" time="0.000707916">
+        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; processing stage is async and returns a value or throws" time="0.000513062">
         </testcase>
-        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; image-rotate — has valid slug/category/lifecycle" time="0.001131108">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/tools/text/case-converter.test.ts" timestamp="2026-07-01T10:48:49.307Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.007974503">
-        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; has a processing stage that is a function" time="0.001487426">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; has a validation stage that accepts input" time="0.001443089">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; inputSchema is a Zod schema" time="0.000251575">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; validation returns structured errors when input is insufficient" time="0.000729422">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; processing stage is async and returns a value or throws" time="0.00040132">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; case-converter — has valid slug/category/lifecycle" time="0.001069391">
+        <testcase classname="tests/unit/tools/developer/json-formatter.test.ts" name="json-formatter — unit &gt; json-formatter — has valid slug/category/lifecycle" time="0.001586524">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/text/remove-duplicate-lines.test.ts" timestamp="2026-07-01T10:48:49.308Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.009930239">
-        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; has a processing stage that is a function" time="0.001669139">
+    <testsuite name="tests/unit/tools/developer/jwt-decoder.test.ts" timestamp="2026-07-03T13:04:32.278Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.012157203">
+        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; has a processing stage that is a function" time="0.002296837">
         </testcase>
-        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; has a validation stage that accepts input" time="0.001649922">
+        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; has a validation stage that accepts input" time="0.001991091">
         </testcase>
-        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; inputSchema is a Zod schema" time="0.000336177">
+        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; inputSchema is a Zod schema" time="0.000482723">
         </testcase>
-        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; validation returns structured errors when input is insufficient" time="0.000904105">
+        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; validation returns structured errors when input is insufficient" time="0.001122841">
         </testcase>
-        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; processing stage is async and returns a value or throws" time="0.00052481">
+        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; processing stage is async and returns a value or throws" time="0.000730476">
         </testcase>
-        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; remove-duplicate-lines — has valid slug/category/lifecycle" time="0.001348842">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/tools/text/sort-lines.test.ts" timestamp="2026-07-01T10:48:49.309Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.006997735">
-        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; has a processing stage that is a function" time="0.00120706">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; has a validation stage that accepts input" time="0.001105013">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; inputSchema is a Zod schema" time="0.000270947">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; validation returns structured errors when input is insufficient" time="0.000571663">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; processing stage is async and returns a value or throws" time="0.000455385">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; sort-lines — has valid slug/category/lifecycle" time="0.001111698">
+        <testcase classname="tests/unit/tools/developer/jwt-decoder.test.ts" name="jwt-decoder — unit &gt; jwt-decoder — has valid slug/category/lifecycle" time="0.001592608">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/text/text-diff.test.ts" timestamp="2026-07-01T10:48:49.310Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.008005563">
-        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; has a processing stage that is a function" time="0.001478201">
+    <testsuite name="tests/unit/tools/developer/url-encoder.test.ts" timestamp="2026-07-03T13:04:32.279Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.007683727">
+        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; has a processing stage that is a function" time="0.001469707">
         </testcase>
-        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; has a validation stage that accepts input" time="0.001202233">
+        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; has a validation stage that accepts input" time="0.001226358">
         </testcase>
-        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; inputSchema is a Zod schema" time="0.000268326">
+        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; inputSchema is a Zod schema" time="0.000247749">
         </testcase>
-        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; validation returns structured errors when input is insufficient" time="0.0009243">
+        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; validation returns structured errors when input is insufficient" time="0.000626299">
         </testcase>
-        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; processing stage is async and returns a value or throws" time="0.000439406">
+        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; processing stage is async and returns a value or throws" time="0.000334874">
         </testcase>
-        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; text-diff — has valid slug/category/lifecycle" time="0.00099279">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/tools/text/word-counter.test.ts" timestamp="2026-07-01T10:48:49.312Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.006978998">
-        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; has a processing stage that is a function" time="0.001223853">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; has a validation stage that accepts input" time="0.0011687">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; inputSchema is a Zod schema" time="0.000337485">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; validation returns structured errors when input is insufficient" time="0.000577363">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; processing stage is async and returns a value or throws" time="0.00041008">
-        </testcase>
-        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; word-counter — has valid slug/category/lifecycle" time="0.000898452">
+        <testcase classname="tests/unit/tools/developer/url-encoder.test.ts" name="url-encoder — unit &gt; url-encoder — has valid slug/category/lifecycle" time="0.001035228">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/pdf/pdf-compress.test.ts" timestamp="2026-07-01T10:48:49.313Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.007736834">
-        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; has a processing stage that is a function" time="0.001282059">
+    <testsuite name="tests/unit/tools/developer/uuid-generator.test.ts" timestamp="2026-07-03T13:04:32.281Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.010377125">
+        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; has a processing stage that is a function" time="0.002290787">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; has a validation stage that accepts input" time="0.001344722">
+        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; has a validation stage that accepts input" time="0.000903396">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; inputSchema is a Zod schema" time="0.000346956">
+        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; inputSchema is a Zod schema" time="0.000455287">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; validation returns structured errors when input is insufficient" time="0.000831425">
+        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; validation returns structured errors when input is insufficient" time="0.000455257">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; processing stage is async and returns a value or throws" time="0.000359397">
+        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; processing stage is async and returns a value or throws" time="0.000470155">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; pdf-compress — has valid slug/category/lifecycle" time="0.001042755">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/tools/pdf/pdf-extract-pages.test.ts" timestamp="2026-07-01T10:48:49.315Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.086670296">
-        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; has a processing stage that is a function" time="0.001325714">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; has a validation stage that accepts input" time="0.00151028">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; inputSchema is a Zod schema" time="0.000403813">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; validation returns structured errors when input is insufficient" time="0.000900057">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; processing stage is async and returns a value or throws" time="0.07884841">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; pdf-extract-pages — has valid slug/category/lifecycle" time="0.001263125">
+        <testcase classname="tests/unit/tools/developer/uuid-generator.test.ts" name="uuid-generator — unit &gt; uuid-generator — has valid slug/category/lifecycle" time="0.00164105">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/pdf/pdf-merge.test.ts" timestamp="2026-07-01T10:48:49.316Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.010378099">
-        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; has a processing stage that is a function" time="0.001821392">
+    <testsuite name="tests/unit/tools/pdf/pdf-compress.test.ts" timestamp="2026-07-03T13:04:32.282Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.014541879">
+        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; has a processing stage that is a function" time="0.001892759">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; has a validation stage that accepts input" time="0.001804856">
+        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; has a validation stage that accepts input" time="0.001955572">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; inputSchema is a Zod schema" time="0.000496902">
+        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; inputSchema is a Zod schema" time="0.000477097">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; validation returns structured errors when input is insufficient" time="0.000943952">
+        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; validation returns structured errors when input is insufficient" time="0.001266086">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; processing stage is async and returns a value or throws" time="0.000555059">
+        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; processing stage is async and returns a value or throws" time="0.000492241">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; pdf-merge — has valid slug/category/lifecycle" time="0.001351141">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/tools/pdf/pdf-protect.test.ts" timestamp="2026-07-01T10:48:49.318Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.017703772">
-        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; has a processing stage that is a function" time="0.002835091">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; has a validation stage that accepts input" time="0.00308206">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; inputSchema is a Zod schema" time="0.000868057">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; validation returns structured errors when input is insufficient" time="0.001870538">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; processing stage is async and returns a value or throws" time="0.000712741">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; pdf-protect — has valid slug/category/lifecycle" time="0.002935199">
+        <testcase classname="tests/unit/tools/pdf/pdf-compress.test.ts" name="pdf-compress — unit &gt; pdf-compress — has valid slug/category/lifecycle" time="0.00168034">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/pdf/pdf-rotate.test.ts" timestamp="2026-07-01T10:48:49.319Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.071008194">
-        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; has a processing stage that is a function" time="0.001210068">
+    <testsuite name="tests/unit/tools/pdf/pdf-extract-pages.test.ts" timestamp="2026-07-03T13:04:32.283Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.079949292">
+        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; has a processing stage that is a function" time="0.001473989">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; has a validation stage that accepts input" time="0.001467306">
+        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; has a validation stage that accepts input" time="0.001597819">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; inputSchema is a Zod schema" time="0.000330856">
+        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; inputSchema is a Zod schema" time="0.000374695">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; validation returns structured errors when input is insufficient" time="0.000891056">
+        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; validation returns structured errors when input is insufficient" time="0.001099713">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; processing stage is async and returns a value or throws" time="0.063654471">
+        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; processing stage is async and returns a value or throws" time="0.071293229">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; pdf-rotate — has valid slug/category/lifecycle" time="0.001080532">
-        </testcase>
-    </testsuite>
-    <testsuite name="tests/unit/tools/pdf/pdf-split.test.ts" timestamp="2026-07-01T10:48:49.320Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.080970753">
-        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; has a processing stage that is a function" time="0.001424619">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; has a validation stage that accepts input" time="0.001493319">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; inputSchema is a Zod schema" time="0.000359906">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; validation returns structured errors when input is insufficient" time="0.000840703">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; processing stage is async and returns a value or throws" time="0.072758883">
-        </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; pdf-split — has valid slug/category/lifecycle" time="0.00123226">
+        <testcase classname="tests/unit/tools/pdf/pdf-extract-pages.test.ts" name="pdf-extract-pages — unit &gt; pdf-extract-pages — has valid slug/category/lifecycle" time="0.001177713">
         </testcase>
     </testsuite>
-    <testsuite name="tests/unit/tools/pdf/pdf-unlock.test.ts" timestamp="2026-07-01T10:48:49.321Z" hostname="c-6a44d9a3-148bea08-2c2162ad5d19" tests="6" failures="0" errors="0" skipped="0" time="0.041313747">
-        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; has a processing stage that is a function" time="0.001803956">
+    <testsuite name="tests/unit/tools/pdf/pdf-merge.test.ts" timestamp="2026-07-03T13:04:32.284Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.011942535">
+        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; has a processing stage that is a function" time="0.002151639">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; has a validation stage that accepts input" time="0.001793878">
+        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; has a validation stage that accepts input" time="0.002081867">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; inputSchema is a Zod schema" time="0.000444477">
+        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; inputSchema is a Zod schema" time="0.000492333">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; validation returns structured errors when input is insufficient" time="0.001045832">
+        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; validation returns structured errors when input is insufficient" time="0.001071533">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; processing stage is async and returns a value or throws" time="0.000463019">
+        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; processing stage is async and returns a value or throws" time="0.000658212">
         </testcase>
-        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; pdf-unlock — has valid slug/category/lifecycle" time="0.002463211">
+        <testcase classname="tests/unit/tools/pdf/pdf-merge.test.ts" name="pdf-merge — unit &gt; pdf-merge — has valid slug/category/lifecycle" time="0.001599515">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/pdf/pdf-protect.test.ts" timestamp="2026-07-03T13:04:32.285Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.008015681">
+        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; has a processing stage that is a function" time="0.001414347">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; has a validation stage that accepts input" time="0.001410606">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; inputSchema is a Zod schema" time="0.000322809">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; validation returns structured errors when input is insufficient" time="0.000763339">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; processing stage is async and returns a value or throws" time="0.000317289">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-protect.test.ts" name="pdf-protect — unit &gt; pdf-protect — has valid slug/category/lifecycle" time="0.001093607">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/pdf/pdf-rotate.test.ts" timestamp="2026-07-03T13:04:32.286Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.078159743">
+        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; has a processing stage that is a function" time="0.001563298">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; has a validation stage that accepts input" time="0.001755036">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; inputSchema is a Zod schema" time="0.000277684">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; validation returns structured errors when input is insufficient" time="0.000937732">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; processing stage is async and returns a value or throws" time="0.069575246">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-rotate.test.ts" name="pdf-rotate — unit &gt; pdf-rotate — has valid slug/category/lifecycle" time="0.001424484">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/pdf/pdf-split.test.ts" timestamp="2026-07-03T13:04:32.288Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.07460287">
+        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; has a processing stage that is a function" time="0.001433844">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; has a validation stage that accepts input" time="0.001395102">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; inputSchema is a Zod schema" time="0.000266062">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; validation returns structured errors when input is insufficient" time="0.000789325">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; processing stage is async and returns a value or throws" time="0.066104814">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-split.test.ts" name="pdf-split — unit &gt; pdf-split — has valid slug/category/lifecycle" time="0.001674648">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/pdf/pdf-unlock.test.ts" timestamp="2026-07-03T13:04:32.289Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.00810849">
+        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; has a processing stage that is a function" time="0.00141075">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; has a validation stage that accepts input" time="0.001486061">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; inputSchema is a Zod schema" time="0.000272687">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; validation returns structured errors when input is insufficient" time="0.000844084">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; processing stage is async and returns a value or throws" time="0.000310741">
+        </testcase>
+        <testcase classname="tests/unit/tools/pdf/pdf-unlock.test.ts" name="pdf-unlock — unit &gt; pdf-unlock — has valid slug/category/lifecycle" time="0.001095287">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/image/image-compress.test.ts" timestamp="2026-07-03T13:04:32.290Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.01153537">
+        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; has a processing stage that is a function" time="0.001827217">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; has a validation stage that accepts input" time="0.003254109">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; inputSchema is a Zod schema" time="0.000349527">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; validation returns structured errors when input is insufficient" time="0.000960272">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; processing stage is async and returns a value or throws" time="0.000769736">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-compress.test.ts" name="image-compress — unit &gt; image-compress — has valid slug/category/lifecycle" time="0.001305063">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/image/image-crop.test.ts" timestamp="2026-07-03T13:04:32.291Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.009547956">
+        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; has a processing stage that is a function" time="0.001556715">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; has a validation stage that accepts input" time="0.001878754">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; inputSchema is a Zod schema" time="0.000315589">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; validation returns structured errors when input is insufficient" time="0.001164067">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; processing stage is async and returns a value or throws" time="0.000608286">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-crop.test.ts" name="image-crop — unit &gt; image-crop — has valid slug/category/lifecycle" time="0.001215054">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/image/image-format-convert.test.ts" timestamp="2026-07-03T13:04:32.292Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.010557621">
+        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; has a processing stage that is a function" time="0.001353152">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; has a validation stage that accepts input" time="0.002147802">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; inputSchema is a Zod schema" time="0.000479266">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; validation returns structured errors when input is insufficient" time="0.000972153">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; processing stage is async and returns a value or throws" time="0.000550737">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-format-convert.test.ts" name="image-format-convert — unit &gt; image-format-convert — has valid slug/category/lifecycle" time="0.001782682">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/image/image-resize.test.ts" timestamp="2026-07-03T13:04:32.293Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.008085321">
+        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; has a processing stage that is a function" time="0.001501692">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; has a validation stage that accepts input" time="0.001407719">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; inputSchema is a Zod schema" time="0.000254423">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; validation returns structured errors when input is insufficient" time="0.000665255">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; processing stage is async and returns a value or throws" time="0.000558785">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-resize.test.ts" name="image-resize — unit &gt; image-resize — has valid slug/category/lifecycle" time="0.00098364">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/image/image-rotate.test.ts" timestamp="2026-07-03T13:04:32.294Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.012447802">
+        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; has a processing stage that is a function" time="0.002052203">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; has a validation stage that accepts input" time="0.002115086">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; inputSchema is a Zod schema" time="0.000444927">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; validation returns structured errors when input is insufficient" time="0.001344602">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; processing stage is async and returns a value or throws" time="0.000873815">
+        </testcase>
+        <testcase classname="tests/unit/tools/image/image-rotate.test.ts" name="image-rotate — unit &gt; image-rotate — has valid slug/category/lifecycle" time="0.001695454">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/tools/image/image-compress.test.ts" timestamp="2026-07-03T13:04:32.296Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.011926537">
+        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; manifest is well-formed" time="0.002242938">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; stages are wired in manifest" time="0.000427987">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; inputSchema is callable" time="0.001577947">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; validation stage returns structured result" time="0.001632977">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; processing stage is async" time="0.000894808">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; download stage is callable" time="0.00022912">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; seo has required fields" time="0.000427461">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; structured data is SoftwareApplication" time="0.00031685">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; related tools is array" time="0.00022384">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; analytics has funnel steps" time="0.000283876">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-compress.test.ts" name="image-compress — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000190712">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/tools/image/image-crop.test.ts" timestamp="2026-07-03T13:04:32.298Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.01090375">
+        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; manifest is well-formed" time="0.002225855">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; stages are wired in manifest" time="0.000446069">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; inputSchema is callable" time="0.001543806">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; validation stage returns structured result" time="0.00157819">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; processing stage is async" time="0.00069124">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; download stage is callable" time="0.00014966">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; seo has required fields" time="0.000290164">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; structured data is SoftwareApplication" time="0.000233025">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; related tools is array" time="0.000183882">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; analytics has funnel steps" time="0.000214765">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-crop.test.ts" name="image-crop — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000132841">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/tools/image/image-format-convert.test.ts" timestamp="2026-07-03T13:04:32.299Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.010188396">
+        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; manifest is well-formed" time="0.002043737">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; stages are wired in manifest" time="0.000707311">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; inputSchema is callable" time="0.001376149">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; validation stage returns structured result" time="0.001258211">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; processing stage is async" time="0.00063246">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; download stage is callable" time="0.000145152">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; seo has required fields" time="0.000257568">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; structured data is SoftwareApplication" time="0.000172605">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; related tools is array" time="0.000129818">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; analytics has funnel steps" time="0.000259682">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-format-convert.test.ts" name="image-format-convert — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000163945">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/tools/image/image-resize.test.ts" timestamp="2026-07-03T13:04:32.301Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.009987737">
+        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; manifest is well-formed" time="0.002169222">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; stages are wired in manifest" time="0.00042106">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; inputSchema is callable" time="0.001556301">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; validation stage returns structured result" time="0.001287028">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; processing stage is async" time="0.000683779">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; download stage is callable" time="0.00014834">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; seo has required fields" time="0.00026246">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; structured data is SoftwareApplication" time="0.000205084">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; related tools is array" time="0.000140956">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; analytics has funnel steps" time="0.000189194">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-resize.test.ts" name="image-resize — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000190376">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/tools/image/image-rotate.test.ts" timestamp="2026-07-03T13:04:32.303Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.008722278">
+        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; manifest is well-formed" time="0.002077962">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; stages are wired in manifest" time="0.000338666">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; inputSchema is callable" time="0.001205947">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; validation stage returns structured result" time="0.00077753">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; processing stage is async" time="0.000609405">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; download stage is callable" time="0.000129854">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; seo has required fields" time="0.000218829">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; structured data is SoftwareApplication" time="0.00023407">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; related tools is array" time="0.000128163">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; analytics has funnel steps" time="0.000194819">
+        </testcase>
+        <testcase classname="tests/integration/tools/image/image-rotate.test.ts" name="image-rotate — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000116598">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/text/case-converter.test.ts" timestamp="2026-07-03T13:04:32.304Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.008086242">
+        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; has a processing stage that is a function" time="0.001494339">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; has a validation stage that accepts input" time="0.001338481">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; inputSchema is a Zod schema" time="0.000318317">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; validation returns structured errors when input is insufficient" time="0.000665032">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; processing stage is async and returns a value or throws" time="0.000433763">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/case-converter.test.ts" name="case-converter — unit &gt; case-converter — has valid slug/category/lifecycle" time="0.001167079">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/text/remove-duplicate-lines.test.ts" timestamp="2026-07-03T13:04:32.305Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.008828776">
+        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; has a processing stage that is a function" time="0.001755634">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; has a validation stage that accepts input" time="0.001612879">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; inputSchema is a Zod schema" time="0.000340796">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; validation returns structured errors when input is insufficient" time="0.000810282">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; processing stage is async and returns a value or throws" time="0.000391456">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — unit &gt; remove-duplicate-lines — has valid slug/category/lifecycle" time="0.001219055">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/text/sort-lines.test.ts" timestamp="2026-07-03T13:04:32.306Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.007899241">
+        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; has a processing stage that is a function" time="0.001378143">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; has a validation stage that accepts input" time="0.001385931">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; inputSchema is a Zod schema" time="0.000275673">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; validation returns structured errors when input is insufficient" time="0.000645801">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; processing stage is async and returns a value or throws" time="0.000494857">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/sort-lines.test.ts" name="sort-lines — unit &gt; sort-lines — has valid slug/category/lifecycle" time="0.001120345">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/text/text-diff.test.ts" timestamp="2026-07-03T13:04:32.307Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.010980816">
+        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; has a processing stage that is a function" time="0.001848492">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; has a validation stage that accepts input" time="0.001613258">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; inputSchema is a Zod schema" time="0.000398827">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; validation returns structured errors when input is insufficient" time="0.001265167">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; processing stage is async and returns a value or throws" time="0.00063212">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/text-diff.test.ts" name="text-diff — unit &gt; text-diff — has valid slug/category/lifecycle" time="0.001638036">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/unit/tools/text/word-counter.test.ts" timestamp="2026-07-03T13:04:32.309Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="6" failures="0" errors="0" skipped="0" time="0.012775045">
+        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; has a processing stage that is a function" time="0.002677034">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; has a validation stage that accepts input" time="0.001979302">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; inputSchema is a Zod schema" time="0.000454492">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; validation returns structured errors when input is insufficient" time="0.001172523">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; processing stage is async and returns a value or throws" time="0.000788846">
+        </testcase>
+        <testcase classname="tests/unit/tools/text/word-counter.test.ts" name="word-counter — unit &gt; word-counter — has valid slug/category/lifecycle" time="0.001724015">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/tools/text/case-converter.test.ts" timestamp="2026-07-03T13:04:32.310Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.013502332">
+        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; manifest is well-formed" time="0.002938967">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; stages are wired in manifest" time="0.000578593">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; inputSchema is callable" time="0.001773913">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; validation stage returns structured result" time="0.001205124">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; processing stage is async" time="0.000717156">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; download stage is callable" time="0.000271895">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; seo has required fields" time="0.00052693">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; structured data is SoftwareApplication" time="0.000306365">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; related tools is array" time="0.000260242">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; analytics has funnel steps" time="0.000359547">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/case-converter.test.ts" name="case-converter — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000389435">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/tools/text/remove-duplicate-lines.test.ts" timestamp="2026-07-03T13:04:32.311Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.008812779">
+        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; manifest is well-formed" time="0.001879809">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; stages are wired in manifest" time="0.000319085">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; inputSchema is callable" time="0.001120564">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; validation stage returns structured result" time="0.000721269">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; processing stage is async" time="0.00047845">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; download stage is callable" time="0.000176405">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; seo has required fields" time="0.000318618">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; structured data is SoftwareApplication" time="0.00022151">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; related tools is array" time="0.000163559">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; analytics has funnel steps" time="0.000198412">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/remove-duplicate-lines.test.ts" name="remove-duplicate-lines — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000174977">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/tools/text/sort-lines.test.ts" timestamp="2026-07-03T13:04:32.313Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.009057621">
+        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; manifest is well-formed" time="0.002017619">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; stages are wired in manifest" time="0.000451905">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; inputSchema is callable" time="0.001129804">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; validation stage returns structured result" time="0.001030191">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; processing stage is async" time="0.000707859">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; download stage is callable" time="0.000144108">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; seo has required fields" time="0.000255974">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; structured data is SoftwareApplication" time="0.000205078">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; related tools is array" time="0.000171304">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; analytics has funnel steps" time="0.000276625">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/sort-lines.test.ts" name="sort-lines — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000131234">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/tools/text/text-diff.test.ts" timestamp="2026-07-03T13:04:32.315Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.008561204">
+        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; manifest is well-formed" time="0.001981089">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; stages are wired in manifest" time="0.000317211">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; inputSchema is callable" time="0.000991518">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; validation stage returns structured result" time="0.001021475">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; processing stage is async" time="0.000522037">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; download stage is callable" time="0.000145025">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; seo has required fields" time="0.000231717">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; structured data is SoftwareApplication" time="0.000275533">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; related tools is array" time="0.000133704">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; analytics has funnel steps" time="0.000174157">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/text-diff.test.ts" name="text-diff — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000099975">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/tools/text/word-counter.test.ts" timestamp="2026-07-03T13:04:32.317Z" hostname="c-6a47b131-14c2a3ca-321ef68e2465" tests="11" failures="0" errors="0" skipped="0" time="0.008618234">
+        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; manifest is well-formed" time="0.002090589">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; stages are wired in manifest" time="0.000319605">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; inputSchema is callable" time="0.001106556">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; validation stage returns structured result" time="0.000897751">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; processing stage is async" time="0.000502669">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; download stage is callable" time="0.000126972">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; seo has required fields" time="0.000266415">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; structured data is SoftwareApplication" time="0.000171995">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; related tools is array" time="0.000160703">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; analytics has funnel steps" time="0.000204203">
+        </testcase>
+        <testcase classname="tests/integration/tools/text/word-counter.test.ts" name="word-counter — integration &gt; does not require auth (LOCK-07: guest-first)" time="0.000123346">
         </testcase>
     </testsuite>
 </testsuites>
