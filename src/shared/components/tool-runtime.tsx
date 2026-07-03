@@ -79,6 +79,7 @@ export function ToolRuntime({ category, slug }: ToolRuntimeProps) {
         },
   );
   const [progress, setProgress] = useState(0);
+  const [executionMs, setExecutionMs] = useState<number | null>(null);
   const engineRef = useRef<ToolEngine<unknown, unknown> | null>(null);
 
   // Load the manifest + engine bundle on mount.
@@ -133,12 +134,15 @@ export function ToolRuntime({ category, slug }: ToolRuntimeProps) {
       setStatus('processing');
       setError(null);
       setProgress(0);
+      const startTime = performance.now();
       trackStandard('tool_started', { slug }, { tool: slug, category });
       try {
         const result = await eng.execute(input);
+        const durationMs = Math.round(performance.now() - startTime);
         setOutput(result);
         setStatus('preview');
         setProgress(100);
+        setExecutionMs(durationMs);
         if (manifest) {
           addRecent({ slug, category, title: manifest.title });
         }
@@ -337,7 +341,14 @@ export function ToolRuntime({ category, slug }: ToolRuntimeProps) {
             </div>
           </div>
           {/* Feedback widget — appears after successful execution */}
-          <FeedbackWidget toolSlug={slug} toolCategory={category} />
+          <div className="flex items-center justify-between gap-3">
+            <FeedbackWidget toolSlug={slug} toolCategory={category} />
+            {executionMs !== null ? (
+              <span className="shrink-0 text-xs text-muted-foreground">
+                ⚡ {executionMs < 1 ? '<1ms' : `${executionMs}ms`}
+              </span>
+            ) : null}
+          </div>
         </div>
       ) : null}
     </div>
@@ -375,8 +386,6 @@ function ToolInputForm({ manifest, onRun, loading, progress = 0 }: ToolInputForm
   const specs = useMemo(() => buildFieldSpecs(manifest), [manifest]);
   const defaults = useMemo(() => buildDefaultValues(specs), [specs]);
 
-  // Cast the runtime schema so the resolver's `Input`/`Output` type params
-  // resolve to a FieldValues-compatible shape (overload matching requirement).
   const inputSchema = manifest.inputSchema as z.ZodType<
     Record<string, unknown>,
     Record<string, unknown>
@@ -391,6 +400,23 @@ function ToolInputForm({ manifest, onRun, loading, progress = 0 }: ToolInputForm
   const onSubmit = form.handleSubmit((values) => {
     return onRun(values);
   });
+
+  // Keyboard shortcut: Ctrl/Cmd + Enter to submit
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        void onSubmit();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onSubmit]);
+
+  // Clear all fields
+  const handleClear = useCallback(() => {
+    form.reset(buildDefaultValues(specs));
+  }, [form, specs]);
 
   return (
     <form onSubmit={onSubmit} className="space-y-5" noValidate>
@@ -416,16 +442,38 @@ function ToolInputForm({ manifest, onRun, loading, progress = 0 }: ToolInputForm
       ) : null}
 
       <div className="flex flex-col gap-3 border-t border-border pt-4">
-        <Button type="submit" disabled={loading} size="lg" className="w-full h-12 text-base font-medium">
-          {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden /> : null}
-          {loading ? 'Processing…' : 'Run Tool'}
-        </Button>
-        {manifest.execution === 'browser' ? (
-          <p className="text-center text-xs text-muted-foreground">
-            <ShieldCheck className="mr-1 inline h-3 w-3 text-accent" aria-hidden />
-            Runs locally in your browser — your data never leaves your device.
-          </p>
-        ) : null}
+        <div className="flex gap-2">
+          <Button type="submit" disabled={loading} size="lg" className="flex-1 h-12 text-base font-medium">
+            {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden /> : null}
+            {loading ? 'Processing…' : 'Run Tool'}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="h-12 px-4"
+            onClick={handleClear}
+            disabled={loading}
+            aria-label="Clear all fields"
+          >
+            <RotateCcw className="h-4 w-4" aria-hidden />
+          </Button>
+        </div>
+        <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
+          {manifest.execution === 'browser' ? (
+            <span>
+              <ShieldCheck className="mr-1 inline h-3 w-3 text-accent" aria-hidden />
+              Runs locally
+            </span>
+          ) : null}
+          <span className="text-border">·</span>
+          <span>
+            <kbd className="rounded border border-border bg-muted px-1 py-0.5 text-[10px]">Ctrl</kbd>
+            +
+            <kbd className="rounded border border-border bg-muted px-1 py-0.5 text-[10px]">Enter</kbd>
+            to run
+          </span>
+        </div>
       </div>
     </form>
   );
