@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { ToolManifest } from '@packages/types';
+import { searchIndex } from '@/generated/search-index';
 import { routes } from '@/shared/config/routes';
 import { cn } from '@/lib/utils';
 
@@ -25,11 +25,24 @@ type SortOption = 'name-asc' | 'name-desc' | 'newest' | 'popular';
 type LifecycleFilter = 'all' | 'stable' | 'beta' | 'development';
 
 export interface CategoryViewProps {
-  tools: ToolManifest[];
   category: string;
 }
 
-export function CategoryView({ tools, category }: CategoryViewProps) {
+export function CategoryView({ category }: CategoryViewProps) {
+  // Use searchIndex (serializable, no functions) instead of receiving ToolManifest props from server
+  const tools = useMemo(() => {
+    return searchIndex
+      .filter((entry) => entry.category === category)
+      .map((entry) => ({
+        slug: entry.slug,
+        category: entry.category,
+        title: entry.title,
+        description: entry.description,
+        lifecycle: 'stable' as const,
+        seo: { keywords: Array.isArray(entry.keywords) ? entry.keywords : [] },
+      }));
+  }, [category]);
+
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<SortOption>('name-asc');
   const [lifecycle, setLifecycle] = useState<LifecycleFilter>('all');

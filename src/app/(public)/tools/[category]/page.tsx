@@ -121,7 +121,7 @@ export default async function CategoryPage({ params }: PageProps) {
       <section aria-labelledby="tools-heading" className="bg-background">
         <PageContainer className="py-12 sm:py-16">
           <h2 id="tools-heading" className="sr-only">Browse {category} tools</h2>
-          <CategoryView tools={tools} category={category} />
+          <CategoryView category={category} />
         </PageContainer>
       </section>
 
