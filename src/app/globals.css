@@ -96,6 +96,24 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   CONTAINER WIDTHS — Explicit definitions (Tailwind v4 fix)
+   Root cause: Tailwind v4 does not generate max-w utilities correctly
+   when custom spacing variables are present in theme.
+   Fix: explicit CSS rules with important to override incorrect generation.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.max-w-xs { max-width: 20rem !important; }
+.max-w-sm { max-width: 24rem !important; }
+.max-w-md { max-width: 28rem !important; }
+.max-w-lg { max-width: 32rem !important; }
+.max-w-xl { max-width: 36rem !important; }
+.max-w-2xl { max-width: 42rem !important; }
+.max-w-3xl { max-width: 48rem !important; }
+.max-w-4xl { max-width: 56rem !important; }
+.max-w-5xl { max-width: 64rem !important; }
+.max-w-6xl { max-width: 72rem !important; }
+.max-w-7xl { max-width: 80rem !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
    LIGHT THEME — Crisp monochrome with subtle blue accent
    ═══════════════════════════════════════════════════════════════════════════ */
 :root {
