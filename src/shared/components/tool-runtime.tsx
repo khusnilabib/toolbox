@@ -415,16 +415,16 @@ function ToolInputForm({ manifest, onRun, loading, progress = 0 }: ToolInputForm
         </div>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-2 pt-1">
-        <Button type="submit" disabled={loading}>
-          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden /> : null}
-          {loading ? 'Processing…' : 'Run'}
+      <div className="flex flex-col gap-3 border-t border-border pt-4">
+        <Button type="submit" disabled={loading} size="lg" className="w-full h-12 text-base font-medium">
+          {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden /> : null}
+          {loading ? 'Processing…' : 'Run Tool'}
         </Button>
         {manifest.execution === 'browser' ? (
-          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-            <AlertTriangle className="h-3 w-3" aria-hidden />
-            Runs locally in your browser.
-          </span>
+          <p className="text-center text-xs text-muted-foreground">
+            <ShieldCheck className="mr-1 inline h-3 w-3 text-accent" aria-hidden />
+            Runs locally in your browser — your data never leaves your device.
+          </p>
         ) : null}
       </div>
     </form>

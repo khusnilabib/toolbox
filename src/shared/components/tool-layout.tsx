@@ -144,9 +144,9 @@ export function ToolLayout({ manifest, children, result, related }: ToolLayoutPr
             {manifest.title} tool
           </h2>
 
-          <div className="grid gap-6 lg:grid-cols-3">
-            {/* Main tool area (2/3 width) */}
-            <div className="lg:col-span-2">
+        <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+            {/* Main tool area */}
+            <div className="min-w-0">
               <Card>
                 <CardHeader className="border-b border-border pb-4">
                   <div className="flex items-center gap-2">
