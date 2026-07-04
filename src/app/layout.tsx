@@ -3,6 +3,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { Analytics } from '@vercel/analytics/next';
 import { PlatformProvider } from '@/shared/providers/platform-provider';
 import { SiteHeader } from '@/shared/components/site-header';
 import { SiteFooter } from '@/shared/components/site-footer';
@@ -122,6 +123,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <SearchOverlay />
           <ToastProviders />
         </PlatformProvider>
+        <Analytics />
       </body>
     </html>
   );
