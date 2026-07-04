@@ -9,6 +9,7 @@ import { SiteFooter } from '@/shared/components/site-footer';
 import { SearchOverlay } from '@/shared/components/search-overlay';
 import { ToastProviders } from '@/shared/components/toast-providers';
 import { siteConfig } from '@/shared/config/site-config';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({
   variable: '--font-geist-sans',
@@ -122,6 +123,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <SearchOverlay />
           <ToastProviders />
         </PlatformProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
