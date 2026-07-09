@@ -181,16 +181,27 @@ export function SearchOverlay() {
     }
   }, [open]);
 
-  // Filter results
+  // Filter results with typo tolerance
   const filtered = useMemo(() => {
     if (!query.trim()) return [];
-    const q = query.toLowerCase();
+    const q = query.toLowerCase().trim();
+
+    // Simple typo tolerance: also match if query is a substring of any word
+    // or if any word starts with the query (prefix matching)
+    const matches = (text: string): boolean => {
+      const lower = text.toLowerCase();
+      if (lower.includes(q)) return true;
+      // Prefix match on individual words
+      const words = lower.split(/\s+/);
+      return words.some((w) => w.startsWith(q));
+    };
+
     return ALL_RESULTS.filter((r) => {
       return (
-        r.title.toLowerCase().includes(q) ||
-        r.description.toLowerCase().includes(q) ||
-        r.key.toLowerCase().includes(q) ||
-        (r.keywords?.some((k) => k.toLowerCase().includes(q)) ?? false)
+        matches(r.title) ||
+        matches(r.description) ||
+        matches(r.key) ||
+        (r.keywords?.some((k) => matches(k)) ?? false)
       );
     }).slice(0, 20);
   }, [query]);

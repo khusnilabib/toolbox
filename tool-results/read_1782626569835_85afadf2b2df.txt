@@ -1,0 +1,708 @@
+     1→# 07 — Folder Structure
+     2→
+     3→> **Status:** 🟢 Approved
+     4→> **Document Owner:** Chief Architect
+     5→> **Last Updated:** 2026-06-28
+     6→> **Revision:** 1.1.0
+     7→> **Implements:** LOCK-04 (Modular), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-03 (Component Reuse First), EC-04 (Tool Template Standard), EC-01 (Documentation First); PC-04 (Tool Template Standard)
+     8→
+     9→---
+    10→
+    11→## 1. Purpose
+    12→
+    13→This Folder Structure document defines the granular file and folder conventions for [PROJECT_NAME]. Where `05_ProjectStructure` defines the high-level layout (top-level directories, bounded contexts, layer boundaries, registry pattern), this document specifies the rules for files within those directories: naming, organization, grouping, and what belongs where.
+    14→
+    15→The reason this document exists separately from `05_ProjectStructure` is that folder structure failures happen at the file level, not the directory level. An engineer who creates `imageResize.ts` instead of `image-resize.ts`, or who puts a React component in `domain/`, or who creates `utils2.ts` because `utils.ts` got too big — these are the failures that compound into an unmaintainable codebase. Without explicit rules, the file-level structure drifts in dozens of small ways that no single reviewer catches.
+    16→
+    17→This document enforces LOCK-04 (modularity), LOCK-05 (plugin-ready architecture via consistent tool structure), LOCK-06 (database optional via structural separation), EC-03 (component reuse first), EC-04 (tool template standard), and EC-01 (documentation first — every folder has a reason recorded here).
+    18→
+    19→## 2. Scope
+    20→
+    21→### 2.1 In Scope
+    22→
+    23→- File naming conventions (kebab-case, PascalCase, camelCase rules).
+    24→- Folder organization within each bounded context.
+    25→- Tool folder template — the exact structure every tool follows (EC-04).
+    26→- Shared code organization (`/packages` vs `/src/shared`).
+    27→- Test file placement and naming.
+    28→- Documentation file placement.
+    29→- Generated files conventions.
+    30→- Configuration file placement.
+    31→- Migration file organization.
+    32→
+    33→### 2.2 Out of Scope
+    34→
+    35→- Top-level directory layout → `05_ProjectStructure`.
+    36→- Code style within files → `08_CodingStandards`.
+    37→- Naming of variables, functions, types → `09_NamingConvention`.
+    38→- Database schema definitions → `16_DatabaseDesign`.
+    39→
+    40→## 3. Architectural Decisions
+    41→
+    42→### AD-01 — File Naming: Three Conventions Based on File Type
+    43→
+    44→**Context.** Mixing naming conventions (some files kebab-case, some PascalCase, some camelCase) creates visual inconsistency and forces engineers to remember per-file rules. A clear convention based on file type reduces cognitive load.
+    45→
+    46→**Decision.** Three naming conventions, each tied to file type:
+    47→
+    48→| File Type | Convention | Example |
+    49→|-----------|-----------|---------|
+    50→| Non-component files (utils, hooks, schemas, configs, tests) | `kebab-case.ts` | `image-utils.ts`, `use-tool-history.ts` |
+    51→| React component files (single component per file) | `PascalCase.tsx` | `ToolCard.tsx`, `ImageUploader.tsx` |
+    52→| Test files | `[name].test.ts` or `[name].test.tsx` | `image-utils.test.ts`, `ToolCard.test.tsx` |
+    53→| Type definition files | `kebab-case.types.ts` or `[name].types.ts` | `tool.types.ts` |
+    54→| Index files (barrels) | `index.ts` or `index.tsx` | always `index` |
+    55→| Documentation | `kebab-case.md` | `architecture-decisions.md` |
+    56→| Configuration | `kebab-case.config.ts` | `tailwind.config.ts`, `drizzle.config.ts` |
+    57→
+    58→**Rationale:**
+    59→- `kebab-case` for non-components is the JavaScript ecosystem standard (Next.js, Vercel conventions).
+    60→- `PascalCase` for components matches the component name (`ToolCard` is in `ToolCard.tsx`), making imports visually obvious.
+    61→- Test suffix `.test.ts` colocates tests with their subjects, easily greppable.
+    62→
+    63→**Implements:** EC-04 (Tool Template Standard — consistent naming).
+    64→
+    65→### AD-02 — One Component Per File
+    66→
+    67→**Context.** Files with multiple components become hard to navigate, hard to test, and create import ambiguity.
+    68→
+    69→**Decision.** Each `.tsx` file in `presentation/` or `components/` contains exactly ONE exported React component. The file name matches the component name (PascalCase). Small "private" sub-components used only by the main component may live in the same file, but only if not exported.
+    70→
+    71→**Consequences.**
+    72→- ✅ File name = component name = import path; no ambiguity.
+    73→- ✅ Tests target one component per file.
+    74→- ⚠️ More files; mitigated by clear folder organization.
+    75→
+    76→**Implements:** EC-09 (Testing — one component per file makes testing straightforward).
+    77→
+    78→### AD-03 — Tool Folder Template (EC-04)
+    79→
+    80→**Context.** EC-04 mandates every tool follows an identical internal structure. The exact structure must be documented so tool authors have a template to copy.
+    81→
+    82→**Decision.** Every tool folder follows this exact structure:
+    83→
+    84→```
+    85→src/tools/[category]/[tool-slug]/
+    86→├── manifest.ts              # ToolManifest — the aggregate root
+    87→├── index.ts                 # Re-exports manifest as default
+    88→├── stages/
+    89→│   ├── input.ts             # InputStage implementation
+    90→│   ├── validation.ts        # ValidationStage (Zod schema + validator)
+    91→│   ├── processing.ts        # ProcessingStage (browser-side or server-side)
+    92→│   ├── preview.tsx          # PreviewStage (React component)
+    93→│   ├── download.ts          # DownloadStage (packaging logic)
+    94→│   ├── history.ts           # HistoryStage (optional)
+    95→│   └── share.ts             # ShareStage (optional)
+    96→├── components/              # Tool-specific React components
+    97→│   ├── InputForm.tsx        # Configuration form (if any)
+    98→│   ├── ProcessingProgress.tsx  # Progress UI
+    99→│   └── ResultDisplay.tsx    # Result preview UI
+   100→├── hooks/                   # Tool-specific hooks
+   101→│   └── use-processing.ts    # e.g., useProcessing()
+   102→├── lib/                     # Tool-specific pure utilities
+   103→│   └── image-ops.ts         # e.g., image manipulation functions
+   104→├── tests/
+   105→│   ├── stages.test.ts       # Unit tests per stage
+   106→│   ├── input-form.test.tsx  # Component tests
+   107→│   └── e2e.test.ts          # Playwright E2E test
+   108→└── README.md                # Tool-specific docs (optional for simple tools)
+   109→```
+   110→
+   111→**Rules:**
+   112→- `manifest.ts` and `index.ts` are mandatory.
+   113→- `stages/` is mandatory with at least 5 files (input, validation, processing, preview, download).
+   114→- `stages/history.ts` and `stages/share.ts` are optional.
+   115→- `components/`, `hooks/`, `lib/` are optional; created only when needed.
+   116→- `tests/` is mandatory with at least `stages.test.ts`.
+   117→- `README.md` is mandatory for tools with non-obvious behavior; optional for trivial tools.
+   118→
+   119→**Implements:** EC-04 (Tool Template Standard), LOCK-05 (Plugin-Ready — third-party tools follow same structure).
+   120→
+   121→### AD-04 — Colocated Tests
+   122→
+   123→**Context.** Separating tests into a top-level `tests/` directory separates tests from the code they test, making it harder to keep them in sync.
+   124→
+   125→**Decision.** Tests are colocated with the code they test:
+   126→- Unit tests: `tests/` subdirectory within the module.
+   127→- Component tests: `tests/` subdirectory within the component's folder.
+   128→- E2E tests: project-level `tests/e2e/` directory (because they span modules).
+   129→- Integration tests: project-level `tests/integration/` directory.
+   130→
+   131→**Consequences.**
+   132→- ✅ Tests are easy to find next to the code.
+   133→- ✅ Deleting a module deletes its tests.
+   134→- ⚠️ E2E tests span modules; centralized for clarity.
+   135→
+   136→**Implements:** EC-09 (Testing Philosophy).
+   137→
+   138→### AD-05 — Layer Subdirectory Pattern Within Contexts
+   139→
+   140→**Context.** `05_ProjectStructure` AD-02 mandates four layer subdirectories per context. Within each layer, files need further organization.
+   141→
+   142→**Decision.** Standard subdirectory pattern within each layer:
+   143→
+   144→```
+   145→src/[context]/
+   146→├── presentation/
+   147→│   ├── components/          # Context-specific React components
+   148→│   ├── layouts/             # Layout components
+   149→│   └── pages/               # Page-level components (if not in app/)
+   150→├── application/
+   151→│   ├── actions/             # Server actions
+   152→│   ├── hooks/               # Application hooks
+   153→│   ├── services/            # Application services
+   154→│   └── use-cases/           # Use case orchestration
+   155→├── domain/
+   156→│   ├── entities/            # Domain entities
+   157→│   ├── value-objects/       # Value objects
+   158→│   ├── aggregates/          # Aggregate roots
+   159→│   ├── events/              # Domain events
+   160→│   └── schemas/             # Zod schemas for domain types
+   161→└── infrastructure/
+   162→    ├── repositories/        # Drizzle-based repositories
+   163→    ├── clients/             # External API clients
+   164→    └── storage/             # File storage adapters
+   165→```
+   166→
+   167→Subdirectories are created only when needed; an empty context may start with empty layer directories.
+   168→
+   169→**Implements:** LOCK-04 (Modular), `02_SAD` AD-01 (Layered Architecture).
+   170→
+   171→### AD-06 — Shared Code Split Rule
+   172→
+   173→**Context.** `05_ProjectStructure` AD-05 defines `/packages` and `/src/shared` as two locations for shared code. The decision rule for which goes where must be explicit.
+   174→
+   175→**Decision.** Decision rule:
+   176→
+   177→| Code Characteristic | Location |
+   178→|---------------------|----------|
+   179→| Has zero dependencies on `src/` structure | `/packages` |
+   180→| Could theoretically be published to npm | `/packages` |
+   181→| Used by multiple bounded contexts | `/packages` or `/src/shared` (see below) |
+   182→| Depends on `src/` structure (e.g., imports from another context's published API) | `/src/shared` |
+   183→| App-specific configuration (env vars, feature flags client) | `/src/shared` |
+   184→| Cross-context hooks (useUser, useLocale) | `/src/shared` |
+   185→| Pure utilities (formatting, math) | `/packages/utils` |
+   186→| Type definitions shared across contexts | `/packages/types` |
+   187→| Zod schemas shared across contexts | `/packages/types` |
+   188→| UI primitives (Button, Input, Card) | `/packages/ui` |
+   189→| Tool Engine abstraction | `/packages/tool-engine` |
+   190→
+   191→When uncertain, default to `/src/shared` — promoting to `/packages` is easy; demoting is harder.
+   192→
+   193→**Implements:** EC-02 (One Source of Truth), EC-03 (Component Reuse First).
+   194→
+   195→### AD-07 — Generated Files Convention
+   196→
+   197→**Context.** `05_ProjectStructure` AD-04 generates files via build-time codegen. Generated files must be clearly marked and never manually edited.
+   198→
+   199→**Decision.** All generated files:
+   200→- Live in `src/generated/` only.
+   201→- Start with the header comment `// AUTO-GENERATED. Do not edit manually.`
+   202→- Are committed to the repo (for type safety across the team).
+   203→- Are verified by CI (`scripts/verify-registry.ts` fails the build if generated files are out of sync with manifests).
+   204→
+   205→**Consequences.**
+   206→- ✅ Type safety without running codegen before lint.
+   207→- ✅ Diff visibility in PRs.
+   208→- ⚠️ Discipline required to never manually edit.
+   209→
+   210→**Implements:** LOCK-05 (Plugin-Ready via codegen), EC-01 (Documentation — generated files are documented as such).
+   211→
+   212→### AD-08 — Documentation File Placement
+   213→
+   214→**Context.** EC-01 mandates documentation first. Documentation files must be discoverable.
+   215→
+   216→**Decision.** Documentation placement rules:
+   217→
+   218→| Document Type | Location |
+   219→|--------------|----------|
+   220→| Project-level docs (architecture, conventions) | `/docs/*.md` |
+   221→| Tool-specific docs | `src/tools/[category]/[slug]/README.md` |
+   222→| Package docs | `/packages/[name]/README.md` |
+   223→| ADRs | `/docs/06_ArchitectureDecisionRecords.md` (consolidated) |
+   224→| API docs | `/docs/17_APIConvention.md` + inline JSDoc |
+   225→| README | Project root `README.md` (links to `/docs`) |
+   226→
+   227→**Implements:** EC-01 (Documentation First).
+   228→
+   229→## 4. Design Principles
+   230→
+   231→### P1 — Convention Over Configuration
+   232→Follow the conventions in this document; don't invent new patterns. If a convention doesn't fit your case, propose an ADR rather than deviating silently.
+   233→
+   234→### P2 — Colocation
+   235→Code, tests, and docs for a module live together. Don't separate them by type.
+   236→
+   237→### P3 — Discoverability
+   238→An engineer browsing the file tree should be able to find what they need without grepping. Folder and file names must be self-explanatory.
+   239→
+   240→### P4 — Minimal Subdirectories
+   241→Don't create subdirectories until you have 5+ files in a folder. Premature subdirectories create empty navigation.
+   242→
+   243→### P5 — Naming Reflects Purpose
+   244→File and folder names reflect what they contain, not who created them or when. Avoid names like `utils-v2.ts` or `johns-stuff/`.
+   245→
+   246→### P6 — Generated Files Are Sacred
+   247→Never manually edit generated files. If a generated file is wrong, fix the source (manifest, codegen script) and regenerate.
+   248→
+   249→## 5. Top-Level Project Layout (Reference)
+   250→
+   251→This is the canonical reference for top-level layout. Detailed in `05_ProjectStructure` §5.
+   252→
+   253→```
+   254→[PROJECT_NAME]/
+   255→├── docs/
+   256→├── public/
+   257→├── scripts/
+   258→├── src/
+   259→│   ├── app/
+   260→│   ├── tools/
+   261→│   ├── identity/
+   262→│   ├── content/
+   263→│   ├── platform-ops/
+   264→│   ├── billing/
+   265→│   ├── analytics/
+   266→│   ├── shared/
+   267→│   └── generated/
+   268→├── packages/
+   269→├── drizzle/
+   270→├── tests/
+   271→├── .github/
+   272→└── config files
+   273→```
+   274→
+   275→## 6. Detailed Folder Rules
+   276→
+   277→### 6.1 `/src/app/` — Next.js App Router
+   278→
+   279→```
+   280→src/app/
+   281→├── (public)/                # Public route group (no auth required)
+   282→│   ├── tools/[category]/[slug]/page.tsx   # Single dynamic route for all tools
+   283→│   ├── tools/[category]/page.tsx          # Category landing
+   284→│   └── tools/page.tsx                     # All-tools hub
+   285→├── (auth)/                  # Auth-required route group
+   286→│   ├── login/page.tsx
+   287→│   ├── register/page.tsx
+   288→│   ├── dashboard/page.tsx
+   289→│   └── settings/page.tsx
+   290→├── (admin)/                 # Admin route group (RBAC required)
+   291→│   ├── admin/layout.tsx     # Admin layout with sidebar
+   292→│   └── admin/page.tsx       # Admin dashboard
+   293→├── (marketing)/             # Marketing pages
+   294→│   ├── page.tsx             # Homepage
+   295→│   ├── about/page.tsx
+   296→│   ├── pricing/page.tsx
+   297→│   └── blog/page.tsx        # Content Context articles
+   298→├── api/                     # API routes (server-side tools, webhooks)
+   299→│   ├── tools/[slug]/route.ts   # Server-side tool endpoints
+   300→│   └── webhooks/               # Webhook handlers
+   301→├── layout.tsx               # Root layout (HTML, body, providers)
+   302→├── globals.css              # Global styles (Tailwind imports, CSS custom properties)
+   303→├── not-found.tsx            # 404 page
+   304→└── error.tsx                # Global error boundary
+   305→```
+   306→
+   307→**Rules:**
+   308→- Route groups `(name)` don't affect URL; used for organization and shared layouts.
+   309→- One `page.tsx` per route; no business logic in page files (delegate to context's application layer).
+   310→- `layout.tsx` files contain shared layout, navigation, and providers.
+   311→
+   312→### 6.2 `/src/tools/[category]/[slug]/` — Tool Folder Template
+   313→
+   314→See AD-03 for the full template. Every tool folder follows this exact structure.
+   315→
+   316→**Category folders** (`image/`, `pdf/`, `developer/`, `text/`, `converters/`, `seo/`, `calculators/`) each contain their tool subfolders and an optional `_shared/` folder for category-specific shared code:
+   317→
+   318→```
+   319→src/tools/image/
+   320→├── _shared/                 # Image-category-specific shared code
+   321→│   ├── lib/
+   322→│   │   └── canvas-utils.ts  # e.g., shared canvas operations
+   323→│   └── components/
+   324→│       └── ImageDropzone.tsx  # Shared image upload component
+   325→├── image-resize/
+   326→├── image-compress/
+   327→├── passport-photo/
+   328→└── background-remover/
+   329→```
+   330→
+   331→The `_shared/` folder name uses underscore prefix to sort it before tool folders alphabetically.
+   332→
+   333→### 6.3 `/src/[context]/` — Bounded Context Layout
+   334→
+   335→Each bounded context follows the four-layer pattern (AD-05). Example for Identity Context:
+   336→
+   337→```
+   338→src/identity/
+   339→├── presentation/
+   340→│   ├── components/
+   341→│   │   ├── LoginForm.tsx
+   342→│   │   ├── UserMenu.tsx
+   343→│   │   └── AuthGuard.tsx
+   344→│   └── layouts/
+   345→│       └── AuthLayout.tsx
+   346→├── application/
+   347→│   ├── actions/
+   348→│   │   ├── sign-in.ts       # Server action
+   349→│   │   ├── sign-out.ts
+   350→│   │   └── save-history-entry.ts
+   351→│   ├── hooks/
+   352→│   │   ├── use-current-user.ts
+   353→│   │   └── use-history.ts
+   354→│   └── services/
+   355→│       └── auth-service.ts  # Wraps Supabase auth client
+   356→├── domain/
+   357→│   ├── entities/
+   358→│   │   └── user.ts          # User entity class
+   359→│   ├── value-objects/
+   360→│   │   └── email.ts         # Email value object
+   361→│   ├── aggregates/
+   362→│   │   └── history-entry.ts # HistoryEntry aggregate root
+   363→│   ├── events/
+   364→│   │   ├── user-registered.ts
+   365→│   │   └── user-logged-in.ts
+   366→│   └── schemas/
+   367→│       └── user-schema.ts   # Zod schema for User
+   368→└── infrastructure/
+   369→    ├── repositories/
+   370→    │   ├── user-repository.ts       # Drizzle-based
+   371→    │   └── history-entry-repository.ts
+   372→    ├── clients/
+   373→    │   └── supabase-auth-client.ts  # Supabase auth wrapper
+   374→    └── storage/
+   375→        └── avatar-storage.ts        # Avatar file storage
+   376→```
+   377→
+   378→### 6.4 `/packages/[name]/` — Shared Package Layout
+   379→
+   380→Each package is a self-contained module with its own `package.json`:
+   381→
+   382→```
+   383→packages/
+   384→├── tool-engine/
+   385→│   ├── src/
+   386→│   │   ├── types.ts         # ToolEngine<TInput, TOutput> types
+   387→│   │   ├── engine.ts        # Engine implementation
+   388→│   │   ├── stages/          # Stage type definitions
+   389→│   │   └── index.ts         # Package entry point
+   390→│   ├── tests/
+   391→│   │   └── engine.test.ts
+   392→│   ├── package.json
+   393→│   ├── tsconfig.json
+   394→│   └── README.md
+   395→├── ui/
+   396→│   ├── src/
+   397→│   │   ├── button/
+   398→│   │   │   ├── Button.tsx
+   399→│   │   │   ├── button.test.tsx
+   400→│   │   │   └── index.ts
+   401→│   │   ├── input/
+   402→│   │   ├── card/
+   403→│   │   └── index.ts
+   404→│   └── package.json
+   405→├── utils/
+   406→│   ├── src/
+   407→│   │   ├── format.ts        # formatBytes, formatDate, etc.
+   408→│   │   ├── math.ts          # clamp, range, etc.
+   409→│   │   └── index.ts
+   410→│   └── package.json
+   411→└── types/
+   412→    ├── src/
+   413→    │   ├── tool.ts          # ToolManifest types
+   414→    │   ├── user.ts          # Shared User type
+   415→    │   └── index.ts
+   416→    └── package.json
+   417→```
+   418→
+   419→### 6.5 `/src/shared/` — App-Specific Shared Code
+   420→
+   421→```
+   422→src/shared/
+   423→├── lib/
+   424→│   ├── supabase-client.ts   # Browser Supabase client
+   425→│   ├── supabase-server.ts   # Server Supabase client
+   426→│   ├── analytics.ts         # Analytics client
+   427→│   └── logger.ts            # Structured logger
+   428→├── config/
+   429→│   ├── env.ts               # Environment variables (validated)
+   430→│   ├── feature-flags.ts     # Feature flag client
+   431→│   ├── site-config.ts       # Site name, URL, social handles
+   432→│   └── routes.ts            # Route constants
+   433→├── hooks/
+   434→│   ├── use-theme.ts         # Dark/light mode
+   435→│   ├── use-media-query.ts
+   436→│   ├── use-debounce.ts
+   437→│   └── use-current-user.ts  # Wraps Identity Context's hook
+   438→├── components/              # App-specific shared components (not in design system)
+   439→│   ├── PageContainer.tsx
+   440→│   ├── SectionHeading.tsx
+   441→│   └── ThemeToggle.tsx
+   442→└── types/
+   443→    ├── api.ts               # Shared API types
+   444→    └── index.ts
+   445→```
+   446→
+   447→### 6.6 `/src/generated/` — Build-Time Generated
+   448→
+   449→```
+   450→src/generated/
+   451→├── registry.ts              # Tool registry (Map of manifests)
+   452→├── navigation.ts            # Category → Tool[] for nav
+   453→├── sitemap.ts               # Sitemap entries
+   454→├── seo-meta.ts              # Per-route SEO metadata
+   455→├── admin-inventory.ts       # Tool list for admin
+   456→└── types.ts                 # Generated TypeScript types
+   457→```
+   458→
+   459→All files start with `// AUTO-GENERATED. Do not edit manually.` and are verified by CI.
+   460→
+   461→### 6.7 `/drizzle/[context]/` — Database Migrations
+   462→
+   463→Migrations are scoped per bounded context:
+   464→
+   465→```
+   466→drizzle/
+   467→├── identity/
+   468→│   ├── 0000_initial.sql
+   469→│   ├── 0001_add_history_entries.sql
+   470→│   └── meta/
+   471→│       ├── 0000_snapshot.json
+   472→│       └── 0001_snapshot.json
+   473→├── content/
+   474→│   └── 0000_initial.sql
+   475→├── platform-ops/
+   476→│   └── 0000_initial.sql
+   477→├── billing/                 # Phase 2+
+   478→└── analytics/
+   479→```
+   480→
+   481→Migration files are numbered sequentially with descriptive names. Migration metadata (snapshots) lives in `meta/`.
+   482→
+   483→### 6.8 `/scripts/` — Build and Utility Scripts
+   484→
+   485→```
+   486→scripts/
+   487→├── generate-registry.ts     # Tool registry codegen (AD-04 in 05_ProjectStructure)
+   488→├── verify-registry.ts       # CI check: generated files match manifests
+   489→├── seed-dev-data.ts         # Dev environment seeding
+   490→├── tool-template/           # Template for new tools
+   491→│   ├── manifest.ts
+   492→│   ├── stages/
+   493→│   └── ...
+   494→└── analyze-bundle.ts        # Bundle size analysis
+   495→```
+   496→
+   497→### 6.9 `/tests/` — Project-Wide Tests
+   498→
+   499→```
+   500→tests/
+   501→├── e2e/                     # Playwright E2E tests
+   502→│   ├── tool-workflow.spec.ts
+   503→│   ├── auth-flow.spec.ts
+   504→│   └── admin.spec.ts
+   505→├── integration/             # Cross-context integration tests
+   506→│   └── tool-to-history.spec.ts
+   507→└── fixtures/                # Test fixtures (sample files, etc.)
+   508→    ├── images/
+   509→    └── pdfs/
+   510→```
+   511→
+   512→### 6.10 `/docs/` — Documentation
+   513→
+   514→All project-level documentation lives in `/docs/`, numbered sequentially as defined in `README.md`. No other location for project-level docs.
+   515→
+   516→### 6.11 `/public/` — Static Assets
+   517→
+   518→```
+   519→public/
+   520→├── fonts/                   # Self-hosted fonts (if any)
+   521→├── images/                  # Static images (logos, OG images)
+   522→│   ├── logo.svg
+   523→│   ├── og-default.png       # Default Open Graph image
+   524→│   └── icons/
+   525→├── favicon.ico
+   526→├── robots.txt               # Static robots.txt (or generated route)
+   527→└── manifest.webmanifest     # PWA manifest
+   528→```
+   529→
+   530→## 7. Tool Folder Template (Reference)
+   531→
+   532→The canonical tool folder template, for quick reference when creating a new tool:
+   533→
+   534→```
+   535→src/tools/[category]/[tool-slug]/
+   536→├── manifest.ts              # MANDATORY
+   537→├── index.ts                 # MANDATORY (re-exports manifest)
+   538→├── stages/                  # MANDATORY (5-7 files)
+   539→│   ├── input.ts
+   540→│   ├── validation.ts
+   541→│   ├── processing.ts
+   542→│   ├── preview.tsx
+   543→│   ├── download.ts
+   544→│   ├── history.ts           # OPTIONAL
+   545→│   └── share.ts             # OPTIONAL
+   546→├── components/              # OPTIONAL (if tool has custom UI)
+   547→│   ├── InputForm.tsx
+   548→│   ├── ProcessingProgress.tsx
+   549→│   └── ResultDisplay.tsx
+   550→├── hooks/                   # OPTIONAL
+   551→│   └── use-processing.ts
+   552→├── lib/                     # OPTIONAL (tool-specific pure utilities)
+   553→│   └── tool-ops.ts
+   554→├── tests/                   # MANDATORY (at least stages.test.ts)
+   555→│   ├── stages.test.ts
+   556→│   ├── input-form.test.tsx
+   557→│   └── e2e.test.ts
+   558→└── README.md                # OPTIONAL for simple, MANDATORY for complex
+   559→```
+   560→
+   561→A tool template scaffold lives at `scripts/tool-template/` and can be copied via `pnpm new-tool [category] [slug]`.
+   562→
+   563→## 8. Standards
+   564→
+   565→### 8.1 File Naming Standards
+   566→- Non-component TypeScript files: `kebab-case.ts`
+   567→- Component files: `PascalCase.tsx`
+   568→- Test files: `[name].test.ts` or `[name].test.tsx`
+   569→- Type files: `[name].types.ts`
+   570→- Documentation: `kebab-case.md`
+   571→- Config: `kebab-case.config.ts`
+   572→
+   573→### 8.2 Folder Naming Standards
+   574→- All folders: `kebab-case`
+   575→- Special prefixes: `_shared/` (sorts first, indicates internal shared)
+   576→- Route groups in `app/`: `(name)` per Next.js convention
+   577→
+   578→### 8.3 File Size Standards (per `00_Project_Charter` §7.1)
+   579→- Soft limit: 300 lines per file
+   580→- Hard limit: 500 lines per file
+   581→- Files approaching 300 lines should be refactored into smaller modules
+   582→- Files exceeding 500 lines block PR merge
+   583→
+   584→### 8.4 Folder Cardinality Standards
+   585→- Don't create a subdirectory until parent has 5+ files
+   586→- Don't create more than 2 levels of nesting within a context's layer
+   587→- Single-file folders are acceptable (e.g., `stages/input.ts`)
+   588→
+   589→### 8.5 Index File Standards
+   590→- `index.ts` files are barrel files that re-export public APIs
+   591→- They do NOT contain logic
+   592→- They prevent deep import paths (`@/tools/image/image-resize` vs `@/tools/image/image-resize/manifest`)
+   593→
+   594→### 8.6 Test File Standards
+   595→- Every test file is named `[subject].test.ts` or `[subject].test.tsx`
+   596→- Test files live in `tests/` subdirectory of their subject's folder
+   597→- E2E tests live in project-level `tests/e2e/`
+   598→- Test fixtures live in `tests/fixtures/`
+   599→
+   600→## 9. Best Practices
+   601→
+   602→### 9.1 When Creating a New Tool
+   603→1. Run `pnpm new-tool [category] [slug]` to scaffold from template.
+   604→2. Edit `manifest.ts` with tool metadata.
+   605→3. Implement each stage in `stages/`.
+   606→4. Add components, hooks, lib as needed.
+   607→5. Write tests in `tests/`.
+   608→6. Run `pnpm gen:registry` to update generated files.
+   609→7. Verify with `pnpm test` and `pnpm lint`.
+   610→
+   611→### 9.2 When Adding a Component
+   612→1. Check `@packages/ui` for existing component (EC-03).
+   613→2. Check `src/shared/components/` for app-specific shared component.
+   614→3. If tool-specific, place in tool's `components/` folder.
+   615→4. Name file `PascalCase.tsx` matching component name.
+   616→5. One component per file (AD-02).
+   617→
+   618→### 9.3 When Adding a Utility Function
+   619→1. Check `@packages/utils` for existing utility (EC-03).
+   620→2. Check context's `domain/` or `application/` for context-specific utility.
+   621→3. If tool-specific, place in tool's `lib/` folder.
+   622→4. Name file `kebab-case.ts` describing the utility group (e.g., `image-ops.ts`, not `helpers.ts`).
+   623→
+   624→### 9.4 When Adding a Test
+   625→1. Place next to the code being tested (AD-04).
+   626→2. Name `[subject].test.ts`.
+   627→3. E2E tests go in `tests/e2e/` with descriptive name `[scenario].spec.ts`.
+   628→4. Use fixtures from `tests/fixtures/` for sample files.
+   629→
+   630→### 9.5 When Refactoring
+   631→1. Preserve file naming conventions.
+   632→2. Don't create temporary folders like `old/`, `deprecated/`, `v2/`.
+   633→3. If deleting a file, delete its tests too (colocated).
+   634→4. Update imports across the codebase; rely on TypeScript to catch misses.
+   635→
+   636→### 9.6 When Adding Documentation
+   637→1. Project-level docs go in `/docs/` with numbered filename.
+   638→2. Tool-specific docs go in tool's `README.md`.
+   639→3. Package docs go in package's `README.md`.
+   640→4. Inline code comments use JSDoc for public APIs.
+   641→
+   642→## 10. Future Scalability
+   643→
+   644→### 10.1 Scaling to 1,000+ Tools
+   645→- Tool folder template scales linearly.
+   646→- At >500 tools, consider adding a `tools/_index.ts` for faster IDE navigation.
+   647→- Category folders may need sub-categories (e.g., `image/resize/`, `image/convert/`); add via ADR if needed.
+   648→
+   649→### 10.2 Scaling Packages
+   650→- `/packages` can grow to 10+ packages without issue.
+   651→- Each package remains self-contained; no cross-package imports except via published APIs.
+   652→
+   653→### 10.3 Plugin Directory (Phase 4)
+   654→- Add `/plugins/` directory for third-party tools.
+   655→- Plugin folder structure mirrors tool folder structure (AD-03).
+   656→- Plugins are signed and sandboxed per future ADR.
+   657→
+   658→### 10.4 Multi-Tenancy (Phase 3+)
+   659→- Each context's `infrastructure/` layer gains `tenancy/` subdirectory for tenant-aware repositories.
+   660→- No structural changes to top-level layout.
+   661→
+   662→## 11. Dependencies
+   663→
+   664→### 11.1 Document Dependencies
+   665→- Depends on `00_Project_Charter` §3, §4 — LOCKs and ECs enforced via this structure.
+   666→- Depends on `02_SAD` — layer definitions and Tool Engine contract.
+   667→- Depends on `03_DDD` — bounded context boundaries.
+   668→- Depends on `04_TechStack` — pnpm workspaces, ESLint, Next.js App Router.
+   669→- Depends on `05_ProjectStructure` — high-level layout this document details.
+   670→- Depends on `06_ArchitectureDecisionRecords` — ADR-047 through ADR-053.
+   671→
+   672→### 11.2 External Dependencies
+   673→- Next.js App Router conventions (route groups, file-based routing).
+   674→- pnpm workspaces (monorepo support).
+   675→- ESLint `no-restricted-imports` (boundary enforcement).
+   676→
+   677→### 11.3 Assumptions
+   678→- File naming conventions remain stable; changes require ADR.
+   679→- Tool template remains stable; deviations require EC-04 architectural approval.
+   680→
+   681→## 12. Revision History
+   682→
+   683→| Revision | Date | Author | Change |
+   684→|----------|------|--------|--------|
+   685→| 1.0.0 | 2026-06-28 | Chief Architect | Initial Folder Structure. Defined file naming conventions, tool folder template, layer subdirectory pattern, shared code split rule, generated files convention, documentation placement. |
+   686→| 1.1.0 | 2026-06-28 | Chief Architect | Linked folder template to PC-04 (Tool Template Standard). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
+   687→
+   688→## 13. Cross References
+   689→
+   690→- `00_Project_Charter` §3, §4, §5 — LOCKs, ECs, and PCs implemented by this structure.
+   691→- `02_SAD` AD-01 — Layered architecture implemented by layer subdirectories here.
+   692→- `03_DDD` §5 — Bounded contexts mapped to top-level directories.
+   693→- `04_TechStack` — Technologies (pnpm, ESLint) enforcing this structure.
+   694→- `05_ProjectStructure` — High-level layout this document details.
+   695→- `06_ArchitectureDecisionRecords` — ADR-047 through ADR-053 record structure decisions.
+   696→- `11_ProductConstitution` — Expands PC-04 (Tool Template Standard).
+   697→- `12_ToolManifestSpecification` — Schema at the root of every tool folder.
+   698→- `08_CodingStandards` — Coding rules within files in this structure.
+   699→- `09_NamingConvention` — Naming rules for variables, functions, types within files.
+   700→- `10_DesignSystem` — Design tokens used by components in this structure.
+   701→- `13_FBRD` — Tool manifest schema (the file at the root of every tool folder).
+   702→- `14_ACD` — Reusable components referenced from `@packages/ui`.
+   703→- `16_DatabaseDesign` — Drizzle migrations under `drizzle/[context]/`.
+   704→- `21_AdminSpecification` — Admin routes under `src/app/(admin)/`.
+   705→- `22_DevelopmentGuideline` — PR workflow including structure verification.
+   706→- `24_DeploymentGuide` — Build pipeline including registry codegen.
+   707→- `25_AI_Guideline` — AI must follow this structure (LOCK-09, EC-11).
+   708→

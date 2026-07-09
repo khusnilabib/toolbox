@@ -1,0 +1,598 @@
+     1→     1→# 11 — Product Constitution
+     2→     2→
+     3→     3→> **Status:** 🟢 Approved (📋 Constitutional)
+     4→     4→> **Document Owner:** Chief Architect
+     5→     5→> **Last Updated:** 2026-06-28
+     6→     6→> **Revision:** 1.0.0
+     7→     7→> **Implements:** PC-01 through PC-10 (expanded from `00_Project_Charter` §5)
+     8→     8→
+     9→     9→---
+    10→    10→
+    11→    11→## 1. Purpose
+    12→    12→
+    13→    13→This Product Constitution document expands the ten Product Constitution articles (PC-01 through PC-10) established in `00_Project_Charter` §5 into operational detail. Where the charter establishes the articles as binding commitments, this document defines what each article means in practice: what it requires, what it forbids, how it's enforced, and how it interacts with the other governance layers.
+    14→    14→
+    15→    15→The Product Constitution is the third governance tier, sitting below the Architectural Locks (§3 of charter) and Engineering Constitution (§4 of charter) and above all technical documents. It binds every tool, present and future, with the same authority. The rationale for treating product decisions as architectural decisions is simple: at 1,000+ tools, inconsistent product behavior fragments the user experience and makes the platform feel like a patchwork rather than a cohesive ecosystem. A user who learns the layout on one tool should immediately understand every other tool.
+    16→    16→
+    17→    17→**Product decisions are architectural decisions.** A tool that violates PC-01 through PC-10 cannot be promoted to Stable status (PC-04) and may be blocked from Beta depending on severity. This document is the authoritative reference for what each article requires; ADR-054 through ADR-063 in `06_ArchitectureDecisionRecords` provide the formal architectural decision records.
+    18→    18→
+    19→    19→## 2. Scope
+    20→    20→
+    21→    21→### 2.1 In Scope
+    22→    22→
+    23→    23→- Detailed expansion of each PC article (PC-01 through PC-10).
+    24→    24→- Enforcement mechanisms for each article.
+    25→    25→- Interaction between Product Constitution and other governance layers.
+    26→    26→- Worked examples for each article.
+    27→    27→- Exceptions and how to request them.
+    28→    28→- Audit checklist for tool promotion (PC-04).
+    29→    29→
+    30→    30→### 2.2 Out of Scope
+    31→    31→
+    32→    32→- The canonical ToolManifest schema → `12_ToolManifestSpecification`.
+    33→    33→- Specific tool implementations → `13_FBRD` and per-tool specs.
+    34→    34→- UI/UX interaction patterns → `15_UDS`.
+    35→    35→- Code review process → `22_DevelopmentGuideline`.
+    36→    36→- Testing strategy → `23_TestingStrategy`.
+    37→    37→
+    38→    38→## 3. Architectural Decisions
+    39→    39→
+    40→    40→### AD-01 — Product Constitution as Governance Tier 3
+    41→    41→
+    42→    42→**Context.** Without a product-level governance layer, product decisions are made ad hoc per tool. Over time, tools diverge in how they handle errors, layout, analytics, monetization, and discoverability. The platform feels inconsistent.
+    43→    43→
+    44→    44→**Decision.** Establish the Product Constitution as the third governance tier, with binding authority over all product behavior. Priority order: Architectural Locks > Engineering Constitution > Product Constitution > Technical Documents. Product decisions require charter-level authority to amend.
+    45→    45→
+    46→    46→**Implements:** All PC articles.
+    47→    47→
+    48→    48→### AD-02 — Every Article Maps to Specific ADR
+    49→    49→
+    50→    50→**Context.** Each PC article is a binding commitment. Without a corresponding ADR, the article's rationale and alternatives are lost.
+    51→    51→
+    52→    52→**Decision.** Each PC article has a corresponding ADR (ADR-054 through ADR-063) that records context, decision, consequences, alternatives, and future review triggers.
+    53→    53→
+    54→    54→**Implements:** EC-01 (Documentation First).
+    55→    55→
+    56→    56→## 4. Design Principles
+    57→    57→
+    58→    58→### P1 — One Tool, One Problem
+    59→    59→Every tool solves exactly one user problem. Multi-feature tools fragment intent and SEO.
+    60→    60→
+    61→    61→### P2 — Contract-Driven
+    62→    62→Every tool has a formal product contract encoded in its manifest. No contract, no tool.
+    63→    63→
+    64→    64→### P3 — Consistency Enables Scale
+    65→    65→1,000+ tools feel like one ecosystem because every tool follows the same layout, analytics, error patterns, and discoverability rules.
+    66→    66→
+    67→    67→### P4 — Quality Is Earned, Not Assumed
+    68→    68→Stable status requires passing 7 quality gates. Tools don't become Stable by aging; they become Stable by meeting objective criteria.
+    69→    69→
+    70→    70→### P5 — User Value Before Revenue
+    71→    71→Monetization never interrupts task completion. Revenue follows value demonstration.
+    72→    72→
+    73→    73→### P6 — Errors Are Recoverable
+    74→    74→Every error explains what, why, how to fix. Users can self-recover.
+    75→    75→
+    76→    76→### P7 — Discovery Is Mandatory
+    77→    77→Every tool helps users discover more tools. The ecosystem grows engagement naturally.
+    78→    78→
+    79→    79→## 5. Product Constitution Articles (Detailed)
+    80→    80→
+    81→    81→### 5.1 PC-01 — Every Tool Solves One Problem
+    82→    82→
+    83→    83→**Binding text (from `00_Project_Charter` §5):**
+    84→    84→> Each tool MUST solve exactly one clearly defined user problem. Avoid feature creep. One page. One intent. One outcome.
+    85→    85→
+    86→    86→**Operational meaning:**
+    87→    87→- A tool has ONE primary user intent, stated in its manifest's `purpose` field.
+    88→    88→- A tool's `slug` and `title` clearly communicate that single intent (e.g., `image-resize` not `image-toolkit`).
+    89→    89→- A tool's Processing stage produces ONE primary output type (with optional secondary outputs like metadata, but not multiple distinct transformations).
+    90→    90→- If a tool naturally does multiple things (e.g., image resize + compress), it's split into multiple tools.
+    91→    91→
+    92→    92→**What it forbids:**
+    93→    93→- "Swiss army knife" tools that combine unrelated functions.
+    94→    94→- "Mode" selectors that change what a tool does.
+    95→    95→- Tools whose name doesn't predict their behavior.
+    96→    96→
+    97→    97→**Enforcement:**
+    98→    98→- Tool manifest validation: `purpose` field is a single sentence.
+    99→    99→- Code review: reviewer verifies the tool does ONE thing.
+   100→   100→- PC-04 quality gate: Functional review checks single-intent compliance.
+   101→   101→
+   102→   102→**Examples:**
+   103→   103→- ✅ `image-resize` — changes image dimensions. Single intent.
+   104→   104→- ✅ `image-compress` — reduces image file size. Single intent.
+   105→   105→- ❌ `image-toolkit` — resizes, compresses, converts, watermarks. Multi-intent (split into 4 tools).
+   106→   106→- ✅ `pdf-merge` — combines multiple PDFs into one. Single intent.
+   107→   107→- ✅ `pdf-split` — splits one PDF into multiple. Single intent.
+   108→   108→
+   109→   109→**Interaction with other articles:**
+   110→   110→- PC-09 (Discoverability): Multi-step workflows span multiple tools; each tool is single-intent but related tools are linked.
+   111→   111→- LOCK-08 (SEO): One intent per page = higher search relevance.
+   112→   112→
+   113→   113→**Exceptions:** None. If a tool genuinely needs to do multiple things, propose a "workflow" concept via ADR (not a multi-feature tool).
+   114→   114→
+   115→   115→---
+   116→   116→
+   117→   117→### 5.2 PC-02 — Every Tool Has a Product Contract
+   118→   118→
+   119→   119→**Binding text:**
+   120→   120→> Every tool MUST define: Purpose, User Problem, Inputs, Outputs, Validation Rules, Processing Steps, Success Criteria, Failure States, Empty States, Loading States, SEO Intent, Related Tools, Analytics Events. No tool exists without this contract.
+   121→   121→
+   122→   122→**Operational meaning:**
+   123→   123→Every tool's manifest (per `12_ToolManifestSpecification`) MUST include:
+   124→   124→
+   125→   125→| Contract Field | Manifest Field | Description |
+   126→   126→|---------------|----------------|-------------|
+   127→   127→| Purpose | `purpose` | One-sentence statement of what the tool does. |
+   128→   128→| User Problem | `userProblem` | The problem the user is trying to solve. |
+   129→   129→| Inputs | `inputSchema` (Zod) | Schema of accepted inputs. |
+   130→   130→| Outputs | `outputSchema` (Zod) | Schema of produced outputs. |
+   131→   131→| Validation Rules | `validationRules` | Specific validation constraints (size limits, format restrictions). |
+   132→   132→| Processing Steps | `stages.processing` | The Processing stage implementation. |
+   133→   133→| Success Criteria | `successCriteria` | What constitutes a successful execution. |
+   134→   134→| Failure States | `failureStates` | Enumerated failure modes with user-facing messages. |
+   135→   135→| Empty States | `emptyStates` | UI when no input has been provided yet. |
+   136→   136→| Loading States | `loadingStates` | UI during processing. |
+   137→   137→| SEO Intent | `seo.searchIntent` | Informational / Transactional / Navigational. |
+   138→   138→| Related Tools | `relatedTools` | Slugs of related tools for discoverability (PC-09). |
+   139→   139→| Analytics Events | `analytics.events` | List of analytics events the tool emits (PC-07). |
+   140→   140→
+   141→   141→**What it forbids:**
+   142→   142→- Tools with incomplete manifests.
+   143→   143→- Tools where behavior is undocumented (if it's not in the contract, it doesn't exist).
+   144→   144→- Tools with implicit inputs/outputs not in the schema.
+   145→   145→
+   146→   146→**Enforcement:**
+   147→   147→- Build-time manifest validation against Zod schema.
+   148→   148→- CI fails if manifest is incomplete.
+   149→   149→- PC-04 quality gate: Documentation review verifies contract completeness.
+   150→   150→
+   151→   151→**Interaction with other articles:**
+   152→   152→- PC-03 (Completion Standard): Contract is the foundation; completion standard verifies implementation matches contract.
+   153→   153→- PC-07 (Analytics): Analytics events are part of the contract.
+   154→   154→- PC-10 (Product Scalability): Manifest is the metadata source for codegen.
+   155→   155→
+   156→   156→---
+   157→   157→
+   158→   158→### 5.3 PC-03 — Tool Completion Standard
+   159→   159→
+   160→   160→**Binding text:**
+   161→   161→> A tool is only considered complete if it provides: Upload/Input, Validation, Processing, Preview, Download/Copy, Error Handling, Success Feedback, Accessibility, Mobile Support, SEO, Analytics, Documentation, Tests. All 13 items mandatory.
+   162→   162→
+   163→   163→**Operational meaning:**
+   164→   164→The 13 mandatory items:
+   165→   165→
+   166→   166→| # | Item | Requirement |
+   167→   167→|---|------|-------------|
+   168→   168→| 1 | Upload/Input | Tool accepts user input via form, file upload, or URL. |
+   169→   169→| 2 | Validation | Input validated with Zod; invalid input returns typed error. |
+   170→   170→| 3 | Processing | Tool Engine Processing stage implemented (browser or server per manifest). |
+   171→   171→| 4 | Preview | Result previewed before download; user can inspect. |
+   172→   172→| 5 | Download/Copy | Result downloadable (file) or copyable (text); per LOCK-07, no registration required for download. |
+   173→   173→| 6 | Error Handling | All error paths produce typed errors with user-facing messages (PC-08). |
+   174→   174→| 7 | Success Feedback | Successful execution shows clear success state (toast, highlight, etc.). |
+   175→   175→| 8 | Accessibility | WCAG 2.1 AA conformance; keyboard nav, screen reader, focus visibility, reduced motion (EC-06). |
+   176→   176→| 9 | Mobile Support | Tool usable on 360px viewport; touch targets ≥44x44px. |
+   177→   177→| 10 | SEO | Per `18_SEOSpecification`: metadata, structured data, FAQ, related tools, breadcrumb. |
+   178→   178→| 11 | Analytics | Emits all PC-07 required events. |
+   179→   179→| 12 | Documentation | Tool README documents purpose, inputs, outputs, edge cases. |
+   180→   180→| 13 | Tests | Unit tests for stages; E2E test for workflow; accessibility test. |
+   181→   181→
+   182→   182→**What it forbids:**
+   183→   183→- Tools missing any of the 13 items.
+   184→   184→- Tools with "TODO" or "coming soon" for any item.
+   185→   185→- Tools that work on desktop but not mobile.
+   186→   186→
+   187→   187→**Enforcement:**
+   188→   188→- PC-04 quality gates verify each item.
+   189→   189→- CI checks for tests, SEO metadata, analytics events.
+   190→   190→- Manual review for accessibility, mobile, UX.
+   191→   191→
+   192→   192→**Interaction with other articles:**
+   193→   193→- PC-04 (Quality Gates): Completion standard is the baseline; quality gates verify it.
+   194→   194→- EC-04 (Tool Template): Template scaffolds all 13 items.
+   195→   195→
+   196→   196→---
+   197→   197→
+   198→   198→### 5.4 PC-04 — Product Quality Gates
+   199→   199→
+   200→   200→**Binding text:**
+   201→   201→> A feature cannot reach Stable unless it passes: Functional review, Accessibility review, Performance review, SEO review, Security review, Documentation review, UX review. Quality gates are mandatory.
+   202→   202→
+   203→   203→**Operational meaning:**
+   204→   204→Seven quality gates, each with objective criteria:
+   205→   205→
+   206→   206→| # | Gate | Criteria | Reviewer |
+   207→   207→|---|------|----------|----------|
+   208→   208→| 1 | Functional | All manifest-declared features work as specified; tests pass. | Engineer (peer) |
+   209→   209→| 2 | Accessibility | WCAG 2.1 AA; Lighthouse accessibility ≥95; keyboard nav tested; screen reader tested. | Engineer (trained) |
+   210→   210→| 3 | Performance | Lighthouse performance ≥90; bundle size within budget; TTFB <500ms. | Engineer |
+   211→   211→| 4 | SEO | All `18_SEOSpecification` requirements met; structured data valid; unique metadata. | SEO reviewer |
+   212→   212→| 5 | Security | Input validation; no secrets in client; RLS policies; no XSS vectors. | Security reviewer |
+   213→   213→| 6 | Documentation | Tool README complete; ADRs updated if architectural change; manifest accurate. | Tech writer or engineer |
+   214→   214→| 7 | UX | Layout follows PC-05; error states follow PC-08; success feedback present; mobile usable. | UX reviewer or designer |
+   215→   215→
+   216→   216→**Promotion workflow:**
+   217→   217→1. Tool is in `Testing` or `Beta` lifecycle state.
+   218→   218→2. Author requests promotion to `Stable` via PR.
+   219→   219→3. Each gate reviewer signs off (or rejects with feedback).
+   220→   220→4. All 7 gates pass → promote to `Stable` (update manifest `lifecycle` field).
+   221→   221→5. Any gate fails → address feedback; re-request.
+   222→   222→
+   223→   223→**What it forbids:**
+   224→   224→- Self-promotion to Stable without all 7 sign-offs.
+   225→   225→- Skipping gates "because it's a small change."
+   226→   226→
+   227→   227→**Enforcement:**
+   228→   228→- Admin panel tracks lifecycle transitions; requires sign-off records.
+   229→   229→- Audit trail (LOCK-11) records who signed off and when.
+   230→   230→- Code review checklist includes gate verification.
+   231→   231→
+   232→   232→**Interaction with other articles:**
+   233→   233→- PC-03 (Completion Standard): Completion is the baseline; gates verify completion plus additional quality.
+   234→   234→- LOCK-12 (Feature Lifecycle): Gates are the criteria for promotion to Stable.
+   235→   235→
+   236→   236→---
+   237→   237→
+   238→   238→### 5.5 PC-05 — UX Consistency
+   239→   239→
+   240→   240→**Binding text:**
+   241→   241→> Every tool page follows the same layout: Hero → Tool → Result → FAQ → Related Tools → Documentation → Feedback → Footer. Users should never relearn navigation between tools.
+   242→   242→
+   243→   243→**Operational meaning:**
+   244→   244→Canonical tool page layout (top to bottom):
+   245→   245→
+   246→   246→```
+   247→   247→┌─────────────────────────────────┐
+   248→   248→│ 1. Hero                         │  Title, one-line description, breadcrumb
+   249→   249→├─────────────────────────────────┤
+   250→   250→│ 2. Tool                         │  Input form, processing controls
+   251→   251→├─────────────────────────────────┤
+   252→   252→│ 3. Result                       │  Preview, download button, success state
+   253→   253→├─────────────────────────────────┤
+   254→   254→│ 4. FAQ                          │  Per LOCK-08; min 3 Q&As
+   255→   255→├─────────────────────────────────┤
+   256→   256→│ 5. Related Tools                │  Per PC-09; min 3 related tools
+   257→   257→├─────────────────────────────────┤
+   258→   258→│ 6. Documentation                │  Tool-specific docs, how-to guides
+   259→   259→├─────────────────────────────────┤
+   260→   260→│ 7. Feedback                     │  "Was this helpful?" widget
+   261→   261→├─────────────────────────────────┤
+   262→   262→│ 8. Footer                       │  Site-wide footer
+   263→   263→└─────────────────────────────────┘
+   264→   264→```
+   265→   265→
+   266→   266→**What it forbids:**
+   267→   267→- Reordering sections (e.g., FAQ before Tool).
+   268→   268→- Omitting sections (except Documentation, which can be minimal for simple tools).
+   269→   269→- Custom layouts per tool.
+   270→   270→
+   271→   271→**Enforcement:**
+   272→   272→- `ToolLayout` component (`14_ACD`) renders the canonical layout.
+   273→   273→- Code review verifies use of `ToolLayout`.
+   274→   274→- PC-04 UX gate checks layout compliance.
+   275→   275→
+   276→   276→**Interaction with other articles:**
+   277→   277→- LOCK-10 (Design Philosophy): Layout uses design system tokens.
+   278→   278→- EC-10 (Design System Governance): No ad hoc layout elements.
+   279→   279→
+   280→   280→---
+   281→   281→
+   282→   282→### 5.6 PC-06 — Monetization Philosophy
+   283→   283→
+   284→   284→**Binding text:**
+   285→   285→> Revenue MUST never interrupt task completion. Advertising or premium prompts may appear only after value has been demonstrated. Core functionality remains free. Premium provides convenience, not necessity.
+   286→   286→
+   287→   287→**Operational meaning:**
+   288→   288→- Core tool workflow (Input → Validation → Processing → Preview → Download) is always free.
+   289→   289→- Ads appear only AFTER the result is shown (in the Result section or below).
+   290→   290→- Premium prompts appear only for value-adds: batch processing, cloud sync, AI features, higher file size limits.
+   291→   291→- No paywalls mid-workflow.
+   292→   292→- No "registration required to download" (per LOCK-07).
+   293→   293→
+   294→   294→**What it forbids:**
+   295→   295→- Ads before the result.
+   296→   296→- Paywalls on core functionality.
+   297→   297→- Forced registration to complete a task.
+   298→   298→- Premium features that are necessary for basic use (e.g., "premium required to download full resolution").
+   299→   299→
+   300→   300→**Enforcement:**
+   301→   301→- Code review: reviewer verifies no monetization in core workflow.
+   302→   302→- PC-04 UX gate: checks monetization placement.
+   303→   303→
+   304→   304→**Interaction with other articles:**
+   305→   305→- LOCK-07 (Guest-First): Reinforces no registration before value.
+   306→   306→- `01_BRD` §4.1: Monetization standards operationalize this.
+   307→   307→
+   308→   308→---
+   309→   309→
+   310→   310→### 5.7 PC-07 — Analytics Standard
+   311→   311→
+   312→   312→**Binding text:**
+   313→   313→> Every tool MUST emit consistent events. Minimum events: Tool Viewed, Tool Started, Validation Failed, Processing Started, Processing Completed, Download Attempted, Download Completed, Registration Prompt Viewed, Registration Completed, Tool Shared.
+   314→   314→
+   315→   315→**Operational meaning:**
+   316→   316→Mandatory analytics events (all tools emit these):
+   317→   317→
+   318→   318→| Event Name | Trigger | Payload |
+   319→   319→|-----------|---------|---------|
+   320→   320→| `tool_viewed` | User lands on tool page | `{ toolSlug, referrer, locale }` |
+   321→   321→| `tool_started` | User begins input (uploads file, types text) | `{ toolSlug, inputType }` |
+   322→   322→| `validation_failed` | Input validation fails | `{ toolSlug, field, errorKind }` |
+   323→   323→| `processing_started` | Processing stage begins | `{ toolSlug, inputSummary }` |
+   324→   324→| `processing_completed` | Processing stage completes successfully | `{ toolSlug, durationMs, outputSummary }` |
+   325→   325→| `download_attempted` | User clicks download/copy button | `{ toolSlug, outputFormat }` |
+   326→   326→| `download_completed` | Download/copy succeeds | `{ toolSlug, outputSize }` |
+   327→   327→| `registration_prompt_viewed` | Registration prompt shown | `{ toolSlug, trigger }` |
+   328→   328→| `registration_completed` | User completes registration | `{ toolSlug, method }` |
+   329→   329→| `tool_shared` | User shares tool (link copy, social) | `{ toolSlug, shareMethod }` |
+   330→   330→
+   331→   331→**What it forbids:**
+   332→   332→- Tools emitting custom event names instead of standard ones.
+   333→   333→- Tools omitting any of the 10 mandatory events.
+   334→   334→- Tools sending PII in event payloads (only userId if authenticated).
+   335→   335→
+   336→   336→**Enforcement:**
+   337→   337→- Tool Engine emits events automatically; tools don't write custom analytics code.
+   338→   338→- Manifest declares which events the tool emits (for tools with optional events like `tool_shared`).
+   339→   339→- CI verifies manifest's analytics configuration.
+   340→   340→
+   341→   341→**Interaction with other articles:**
+   342→   342→- PC-02 (Product Contract): Analytics events are part of the contract.
+   343→   343→- PC-10 (Product Scalability): Analytics config derived from manifest.
+   344→   344→
+   345→   345→---
+   346→   346→
+   347→   347→### 5.8 PC-08 — Error Experience
+   348→   348→
+   349→   349→**Binding text:**
+   350→   350→> Every error MUST: explain what happened, explain why, explain how to fix it. Never expose technical stack traces.
+   351→   351→
+   352→   352→**Operational meaning:**
+   353→   353→Every error has three components:
+   354→   354→
+   355→   355→1. **What happened** (plain language): "The image you uploaded is too large."
+   356→   356→2. **Why** (if known): "The maximum file size is 10MB; your file is 25MB."
+   357→   357→3. **How to fix it** (actionable): "Please upload a smaller image, or use the Image Compressor tool first."
+   358→   358→
+   359→   359→**Error types** (from `02_SAD` §6.3):
+   360→   360→- `validation` — input validation failed.
+   361→   361→- `processing` — tool logic failed (recoverable or not).
+   362→   362→- `quota_exceeded` — user hit usage limit.
+   363→   363→- `auth_required` — feature requires registration.
+   364→   364→- `server_unavailable` — backend service down.
+   365→   365→
+   366→   366→Each error type has a user-facing message template; tools fill in specifics.
+   367→   367→
+   368→   368→**What it forbids:**
+   369→   369→- Generic "Something went wrong" messages.
+   370→   370→- Raw stack traces or technical error codes visible to users.
+   371→   371→- Errors without recovery guidance.
+   372→   372→- Errors that blame the user ("You entered invalid input").
+   373→   373→
+   374→   374→**Enforcement:**
+   375→   375→- Tool Engine maps errors to user-facing messages.
+   376→   376→- Code review: reviewer verifies error messages meet the three-component standard.
+   377→   377→- PC-04 UX gate: checks error experience.
+   378→   378→
+   379→   379→**Interaction with other articles:**
+   380→   380→- EC-05 (Progressive Enhancement): Errors are graceful degradation points.
+   381→   381→
+   382→   382→---
+   383→   383→
+   384→   384→### 5.9 PC-09 — Feature Discoverability
+   385→   385→
+   386→   386→**Binding text:**
+   387→   387→> Every tool MUST help users discover additional tools. Methods: Related Tools, Suggested Workflows, Category Navigation, Search, Recently Used, Popular Tools. The ecosystem should naturally expand user engagement.
+   388→   388→
+   389→   389→**Operational meaning:**
+   390→   390→Six discoverability methods (all tools implement at least the first three):
+   391→   391→
+   392→   392→| Method | Requirement | Implementation |
+   393→   393→|--------|-------------|----------------|
+   394→   394→| Related Tools | Min 3 related tools listed in Result section. | Manifest `relatedTools` field; rendered by `RelatedTools` component. |
+   395→   395→| Suggested Workflows | If tool is part of a workflow (e.g., resize → compress → convert), suggest next steps. | Manifest `suggestedWorkflows` field (optional in Phase 1). |
+   396→   396→| Category Navigation | Tool page links to its category page. | Breadcrumb (LOCK-08) + sidebar. |
+   397→   397→| Search | Tool is searchable in site search. | Auto-indexed from manifest (PC-10). |
+   398→   398→| Recently Used | If authenticated, show recently used tools. | Identity Context history; UI in header. |
+   399→   399→| Popular Tools | Site-wide popular tools shown on category pages. | Derived from Analytics Context (PC-07). |
+   400→   400→
+   401→   401→**What it forbids:**
+   402→   402→- Tools with no related tools declared.
+   403→   403→- Tools that don't link to their category.
+   404→   404→- Dead-end pages (no path to other tools).
+   405→   405→
+   406→   406→**Enforcement:**
+   407→   407→- Manifest validation: `relatedTools` array has ≥3 entries.
+   408→   408→- Code review: verifies Related Tools section present.
+   409→   409→- PC-04 SEO gate: checks internal linking.
+   410→   410→
+   411→   411→**Interaction with other articles:**
+   412→   412→- LOCK-08 (SEO): Internal linking strengthens SEO.
+   413→   413→- PC-05 (UX Consistency): Related Tools section is part of canonical layout.
+   414→   414→
+   415→   415→---
+   416→   416→
+   417→   417→### 5.10 PC-10 — Product Scalability
+   418→   418→
+   419→   419→**Binding text:**
+   420→   420→> Every new tool should require minimal engineering effort. The Tool Manifest MUST contain enough metadata to automatically generate: Navigation, SEO, Sitemap, Categories, Search Index, Admin Inventory, Analytics Configuration. Metadata-first development is mandatory.
+   421→   421→
+   422→   422→**Operational meaning:**
+   423→   423→Adding a tool = creating a folder with `manifest.ts` + stage files. The build-time codegen (`05_ProjectStructure` AD-04) automatically:
+   424→   424→
+   425→   425→| Generated Artifact | Source Manifest Field |
+   426→   426→|--------------------|-----------------------|
+   427→   427→| Navigation entries | `category`, `slug`, `title` |
+   428→   428→| SEO metadata | `seo` (title, description, OG, Twitter Card, JSON-LD) |
+   429→   429→| Sitemap entries | `slug`, `category`, `lastModified` |
+   430→   430→| Category taxonomies | `category` |
+   431→   431→| Search index | `title`, `description`, `keywords`, `faq` |
+   432→   432→| Admin inventory | All manifest fields |
+   433→   433→| Analytics configuration | `analytics.events` |
+   434→   434→
+   435→   435→**What it forbids:**
+   436→   436→- Manual registration of tools in navigation, sitemap, or admin.
+   437→   437→- Tools that require infrastructure changes outside their own folder.
+   438→   438→- Hardcoded tool lists anywhere in the codebase.
+   439→   439→
+   440→   440→**Enforcement:**
+   441→   441→- CI verifies generated files match manifests (`scripts/verify-registry.ts`).
+   442→   442→- Code review: reviewer verifies no manual registration.
+   443→   443→- PC-04 Documentation gate: checks manifest completeness.
+   444→   444→
+   445→   445→**Interaction with other articles:**
+   446→   446→- LOCK-05 (Plugin-Ready): Manifest is the plugin contract.
+   447→   447→- PC-02 (Product Contract): Manifest encodes the contract.
+   448→   448→- EC-04 (Tool Template): Template ensures manifest completeness.
+   449→   449→
+   450→   450→## 6. Standards
+   451→   451→
+   452→   452→### 6.1 Article Enforcement Standards
+   453→   453→- Every PC article is binding on every tool.
+   454→   454→- Violations block promotion to Beta or Stable (per article severity).
+   455→   455→- Exceptions require ADR approval.
+   456→   456→
+   457→   457→### 6.2 Article Interaction Standards
+   458→   458→- PC articles are complementary; tools must satisfy ALL articles simultaneously.
+   459→   459→- When articles appear to conflict (e.g., PC-05 layout vs. PC-09 discoverability), the canonical layout (PC-05) includes discoverability sections (PC-09).
+   460→   460→
+   461→   461→### 6.3 Article Evolution Standards
+   462→   462→- New PC articles require charter amendment (`00_Project_Charter` §5).
+   463→   463→- Article modifications require charter amendment.
+   464→   464→- Article interpretation clarifications can be made in this document via revision bump.
+   465→   465→
+   466→   466→## 7. Best Practices
+   467→   467→
+   468→   468→### 7.1 When Designing a New Tool
+   469→   469→1. Define the ONE problem the tool solves (PC-01).
+   470→   470→2. Draft the product contract (PC-02) — all 13 fields.
+   471→   471→3. Plan the 13 completion items (PC-03).
+   472→   472→4. Plan for all 7 quality gates (PC-04) before requesting promotion.
+   473→   473→5. Use the canonical layout (PC-05).
+   474→   474→6. Place monetization only after result (PC-06).
+   475→   475→7. Plan the 10 analytics events (PC-07).
+   476→   476→8. Draft error messages with what/why/how (PC-08).
+   477→   477→9. Identify 3+ related tools (PC-09).
+   478→   478→10. Ensure manifest is complete for codegen (PC-10).
+   479→   479→
+   480→   480→### 7.2 When Reviewing a Tool PR
+   481→   481→- Verify PC-01: single intent?
+   482→   482→- Verify PC-02: contract complete in manifest?
+   483→   483→- Verify PC-03: all 13 items present?
+   484→   484→- For promotion to Stable: verify all 7 gates passed (PC-04).
+   485→   485→- Verify PC-05: uses `ToolLayout`?
+   486→   486→- Verify PC-06: no monetization in core workflow?
+   487→   487→- Verify PC-07: emits all 10 events (or delegates to Tool Engine)?
+   488→   488→- Verify PC-08: error messages meet three-component standard?
+   489→   489→- Verify PC-09: ≥3 related tools declared?
+   490→   490→- Verify PC-10: manifest complete enough for codegen?
+   491→   491→
+   492→   492→### 7.3 When Requesting an Exception
+   493→   493→1. Write an ADR proposing the exception with rationale.
+   494→   494→2. Reference the PC article being excepted.
+   495→   495→3. Explain why the exception doesn't undermine the article's intent.
+   496→   496→4. Get Chief Architect approval.
+   497→   497→5. Document the exception in the tool's README.
+   498→   498→
+   499→   499→## 8. Examples
+   500→   500→
+   501→   501→### 8.1 Example: Image Resizer Tool
+   502→   502→
+   503→   503→**PC-01 (One Problem):** Resizes images to specified dimensions. Single intent.
+   504→   504→
+   505→   505→**PC-02 (Contract):**
+   506→   506→- Purpose: "Resize an image to specific width and height."
+   507→   507→- User Problem: "I need an image at a specific size for a profile picture / thumbnail / print."
+   508→   508→- Inputs: Image file (PNG, JPEG, WebP), target width, target height, optional maintain-aspect-ratio flag.
+   509→   509→- Outputs: Resized image file (same format as input).
+   510→   510→- Validation Rules: File ≤10MB; dimensions 1-10000px; supported formats only.
+   511→   511→- Processing Steps: Decode image → resize via Canvas → encode → return blob.
+   512→   512→- Success Criteria: Output image has exact specified dimensions.
+   513→   513→- Failure States: `validation` (invalid file), `processing` (decode failure), `quota_exceeded` (file too large).
+   514→   514→- Empty States: "Upload an image to resize" with upload icon.
+   515→   515→- Loading States: Progress bar during resize.
+   516→   516→- SEO Intent: Transactional (user wants to DO something).
+   517→   517→- Related Tools: `image-compress`, `image-crop`, `image-format-convert`.
+   518→   518→- Analytics Events: All 10 standard events.
+   519→   519→
+   520→   520→**PC-03 (Completion):** All 13 items implemented.
+   521→   521→
+   522→   522→**PC-04 (Gates):** Passed all 7 gates; promoted to Stable.
+   523→   523→
+   524→   524→**PC-05 (Layout):** Uses `ToolLayout` with all 8 sections.
+   525→   525→
+   526→   526→**PC-06 (Monetization):** No ads before result. Ad appears after download. Premium upsell for batch resize (not blocking single resize).
+   527→   527→
+   528→   528→**PC-07 (Analytics):** Emits all 10 events via Tool Engine.
+   529→   529→
+   530→   530→**PC-08 (Errors):**
+   531→   531→- File too large: "Your image is too large (25MB). The maximum size is 10MB. Try the Image Compressor first to reduce its size."
+   532→   532→- Invalid format: "This file format isn't supported (GIF). Supported formats are PNG, JPEG, and WebP. Convert your image to one of these formats first."
+   533→   533→
+   534→   534→**PC-09 (Discoverability):** Related Tools section shows Image Compress, Image Crop, Image Format Convert.
+   535→   535→
+   536→   536→**PC-10 (Scalability):** Manifest complete; codegen generates nav, SEO, sitemap, search, admin automatically.
+   537→   537→
+   538→   538→## 9. Future Expansion
+   539→   539→
+   540→   540→### 9.1 New PC Articles
+   541→   541→As the platform evolves, new PC articles may be needed (e.g., PC-11 for internationalization, PC-12 for collaboration). Each requires charter amendment per `00_Project_Charter` §12.
+   542→   542→
+   543→   543→### 9.2 Article Refinement
+   544→   544→Existing articles may need operational refinement. Refinements that don't change binding text are made via revision bump to this document. Refinements that change binding text require charter amendment.
+   545→   545→
+   546→   546→### 9.3 Tool-Specific PC Extensions
+   547→   547→Some tool categories may need additional product rules (e.g., AI tools need disclosure requirements). These are added as appendices to this document, not as new PC articles.
+   548→   548→
+   549→   549→## 10. Dependencies
+   550→   550→
+   551→   551→### 10.1 Document Dependencies
+   552→   552→- Depends on `00_Project_Charter` §5 — source of PC articles.
+   553→   553→- Depends on `01_BRD` — business context for monetization (PC-06).
+   554→   554→- Depends on `02_SAD` — Tool Engine implementing PC-02, PC-03, PC-07.
+   555→   555→- Depends on `05_ProjectStructure` — registry codegen implementing PC-10.
+   556→   556→- `06_ArchitectureDecisionRecords` — ADR-054 through ADR-063.
+   557→   557→- `12_ToolManifestSpecification` — canonical schema implementing PC-02, PC-07, PC-09, PC-10.
+   558→   558→- `13_FBRD` — per-feature requirements referencing PC-01, PC-02.
+   559→   559→- `14_ACD` — components implementing PC-05, PC-08.
+   560→   560→- `15_UDS` — UX patterns implementing PC-05, PC-08.
+   561→   561→- `18_SEOSpecification` — SEO implementing PC-09.
+   562→   562→- `19_UserFlow` — user flows implementing PC-06.
+   563→   563→- `21_AdminSpecification` — admin implementing PC-04 (lifecycle), PC-07 (analytics), PC-10 (inventory).
+   564→   564→- `22_DevelopmentGuideline` — quality gates implementing PC-04, completion standard PC-03.
+   565→   565→- `23_TestingStrategy` — testing implementing PC-03.
+   566→   566→
+   567→   567→### 10.2 External Dependencies
+   568→   568→- None. Product Constitution is governance, not implementation.
+   569→   569→
+   570→   570→### 10.3 Assumptions
+   571→   571→- Team accepts the discipline of product-level governance.
+   572→   572→- Tool authors read this document before creating tools.
+   573→   573→
+   574→   574→## 11. Revision History
+   575→   575→
+   576→   576→| Revision | Date | Author | Change |
+   577→   577→|----------|------|--------|--------|
+   578→   578→| 1.0.0 | 2026-06-28 | Chief Architect | Initial Product Constitution. Expanded PC-01 through PC-10 with operational detail, enforcement mechanisms, worked examples, and interaction with other governance layers. |
+   579→   579→
+   580→   580→## 12. Cross References
+   581→   581→
+   582→   582→- `00_Project_Charter` §5 — Source of PC articles (binding text).
+   583→   583→- `01_BRD` §4.1 — Monetization standards operationalizing PC-06.
+   584→   584→- `02_SAD` §6 — Tool Engine implementing PC-02, PC-03, PC-07.
+   585→   585→- `05_ProjectStructure` §Tool Registry Pattern — Codegen implementing PC-10.
+   586→   586→- `06_ArchitectureDecisionRecords` — ADR-054 through ADR-063 (formal ADRs for each PC article).
+   587→   587→- `12_ToolManifestSpecification` — Canonical schema encoding PC-02 contract.
+   588→   588→- `13_FBRD` — Per-feature requirements implementing PC-01, PC-02.
+   589→   589→- `14_ACD` — `ToolLayout` component implementing PC-05; error components implementing PC-08.
+   590→   590→- `15_UDS` — Tool page layout implementing PC-05; error states implementing PC-08.
+   591→   591→- `18_SEOSpecification` — Internal linking implementing PC-09.
+   592→   592→- `19_UserFlow` — Monetization touchpoints implementing PC-06.
+   593→   593→- `21_AdminSpecification` — Feature lifecycle (PC-04), analytics (PC-07), inventory (PC-10).
+   594→   594→- `22_DevelopmentGuideline` — Quality gates (PC-04), definition of done (PC-03).
+   595→   595→- `23_TestingStrategy` — Testing for completion standard (PC-03).
+   596→   596→- `25_AI_Guideline` — AI must follow Product Constitution (LOCK-09, EC-11).
+   597→   597→- `28_Backlog` — Every backlog tool must satisfy all PC articles.
+   598→   598→

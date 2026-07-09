@@ -1,0 +1,763 @@
+     1→# 00 — Project Charter
+     2→
+     3→> **Status:** 🟢 Approved
+     4→> **Document Owner:** Chief Architect
+     5→> **Last Updated:** 2026-06-28
+     6→> **Revision:** 1.5.0
+     7→
+     8→---
+     9→
+    10→## 1. Purpose
+    11→
+    12→This Project Charter formally authorizes the existence of **[PROJECT_NAME]** — a **browser-first productivity ecosystem that enables users to solve everyday digital tasks without installing software and without requiring an account.** The platform consolidates hundreds to thousands of utility tools under a single, scalable, privacy-respecting surface. The charter defines the project's mission, vision, scope, guiding principles, twelve **Architectural Locks** (§3), twelve **Engineering Constitution** articles (§4), ten **Product Constitution** articles (§5), ten **Data & Growth Architecture** articles (§6), ten **Platform Operations Constitution** articles (§7), and governance model. It serves as the foundational reference from which all subsequent architecture, business, engineering, product, growth, and operational decisions derive.
+    13→
+    14→Every downstream document in the `/docs` repository must remain consistent with this charter, the twelve Architectural Locks in §3, the twelve Engineering Constitution articles in §4, the ten Product Constitution articles in §5, the ten Data & Growth Architecture articles in §6, and the ten Platform Operations Constitution articles in §7. Priority order: Architectural Locks > Engineering Constitution > Product Constitution > Data & Growth Architecture > Platform Operations Constitution > rest of charter > all other documents. If any document conflicts, the higher-priority layer wins until formally amended through the revision process defined in §15. This rule exists because architectural drift is the leading cause of platform decay; without a single authoritative source, teams gradually make inconsistent micro-decisions that compound into structural incoherence.
+    15→
+    16→**Product decisions are architectural decisions.** The Product Constitution binds every tool, present and future, with the same authority as the Architectural Locks and Engineering Constitution. A tool that violates PC-01 through PC-10 cannot be promoted to Stable (PC-04).
+    17→
+    18→**Data & growth decisions are architectural decisions.** The Data & Growth Architecture binds every analytics event, SEO element, search index, feature flag, audit log, API version, and growth metric with the same authority. A feature that violates DGA-01 through DGA-10 cannot ship to production.
+    19→
+    20→**Operational decisions are architectural decisions.** The Platform Operations Constitution binds every deployment, monitoring configuration, backup procedure, security control, incident response, and cost consideration with the same authority. A deployment that violates POC-01 through POC-10 cannot proceed to production.
+    21→
+    22→The charter is intentionally short on implementation detail. It defines *what* and *why*, never *how*. The *how* lives in `02_SAD`, `05_ProjectStructure`, `13_DatabaseDesign`, and related technical documents.
+    23→
+    24→## 2. Platform Identity
+    25→
+    26→[PROJECT_NAME] is **NOT** simply an online tools website. The official positioning is:
+    27→
+    28→> **A browser-first productivity ecosystem that enables users to solve everyday digital tasks without installing software and without requiring an account.**
+    29→
+    30→The phrase **"Browser-first Productivity Ecosystem"** is part of the project's permanent identity. Four brand values anchor every product, design, and engineering decision:
+    31→
+    32→1. **Privacy** — User data stays on the user's device whenever technically possible.
+    33→2. **Speed** — Sub-second first interaction; no unnecessary network round-trips for browser-capable tasks.
+    34→3. **Simplicity** — Every tool has one obvious primary action; no clutter, no tours, no forced onboarding.
+    35→4. **Accessibility** — WCAG 2.1 AA from day 1; usable on a 360px viewport and a screen reader.
+    36→
+    37→These values are not aspirational. They are evaluation criteria for every PR, every design mock, and every tool added to the backlog.
+    38→
+    39→---
+    40→
+    41→## 3. Architectural Locks (Permanent Rules)
+    42→
+    43→The following twelve decisions are **locked** as permanent project rules. They have higher priority than any future document unless explicitly revised through a charter amendment (§10). Every downstream document MUST be consistent with these locks. The lock identifier (e.g., `LOCK-01`) is referenced from every doc that implements or depends on it.
+    44→
+    45→### LOCK-01 — Platform Identity
+    46→
+    47→[PROJECT_NAME] is officially positioned as a **browser-first productivity ecosystem**. The full positioning statement is in §2 above. This lock prevents any future repositioning (e.g., "SaaS suite", "online tools directory") without explicit charter amendment.
+    48→
+    49→### LOCK-02 — Browser-First Philosophy
+    50→
+    51→Whenever technically possible, processing MUST happen entirely inside the user's browser. This is a platform-level architectural commitment, not a cost-saving measure.
+    52→
+    53→**Browser-first by default:**
+    54→- Image conversion, resize, compression, passport photo, background removal
+    55→- PDF merge/split (client-side where feasible via pdf-lib / WASM)
+    56→- Text formatting, JSON formatting, code formatters
+    57→- UUID generation, password generation, QR generation
+    58→- All calculators, unit converters, color converters
+    59→
+    60→**Server-side only when technically unavoidable:**
+    61→- AI inference (summarization, translation, captioning)
+    62→- OCR on large documents
+    63→- File processing beyond browser memory capacity
+    64→- Premium cloud features (batch, scheduled, sync)
+    65→
+    66→Benefits: better privacy, faster UX, lower infrastructure cost, better scalability, reduced server dependency. See `02_SAD` §Browser-First Decision Matrix for the authoritative classification.
+    67→
+    68→### LOCK-03 — Tool Engine Philosophy
+    69→
+    70→Every tool MUST follow one standardized lifecycle:
+    71→
+    72→```
+    73→Input → Validation → Processing → Preview → Download → History (optional) → Share (optional)
+    74→```
+    75→
+    76→Tools MUST reuse this lifecycle instead of implementing custom workflows whenever possible. This becomes the standard **Tool Engine** architecture. The lifecycle is implemented as a typed pipeline (`ToolEngine<TInput, TOutput>`) detailed in `02_SAD` §Tool Engine and `11_ACD` §Tool Engine Component.
+    77→
+    78→### LOCK-04 — Modular Architecture
+    79→
+    80→Every tool is an independent module. Modules MUST be:
+    81→
+    82→- **Independent** — operates without other modules being present or healthy
+    83→- **Reusable** — composable into new tools or workflows
+    84→- **Replaceable** — swappable without affecting siblings
+    85→- **Maintainable** — fixable in isolation; tests run in isolation
+    86→- **Discoverable** — registered for navigation, search, and SEO
+    87→
+    88→A module MUST NOT depend directly on another module's internal implementation. Shared functionality lives only in shared libraries/components under `/packages` and `/src/shared`. See `05_ProjectStructure` §Module Boundaries.
+    89→
+    90→### LOCK-05 — Plugin-Ready Architecture
+    91→
+    92→The platform MUST support future plugin/module registration. Each tool MUST eventually expose metadata through a manifest/registry system.
+    93→
+    94→**Long-term objective:** Adding a new tool should require minimal modification outside the tool's own module. Architecture MUST anticipate auto-discovery and registry-driven navigation. The registry pattern is defined in `05_ProjectStructure` §Tool Registry and the manifest schema in `10_FBRD` §Tool Manifest.
+    95→
+    96→### LOCK-06 — Database Optional Philosophy
+    97→
+    98→The database is NOT required for the platform to operate. Core tools MUST continue functioning even if database services are temporarily unavailable.
+    99→
+   100→**Database responsibilities (with graceful degradation):**
+   101→- Authentication, user profile, history, favorites, cloud sync, analytics, admin, content, settings
+   102→
+   103→**Core tool processing MUST NOT depend on database availability.** Architecture enforces this through strict separation between the **Tool Engine** (stateless, browser-side) and **Platform Services** (stateful, server-side). See `02_SAD` §Layered Architecture and §Graceful Degradation.
+   104→
+   105→### LOCK-07 — Guest-First User Experience
+   106→
+   107→Guest users MAY: browse tools, upload files, configure settings, process files, preview results.
+   108→
+   109→Registration is requested ONLY when users attempt to: download results, save history, favorite tools, synchronize devices, access premium capabilities.
+   110→
+   111→The onboarding flow MUST maximize trust and minimize friction. **No mandatory registration before demonstrating value.** See `16_UserFlow` and `01_BRD` §4.2.
+   112→
+   113→### LOCK-08 — SEO Constitution
+   114→
+   115→SEO is a first-class architectural concern, not a post-launch optimization. Every tool page MUST support:
+   116→
+   117→- Unique URL
+   118→- Unique metadata (title, description, keywords)
+   119→- Canonical URL
+   120→- Open Graph tags
+   121→- Twitter Card tags
+   122→- Structured Data (JSON-LD: SoftwareApplication + FAQPage + BreadcrumbList)
+   123→- Breadcrumb navigation
+   124→- FAQ section
+   125→- Related Tools section
+   126→- Internal Linking (bidirectional where sensible)
+   127→- Search Intent Mapping (informational / transactional / navigational)
+   128→
+   129→**No duplicate metadata or duplicate content.** SEO requirements influence architecture from the beginning — the URL structure, the routing layer, and the tool manifest schema all encode SEO requirements. See `15_SEOSpecification`.
+   130→
+   131→### LOCK-09 — AI Development Constitution
+   132→
+   133→This project is AI-assisted. The AI assistant (and any human using AI tooling) MUST NOT:
+   134→
+   135→- Duplicate components or business logic
+   136→- Change architecture
+   137→- Change folder conventions
+   138→- Install new dependencies
+   139→- Introduce breaking patterns
+   140→
+   141→...without explicit human approval recorded in the PR description.
+   142→
+   143→The AI MUST always prefer **extending existing systems** over creating parallel implementations. **Consistency has higher priority than speed.** See `22_AI_Guideline` and `19_DevelopmentGuideline` §AI-Assisted Development.
+   144→
+   145→### LOCK-10 — Design Philosophy
+   146→
+   147→Visual language follows **developer-first minimalism** inspired by modern engineering products (Vercel-like).
+   148→
+   149→Characteristics:
+   150→- Monochrome palette (black / white / grays + single accent)
+   151→- High contrast (WCAG AAA where feasible)
+   152→- Spacious layout (generous padding, breathing room)
+   153→- Premium feel (precise typography, deliberate spacing)
+   154→- Fast interfaces (no decorative animations, ≤200ms interaction feedback)
+   155→- Minimal animation (only state-change animations that aid comprehension)
+   156→- Accessible (WCAG 2.1 AA minimum)
+   157→- Mobile-first (360px baseline, scales up)
+   158→- Dark mode ready (token-driven, no hardcoded colors)
+   159→- Light mode ready (default)
+   160→
+   161→**Avoid decorative UI that does not improve usability.** Every visual element must justify its existence with a usability purpose. See `09_DesignSystem` and `12_UDS`.
+   162→
+   163→### LOCK-11 — Admin Philosophy
+   164→
+   165→The Admin Panel is NOT merely a CMS. It is the **operational control center** of the platform.
+   166→
+   167→Long-term modules include:
+   168→- Dashboard, Users, Roles, Permissions
+   169→- Categories, Tools, Media
+   170→- SEO, Articles, Analytics
+   171→- Advertisements
+   172→- Feature Flags, Experiments
+   173→- System Health, Logs, Audit Trail
+   174→- Settings
+   175→
+   176→Admin architecture MUST anticipate enterprise-scale growth. RBAC enforced from Phase 1 (`17_RBAC`); audit trail mandatory from Phase 1. See `18_AdminSpecification`.
+   177→
+   178→### LOCK-12 — Feature Lifecycle
+   179→
+   180→Every feature MUST have a maturity status. The canonical lifecycle:
+   181→
+   182→```
+   183→Concept → Planned → Design → Development → Testing → Beta → Stable → Deprecated → Archived
+   184→```
+   185→
+   186→This lifecycle MUST eventually be represented inside the Admin Panel as a first-class status field on every tool, feature, and module. Each tool's manifest (`11_FBRD` §Tool Manifest) MUST declare its current lifecycle status. Status transitions are audited.
+   187→
+   188→---
+   189→
+   190→## 4. Engineering Constitution (Mandatory Engineering Rules)
+   191→
+   192→The Architectural Locks in §3 define **what the platform is**. The Engineering Constitution defines **how engineering is done** — the mandatory discipline that every contributor (human or AI) must follow. These twelve articles supersede implementation preferences. Violations block PR merge.
+   193→
+   194→Where an Engineering Constitution article implements or extends an Architectural Lock, the lock ID is cited. Where an article is operationalized by a specific document, that document is referenced.
+   195→
+   196→### EC-01 — Documentation First
+   197→
+   198→Documentation is the single source of truth. No implementation may exist without corresponding documentation. Every Pull Request must satisfy:
+   199→- Documentation updated to reflect the change.
+   200→- Architecture remains compliant with all LOCKs and ECs.
+   201→- ADR (`06_ArchitectureDecisionRecords`) updated if an architectural decision changes.
+   202→
+   203→*Implements:* LOCK-09 (AI Discipline). *Operationalized by:* `20_DevelopmentGuideline`, `06_ArchitectureDecisionRecords`.
+   204→
+   205→### EC-02 — One Source of Truth
+   206→
+   207→Every business rule must exist in exactly one place. Avoid duplicated constants, duplicated validation logic, duplicated schemas, duplicated utilities, or duplicated business workflows. If duplication is discovered, it must be refactored.
+   208→
+   209→*Implements:* LOCK-04 (Modular), LOCK-09. *Operationalized by:* `08_CodingStandards` §DRY Enforcement, `12_ACD` §Shared Component Inventory.
+   210→
+   211→### EC-03 — Component Reuse First
+   212→
+   213→Before creating a new component, hook, utility, service, or helper:
+   214→1. Search existing implementation.
+   215→2. Extend existing implementation if appropriate.
+   216→3. Create new only when justified.
+   217→
+   218→The platform grows by composition rather than duplication.
+   219→
+   220→*Implements:* LOCK-04, LOCK-09. *Operationalized by:* `12_ACD` §Component Catalog, `08_CodingStandards` §Reuse Checklist.
+   221→
+   222→### EC-04 — Tool Template Standard
+   223→
+   224→Every tool MUST follow an identical internal structure. Each tool exposes:
+   225→- metadata, manifest, validation, processing, preview, download, SEO, tests, documentation.
+   226→
+   227→No tool may define an entirely custom lifecycle without architectural approval.
+   228→
+   229→*Implements:* LOCK-03 (Tool Engine), LOCK-05 (Plugin-Ready). *Operationalized by:* `05_ProjectStructure` §Tool Module Anatomy, `11_FBRD` §Tool Manifest, `07_FolderStructure` §Tool Folder Template.
+   230→
+   231→### EC-05 — Progressive Enhancement
+   232→
+   233→The platform must remain usable when:
+   234→- JavaScript partially fails.
+   235→- APIs are temporarily unavailable.
+   236→- Database is offline.
+   237→- Authentication service is unavailable.
+   238→
+   239→Whenever possible, gracefully degrade rather than fail.
+   240→
+   241→*Implements:* LOCK-06 (Database Optional), LOCK-07 (Guest-First). *Operationalized by:* `02_SAD` §Graceful Degradation, `17_UserFlow` §Degraded Journeys.
+   242→
+   243→### EC-06 — Accessibility First
+   244→
+   245→Every UI component must satisfy accessibility requirements. Minimum expectations:
+   246→- Keyboard navigation, focus visibility, screen reader support, semantic HTML.
+   247→- WCAG AA contrast.
+   248→- Reduced motion compatibility.
+   249→
+   250→Accessibility is not optional.
+   251→
+   252→*Implements:* LOCK-10 (Design Philosophy). *Operationalized by:* `10_DesignSystem` §Accessibility, `13_UDS` §Accessibility Standards, `21_TestingStrategy` §Accessibility Testing.
+   253→
+   254→### EC-07 — Performance Budget
+   255→
+   256→Every feature must respect predefined performance budgets. Targets include:
+   257→- Fast initial render, minimal JavaScript, lazy loading where appropriate, tree shaking, code splitting, image optimization.
+   258→
+   259→Performance regressions are treated as bugs.
+   260→
+   261→*Implements:* LOCK-02 (Browser-First, performance angle). *Operationalized by:* `02_SAD` §Performance Standards, `08_CodingStandards` §Performance Budget, `21_TestingStrategy` §Performance Testing, `22_DeploymentGuide` §Performance Monitoring.
+   262→
+   263→### EC-08 — Security by Default
+   264→
+   265→Default assumptions:
+   266→- Validate every input. Sanitize every output. Principle of least privilege.
+   267→- Secure headers. Strict TypeScript. Secrets never committed.
+   268→- Dependency review required.
+   269→
+   270→Security is proactive, not reactive.
+   271→
+   272→*Implements:* Supports all LOCKs. *Operationalized by:* `08_CodingStandards` §Security Rules, `15_APIConvention` §Security, `14_DatabaseDesign` §Row-Level Security, `18_RBAC`, `22_DeploymentGuide` §Security Headers.
+   273→
+   274→### EC-09 — Testing Philosophy
+   275→
+   276→Testing pyramid: Unit Tests → Integration Tests → End-to-End Tests. Every reusable engine must be testable independently. Tool Engine, Registry, Validators, and Shared Utilities are designed for testing from the beginning.
+   277→
+   278→*Implements:* LOCK-04 (Maintainable). *Operationalized by:* `21_TestingStrategy`, `08_CodingStandards` §Testability Requirements.
+   279→
+   280→### EC-10 — Design System Governance
+   281→
+   282→No page may introduce ad hoc UI patterns. Every visual element must originate from the Design System. Spacing, typography, colors, radius, shadows, icons, and motion remain consistent across the ecosystem.
+   283→
+   284→*Implements:* LOCK-10 (Design Philosophy). *Operationalized by:* `10_DesignSystem`, `12_ACD` §Design System Components, `08_CodingStandards` §Design System Compliance.
+   285→
+   286→### EC-11 — AI Collaboration Rules
+   287→
+   288→AI is a permanent engineering partner. AI must:
+   289→- Preserve consistency. Explain architectural trade-offs. Reference existing documentation. Avoid unnecessary abstractions. Minimize technical debt.
+   290→
+   291→When uncertainty exists: **ask before assuming.**
+   292→
+   293→*Implements:* LOCK-09 (AI Development Constitution). *Operationalized by:* `23_AI_Guideline`, `24_ZAI_Context`, `20_DevelopmentGuideline` §AI-Assisted Development.
+   294→
+   295→### EC-12 — Enterprise Readiness
+   296→
+   297→Although the project begins on free infrastructure (Vercel Free, Supabase Free, GitHub), the architecture must remain capable of scaling to enterprise deployment without major redesign. No implementation should assume free-tier limitations as permanent.
+   298→
+   299→*Implements:* Supports LOCK-04, `00_Project_Charter` §10 Future Expansion. *Operationalized by:* `04_TechStack` §Upgrade Paths, `02_SAD` §Future Scalability, `24_DeploymentGuide` §Enterprise Migration.
+   300→
+   301→---
+   302→
+   303→## 5. Product Constitution (Mandatory Product Rules)
+   304→
+   305→The Architectural Locks in §3 define **what the platform is**. The Engineering Constitution in §4 defines **how engineering is done**. The Product Constitution defines **how every tool behaves as a product** — the binding rules that ensure 1,000+ tools feel like one cohesive ecosystem rather than a patchwork of independent utilities.
+   306→
+   307→**Product decisions are architectural decisions.** A tool that violates the Product Constitution cannot be promoted to Stable status (PC-04). These ten articles are binding on every tool, present and future, and supersede product preferences. The full text is expanded in `11_ProductConstitution`; this section establishes them as charter-level commitments.
+   308→
+   309→### PC-01 — Every Tool Solves One Problem
+   310→
+   311→Each tool MUST solve exactly one clearly defined user problem. Avoid feature creep. One page. One intent. One outcome.
+   312→
+   313→*Implements:* LOCK-01 (Platform Identity — ecosystem of single-purpose tools). *Operationalized by:* `11_ProductConstitution` §PC-01, `13_FBRD` §Tool Product Contract.
+   314→
+   315→### PC-02 — Every Tool Has a Product Contract
+   316→
+   317→Every tool MUST define: Purpose, User Problem, Inputs, Outputs, Validation Rules, Processing Steps, Success Criteria, Failure States, Empty States, Loading States, SEO Intent, Related Tools, Analytics Events. No tool exists without this contract.
+   318→
+   319→*Implements:* LOCK-03 (Tool Engine), LOCK-05 (Plugin-Ready — manifest encodes contract). *Operationalized by:* `11_ProductConstitution` §PC-02, `12_ToolManifestSpecification`, `13_FBRD` §Tool Product Contract.
+   320→
+   321→### PC-03 — Tool Completion Standard
+   322→
+   323→A tool is only considered complete if it provides: Upload/Input, Validation, Processing, Preview, Download/Copy, Error Handling, Success Feedback, Accessibility, Mobile Support, SEO, Analytics, Documentation, Tests. All 13 items mandatory.
+   324→
+   325→*Implements:* LOCK-03, EC-04, EC-06, EC-09. *Operationalized by:* `11_ProductConstitution` §PC-03, `22_DevelopmentGuideline` §Definition of Done, `23_TestingStrategy`.
+   326→
+   327→### PC-04 — Product Quality Gates
+   328→
+   329→A feature cannot reach Stable unless it passes: Functional review, Accessibility review, Performance review, SEO review, Security review, Documentation review, UX review. Quality gates are mandatory.
+   330→
+   331→*Implements:* LOCK-12 (Feature Lifecycle — Stable requires all gates). *Operationalized by:* `11_ProductConstitution` §PC-04, `22_DevelopmentGuideline` §Quality Gates, `21_AdminSpecification` §Feature Lifecycle.
+   332→
+   333→### PC-05 — UX Consistency
+   334→
+   335→Every tool page follows the same layout: Hero → Tool → Result → FAQ → Related Tools → Documentation → Feedback → Footer. Users should never relearn navigation between tools.
+   336→
+   337→*Implements:* LOCK-10 (Design Philosophy), EC-10 (Design System Governance). *Operationalized by:* `11_ProductConstitution` §PC-05, `15_UDS` §Tool Page Layout, `14_ACD` §Tool Page Components.
+   338→
+   339→### PC-06 — Monetization Philosophy
+   340→
+   341→Revenue MUST never interrupt task completion. Advertising or premium prompts may appear only after value has been demonstrated. Core functionality remains free. Premium provides convenience, not necessity.
+   342→
+   343→*Implements:* LOCK-07 (Guest-First UX), `01_BRD` §4.1 (Monetization Standards). *Operationalized by:* `11_ProductConstitution` §PC-06, `19_UserFlow` §Monetization Touchpoints.
+   344→
+   345→### PC-07 — Analytics Standard
+   346→
+   347→Every tool MUST emit consistent events. Minimum events: Tool Viewed, Tool Started, Validation Failed, Processing Started, Processing Completed, Download Attempted, Download Completed, Registration Prompt Viewed, Registration Completed, Tool Shared.
+   348→
+   349→*Implements:* LOCK-04 (Maintainable — consistent analytics). *Operationalized by:* `11_ProductConstitution` §PC-07, `12_ToolManifestSpecification` §Analytics Configuration, `21_AdminSpecification` §Analytics Module.
+   350→
+   351→### PC-08 — Error Experience
+   352→
+   353→Every error MUST: explain what happened, explain why, explain how to fix it. Never expose technical stack traces.
+   354→
+   355→*Implements:* EC-05 (Progressive Enhancement — graceful error UX). *Operationalized by:* `11_ProductConstitution` §PC-08, `15_UDS` §Error States, `14_ACD` §Error Components.
+   356→
+   357→### PC-09 — Feature Discoverability
+   358→
+   359→Every tool MUST help users discover additional tools. Methods: Related Tools, Suggested Workflows, Category Navigation, Search, Recently Used, Popular Tools. The ecosystem should naturally expand user engagement.
+   360→
+   361→*Implements:* LOCK-08 (SEO — internal linking). *Operationalized by:* `11_ProductConstitution` §PC-09, `12_ToolManifestSpecification` §Related Tools, `18_SEOSpecification` §Internal Linking.
+   362→
+   363→### PC-10 — Product Scalability
+   364→
+   365→Every new tool should require minimal engineering effort. The Tool Manifest MUST contain enough metadata to automatically generate: Navigation, SEO, Sitemap, Categories, Search Index, Admin Inventory, Analytics Configuration. Metadata-first development is mandatory.
+   366→
+   367→*Implements:* LOCK-05 (Plugin-Ready Architecture), EC-04 (Tool Template Standard). *Operationalized by:* `11_ProductConstitution` §PC-10, `12_ToolManifestSpecification`, `05_ProjectStructure` §Tool Registry Pattern.
+   368→
+   369→---
+   370→
+   371→## 6. Data & Growth Architecture (Mandatory Growth Rules)
+   372→
+   373→The Architectural Locks in §3 define **what the platform is**. The Engineering Constitution in §4 defines **how engineering is done**. The Product Constitution in §5 defines **how every tool behaves as a product**. The Data & Growth Architecture defines **how the platform grows sustainably** — the binding rules that ensure 1,000+ tools generate compounding analytics, SEO authority, search discoverability, and operational insight rather than fragmented data silos.
+   374→
+   375→**Data & growth decisions are architectural decisions.** A feature that violates the DGA cannot ship to production. These ten articles are binding on every system that touches data persistence, analytics, SEO, search, content, feature flags, audit logs, API contracts, or growth metrics. The full text is expanded in `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture`, and other operationalizing documents; this section establishes them as charter-level commitments.
+   376→
+   377→### DGA-01 — Database as a Product Service
+   378→
+   379→The database is not merely persistence. It is a product capability. Only information that creates long-term user value should be persisted. Temporary processing results should remain browser-local whenever possible (LOCK-02).
+   380→
+   381→*Implements:* LOCK-02 (Browser-First), LOCK-06 (Database Optional). *Operationalized by:* `19_DatabaseDesign`, `02_SAD` AD-05.
+   382→
+   383→### DGA-02 — Event-Driven Analytics
+   384→
+   385→Every important action MUST produce a standardized analytics event. Analytics MUST be vendor-neutral. The event model supports Google Analytics, PostHog, Plausible, and self-hosted analytics without changing business logic. Analytics providers are adapters; the event schema is canonical.
+   386→
+   387→*Implements:* PC-07 (Analytics Standard), LOCK-04 (Modular — adapter pattern). *Operationalized by:* `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`.
+   388→
+   389→### DGA-03 — SEO Metadata as Structured Data
+   390→
+   391→SEO MUST originate from structured metadata. The Tool Manifest is the canonical source for: Title, Description, Keywords, Canonical URL, Open Graph, Twitter Card, JSON-LD, FAQ, Breadcrumb, Related Tools, Search Intent. No SEO values are hardcoded inside pages.
+   392→
+   393→*Implements:* LOCK-08 (SEO Constitution), PC-10 (Product Scalability — manifest generates SEO). *Operationalized by:* `12_ToolManifestSpecification` §SEO, `21_SEOSpecification`.
+   394→
+   395→### DGA-04 — Search Architecture
+   396→
+   397→Search MUST eventually support: Instant Search, Category Search, Related Tools, Popular Tools, Recently Used, Synonyms, Fuzzy Matching, Tags. Search indexes are generated from the Tool Manifest.
+   398→
+   399→*Implements:* PC-09 (Feature Discoverability), LOCK-05 (Plugin-Ready — manifest-driven index). *Operationalized by:* `18_SearchArchitecture`.
+   400→
+   401→### DGA-05 — Content Architecture
+   402→
+   403→Documentation, Help, Blog, Tutorials, and Tool Pages are separate content types. Future CMS integration MUST NOT affect the Tool Engine. Content remains isolated from tool execution.
+   404→
+   405→*Implements:* LOCK-04 (Modular — content context is separate), `03_DDD` AD-01 (Content Context). *Operationalized by:* `19_DatabaseDesign` §Content Context, `24_AdminSpecification` §Content Modules.
+   406→
+   407→### DGA-06 — Feature Flags
+   408→
+   409→Every major feature MUST be deployable independently. Support: Beta Features, A/B Experiments, Regional Rollouts, Gradual Rollouts, Internal Testing. Feature Flags are a first-class platform capability.
+   410→
+   411→*Implements:* LOCK-11 (Admin Philosophy — feature flags in admin), LOCK-12 (Feature Lifecycle — flags gate lifecycle). *Operationalized by:* `24_AdminSpecification` §Feature Flags, `03_DDD` §Platform Ops Context.
+   412→
+   413→### DGA-07 — Auditability
+   414→
+   415→Every administrative action MUST be auditable. Examples: Tool Published, Tool Deprecated, SEO Updated, User Role Changed, Settings Modified. Audit logs are immutable.
+   416→
+   417→*Implements:* LOCK-11 (Admin Philosophy — audit trail), EC-08 (Security by Default). *Operationalized by:* `23_RBAC`, `24_AdminSpecification` §Audit Trail, `19_DatabaseDesign` §Audit Entries.
+   418→
+   419→### DGA-08 — API Evolution
+   420→
+   421→Public APIs MUST be versioned. Deprecation MUST follow a documented policy. Backward compatibility is preferred. Breaking changes require ADR entries.
+   422→
+   423→*Implements:* EC-12 (Enterprise Readiness — stable API contracts), LOCK-05 (Plugin-Ready — stable contracts for plugins). *Operationalized by:* `20_APIConvention`.
+   424→
+   425→### DGA-09 — Growth Metrics
+   426→
+   427→Every tool MUST automatically contribute to ecosystem metrics. Examples: Tool Popularity, Conversion Rate, Completion Rate, Registration Rate, Search Success Rate, Return Visits, Average Processing Time. Growth metrics are generated from standardized events (DGA-02).
+   428→
+   429→*Implements:* PC-07 (Analytics Standard), DGA-02 (Event-Driven Analytics). *Operationalized by:* `17_AnalyticsArchitecture` §Growth Metrics, `16_EventSchemaSpecification`.
+   430→
+   431→### DGA-10 — Future Marketplace Readiness
+   432→
+   433→The architecture MUST anticipate: Community-created tools, Verified publishers, Plugin marketplace, Ratings, Reviews, Tool collections. No implementation is required today. However, database and manifest design MUST avoid blocking these future capabilities.
+   434→
+   435→*Implements:* LOCK-05 (Plugin-Ready Architecture), `00_Project_Charter` §12 Future Expansion. *Operationalized by:* `12_ToolManifestSpecification` §Plugin Extension, `19_DatabaseDesign` §Marketplace Prep.
+   436→
+   437→---
+   438→
+   439→## 7. Platform Operations Constitution (Mandatory Operations Rules)
+   440→
+   441→The Architectural Locks in §3 define **what the platform is**. The Engineering Constitution in §4 defines **how engineering is done**. The Product Constitution in §5 defines **how every tool behaves as a product**. The Data & Growth Architecture in §6 defines **how the platform grows sustainably**. The Platform Operations Constitution defines **how the platform is deployed, monitored, maintained, secured, and operated** — the binding rules that ensure the platform remains reliable, observable, and operable at scale.
+   442→
+   443→**Operational decisions are architectural decisions.** A deployment that violates POC-01 through POC-10 cannot proceed to production. These ten articles are binding on every deployment, monitoring configuration, backup procedure, security control, incident response, and cost consideration. The full text is expanded in `24_PlatformOperationsConstitution`, `25_DeploymentArchitecture`, `26_ObservabilitySpecification`, `27_BackupAndRecovery`, and `28_ReleaseManagement`; this section establishes them as charter-level commitments.
+   444→
+   445→### POC-01 — Reliability First
+   446→
+   447→The platform MUST be designed to continue operating despite partial failures. Examples: Database unavailable, Analytics unavailable, AI provider unavailable, Storage unavailable, Third-party API unavailable. Graceful degradation is mandatory.
+   448→
+   449→*Implements:* LOCK-06 (Database Optional), EC-05 (Progressive Enhancement). *Operationalized by:* `25_DeploymentArchitecture`, `26_ObservabilitySpecification`, `02_SAD` §Graceful Degradation.
+   450→
+   451→### POC-02 — Observability by Default
+   452→
+   453→Every important subsystem MUST expose: Logs, Metrics, Health checks, Error reports, Performance measurements. Monitoring MUST be built into the architecture rather than added later.
+   454→
+   455→*Implements:* DGA-07 (Auditability — logging), EC-07 (Performance Budget — measurement). *Operationalized by:* `26_ObservabilitySpecification`.
+   456→
+   457→### POC-03 — Release Strategy
+   458→
+   459→Adopt a predictable release workflow. Recommended environments: Local → Development → Preview → Production. Every production deployment MUST be reproducible.
+   460→
+   461→*Implements:* EC-12 (Enterprise Readiness), DGA-06 (Feature Flags — independent deployment). *Operationalized by:* `28_ReleaseManagement`, `25_DeploymentArchitecture`.
+   462→
+   463→### POC-04 — Rollback Strategy
+   464→
+   465→Every deployment MUST support rollback. Rollback procedures MUST be documented. Database migrations MUST follow forward-compatible patterns whenever possible.
+   466→
+   467→*Implements:* EC-12, DGA-08 (API Evolution — backward compatibility). *Operationalized by:* `28_ReleaseManagement` §Rollback, `19_DatabaseDesign` §Migrations.
+   468→
+   469→### POC-05 — Backup & Recovery
+   470→
+   471→Critical data requires documented backup and recovery procedures. Recovery objectives MUST define: Recovery Point Objective (RPO), Recovery Time Objective (RTO).
+   472→
+   473→*Implements:* EC-08 (Security by Default), DGA-01 (Database as Product Service). *Operationalized by:* `27_BackupAndRecovery`.
+   474→
+   475→### POC-06 — Operational Security
+   476→
+   477→Operational access MUST follow least privilege. Examples: Environment variables, Service accounts, Deployment tokens, Database credentials, Admin access. Every sensitive operation MUST be auditable.
+   478→
+   479→*Implements:* EC-08, DGA-07 (Auditability), LOCK-11 (Admin Philosophy). *Operationalized by:* `23_RBAC`, `25_DeploymentArchitecture` §Secrets Management.
+   480→
+   481→### POC-07 — Incident Management
+   482→
+   483→Operational incidents MUST follow a standard lifecycle: Detected → Acknowledged → Investigating → Mitigated → Resolved → Postmortem. Every significant incident MUST produce documentation and, where appropriate, a new ADR.
+   484→
+   485→*Implements:* DGA-07 (Auditability), EC-01 (Documentation First — postmortems). *Operationalized by:* `28_ReleaseManagement` §Incident Management.
+   486→
+   487→### POC-08 — Monitoring Standards
+   488→
+   489→Define minimum monitoring requirements: Uptime, Response Time, Error Rate, Build Status, Deployment Status, API Health, Database Health. These metrics MUST become dashboard-ready.
+   490→
+   491→*Implements:* POC-02 (Observability by Default). *Operationalized by:* `26_ObservabilitySpecification` §Monitoring Standards.
+   492→
+   493→### POC-09 — Cost Awareness
+   494→
+   495→Infrastructure MUST be monitored for cost efficiency. Architecture decisions MUST consider: Compute usage, Storage usage, Database usage, Bandwidth, Build minutes. Optimize for sustainable growth.
+   496→
+   497→*Implements:* EC-12 (Enterprise Readiness — sustainable cost scaling). *Operationalized by:* `26_ObservabilitySpecification` §Cost Monitoring.
+   498→
+   499→### POC-10 — Future Enterprise Operations
+   500→
+   501→Although the project starts on free infrastructure, the operational model MUST support future migration to enterprise environments without architectural redesign.
+   502→
+   503→*Implements:* EC-12, DGA-10 (Future Marketplace Readiness — enterprise operations). *Operationalized by:* `25_DeploymentArchitecture` §Enterprise Migration, `27_BackupAndRecovery` §Enterprise DR.
+   504→
+   505→---
+   506→
+   507→## 7. Scope
+   508→
+   509→### 7.1 In Scope
+   510→
+   511→[PROJECT_NAME] covers the following tool categories, with explicit intent to expand to additional categories over time:
+   512→
+   513→- **Image Tools** — resize, compress, crop, format convert, passport photo, background removal, watermark.
+   514→- **Document Tools** — merge, split, convert, preview, redact.
+   515→- **PDF Tools** — merge, split, compress, rotate, watermark, PDF↔image conversion, OCR.
+   516→- **Developer Tools** — JSON formatter, Base64, UUID, password generator, hash, regex tester, JWT decoder.
+   517→- **Text Tools** — word counter, case converter, Lorem Ipsum, diff, markdown preview.
+   518→- **SEO Tools** — meta tag generator, sitemap builder, robots.txt, Open Graph preview, schema markup.
+   519→- **Converters** — unit, currency, color (HEX/RGB/HSL), timezone, number base.
+   520→- **Calculators** — loan, BMI, age, percentage, scientific, GPA.
+   521→- **Utility Tools** — QR generator, color picker, stopwatch, password strength meter.
+   522→- **AI Utilities** — text summarizer, translator, image captioner (Phase 2+, opt-in only).
+   523→
+   524→The platform also includes a fully integrated admin panel at `/admin`, a content management layer for articles and SEO landing pages, and a user account system with freemium capabilities.
+   525→
+   526→### 7.2 Out of Scope (Phase 1)
+   527→
+   528→- Native mobile applications (web is responsive and PWA-capable; native apps deferred to Phase 3+).
+   529→- Real-time collaborative editing of documents.
+   530→- Paid enterprise SSO (SAML, SCIM) — deferred until paying enterprise demand exists.
+   531→- Desktop installers / Electron builds.
+   532→- Marketplaces for third-party tool developers.
+   533→
+   534→### 7.3 Long-Term Scope
+   535→
+   536→The architecture must support growth from 30 tools (Phase 1) to 1,000+ tools (Phase 4) without major restructuring. This is the single most important architectural constraint and shapes every downstream decision in `02_SAD`, `05_ProjectStructure`, and `07_FolderStructure`.
+   537→
+   538→## 8. Goals
+   539→
+   540→### 8.1 Phase Goals
+   541→
+   542→| Phase | Tool Count | Primary Goal |
+   543→|-------|------------|--------------|
+   544→| Phase 1 | 30 tools | Validate architecture, ship initial SEO footprint, achieve first 10k MAU. |
+   545→| Phase 2 | 100 tools | Establish category leadership in 3 categories, reach 100k MAU. |
+   546→| Phase 3 | 300 tools | Introduce premium tier, reach 500k MAU. |
+   547→| Phase 4 | 1,000+ tools | Platform plays role of "developer infrastructure" — APIs, embeds, white-label. |
+   548→
+   549→### 8.2 Non-Numeric Goals
+   550→
+   551→1. **Architectural longevity.** No rewrite required between Phase 1 and Phase 4.
+   552→2. **Sub-second tool load.** First interaction with any tool within 1 second on a mid-tier device over 4G.
+   553→3. **Zero backend for browser-capable tools.** Image, text, and most developer tools run entirely client-side.
+   554→4. **Guest-first UX.** Users complete core workflows without registration; registration prompted only at value-adding moments (download, save history, favorite).
+   555→5. **SEO dominance.** Every tool is an indexable, schema-marked landing page.
+   556→
+   557→## 9. Standards
+   558→
+   559→The project adheres to the following non-negotiable standards. Each is expanded in its dedicated document; this section establishes them as charter-level commitments. Where a standard implements an Architectural Lock (§3), Engineering Constitution article (§4), Product Constitution article (§5), or Data & Growth Architecture article (§6), the ID is cited.
+   560→
+   561→### 9.1 Architectural Standards
+   562→- **Feature-Based Architecture.** Every tool is a self-contained feature module. *Implements LOCK-04, LOCK-05, EC-04.* See `13_FBRD` and `05_ProjectStructure`.
+   563→- **Browser-first processing.** Tools that can run client-side MUST run client-side. Backend is reserved for auth, persistence, AI, and content. *Implements LOCK-02, LOCK-06, EC-07, DGA-01.* See `02_SAD`.
+   564→- **Tool Engine lifecycle.** Every tool follows Input → Validation → Processing → Preview → Download → History → Share. *Implements LOCK-03, EC-04, PC-02.* See `02_SAD` §Tool Engine.
+   565→- **Type safety end-to-end.** TypeScript strict mode; Zod schemas at every IO boundary. *Implements EC-08.* See `08_CodingStandards`.
+   566→- **No giant files.** Soft limit 300 lines per file; hard limit 500. *Implements EC-09.* See `08_CodingStandards`.
+   567→
+   568→### 9.2 Engineering Standards
+   569→- **Free-tier-first.** Initial budget is $0. Every dependency must have a viable free tier. *Implements EC-12.* See `04_TechStack`.
+   570→- **DRY / KISS / SOLID.** Applied as default review criteria. *Implements EC-02, EC-03.* See `08_CodingStandards`.
+   571→- **Documentation first.** No production code without prior docs. *Implements EC-01.* See `25_DevelopmentGuideline`.
+   572→- **AI-assisted discipline.** AI must not duplicate, drift, or introduce unapproved dependencies. *Implements LOCK-09, EC-11.* See `28_AI_Guideline`.
+   573→- **Testability.** Engines designed for independent testing. *Implements EC-09.* See `26_TestingStrategy`.
+   574→
+   575→### 9.3 UX Standards
+   576→- **Guest-first onboarding.** No registration before value demonstrated. *Implements LOCK-07, EC-05, PC-06.* See `22_UserFlow`.
+   577→- **Dark / Light mode ready from day 1.** Token-driven, no hardcoded colors. *Implements LOCK-10, EC-10.* See `10_DesignSystem`.
+   578→- **Accessibility AA.** WCAG 2.1 AA conformance for every tool. *Implements EC-06, PC-03.* See `15_UDS`.
+   579→- **Mobile-first responsive.** Every tool usable on a 360px viewport. *Implements PC-03.* See `15_UDS`.
+   580→- **Progressive enhancement.** Tools degrade gracefully when services fail. *Implements EC-05.* See `02_SAD` §Graceful Degradation.
+   581→- **Consistent tool page layout.** Hero → Tool → Result → FAQ → Related → Docs → Feedback → Footer. *Implements PC-05.* See `15_UDS` §Tool Page Layout.
+   582→
+   583→### 9.4 SEO Standards
+   584→- Every tool page has: unique URL, unique metadata, canonical URL, Open Graph, Twitter Card, JSON-LD structured data, breadcrumb, FAQ, related tools, internal linking, search intent mapping. *Implements LOCK-08, PC-09, DGA-03.* See `21_SEOSpecification`.
+   585→- SEO metadata originates from Tool Manifest; no hardcoded SEO values. *Implements DGA-03.* See `12_ToolManifestSpecification` §SEO.
+   586→
+   587→### 9.5 Security Standards
+   588→- RBAC enforced from Phase 1. *Implements LOCK-11, EC-08, DGA-07.* See `23_RBAC`.
+   589→- Audit trail mandatory and immutable. *Implements DGA-07.* See `24_AdminSpecification` §Audit Trail.
+   590→- No secrets in client bundles. Server-only env vars validated at boot. *Implements EC-08.*
+   591→- All file uploads scanned and size-limited before processing.
+   592→
+   593→### 9.6 Admin Standards
+   594→- Admin is the operational control center, not a CMS. *Implements LOCK-11.* See `24_AdminSpecification`.
+   595→- Feature lifecycle status visible in admin. *Implements LOCK-12.* See `24_AdminSpecification` §Feature Lifecycle.
+   596→- Feature flags first-class platform capability. *Implements DGA-06.* See `24_AdminSpecification` §Feature Flags.
+   597→
+   598→### 9.7 Product Standards
+   599→- Every tool solves one problem. *Implements PC-01.* See `11_ProductConstitution`.
+   600→- Every tool has a Product Contract. *Implements PC-02.* See `12_ToolManifestSpecification`.
+   601→- Every tool meets the Completion Standard (13 items). *Implements PC-03.* See `25_DevelopmentGuideline` §Definition of Done.
+   602→- Every tool passes 7 quality gates before Stable. *Implements PC-04.* See `25_DevelopmentGuideline` §Quality Gates.
+   603→- Every tool emits consistent analytics events. *Implements PC-07, DGA-02.* See `16_EventSchemaSpecification`.
+   604→- Every error explains what, why, how to fix. *Implements PC-08.* See `15_UDS` §Error States.
+   605→- Every tool supports discoverability. *Implements PC-09, DGA-04.* See `18_SearchArchitecture`.
+   606→- Every new tool requires minimal engineering effort (metadata-first). *Implements PC-10.* See `12_ToolManifestSpecification`.
+   607→
+   608→### 9.8 Data & Growth Standards
+   609→- Database is a product service; only long-term-value data persisted. *Implements DGA-01.* See `19_DatabaseDesign`.
+   610→- Every important action produces a standardized analytics event. *Implements DGA-02, PC-07.* See `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`.
+   611→- SEO metadata originates from structured data (manifest); no hardcoded SEO. *Implements DGA-03.* See `21_SEOSpecification`.
+   612→- Search indexes generated from manifest; support instant/category/related/fuzzy/synonyms. *Implements DGA-04.* See `18_SearchArchitecture`.
+   613→- Content types (docs, help, blog, tutorials, tool pages) are separate; CMS isolation. *Implements DGA-05.* See `19_DatabaseDesign` §Content Context.
+   614→- Feature flags support beta/A-B/regional/gradual/internal. *Implements DGA-06.* See `24_AdminSpecification` §Feature Flags.
+   615→- Every admin action auditable; audit logs immutable. *Implements DGA-07.* See `23_RBAC`, `24_AdminSpecification`.
+   616→- Public APIs versioned; deprecation policy documented; breaking changes require ADR. *Implements DGA-08.* See `20_APIConvention`.
+   617→- Growth metrics generated from standardized events. *Implements DGA-09.* See `17_AnalyticsArchitecture` §Growth Metrics.
+   618→- Architecture anticipates marketplace (community tools, publishers, ratings, reviews, collections). *Implements DGA-10.* See `12_ToolManifestSpecification` §Plugin Extension, `19_DatabaseDesign` §Marketplace Prep.
+   619→
+   620→## 10. Examples
+   621→
+   622→### 10.1 Reference Platforms
+   623→
+   624→The following platforms represent the target end state. We study their UX, SEO, and architecture; we do not copy their code.
+   625→
+   626→| Platform | What we learn from it |
+   627→|----------|----------------------|
+   628→| **TinyWow** | Tool breadth, guest-first UX, no-login download friction. |
+   629→| **FreeConvert** | Premium UX patterns, conversion workflow design. |
+   630→| **ILovePDF** | PDF tool segmentation, category landing pages. |
+   631→| **Vercel** | Design language, dark/light execution, dashboard patterns. |
+   632→| **Stripe Docs** | Documentation structure, code-as-docs philosophy. |
+   633→
+   634→### 10.2 Reference Workflow — Passport Photo Maker
+   635→
+   636→This canonical workflow (defined in the original brief) becomes a reusable pattern for any multi-step tool:
+   637→
+   638→```
+   639→Upload → Face Detection → Auto Crop → Background Selection
+   640→       → Standard Size Selection → Preview → Download
+   641→```
+   642→
+   643→The pattern is generalized in `14_ACD` as the **Multi-Step Tool Workflow** component and reused by Image Resizer, Background Remover, Format Converter, and any future tool with similar shape.
+   644→
+   645→## 11. Best Practices
+   646→
+   647→### 11.1 Decision-Making
+   648→- **Always prefer long-term scalability over short-term convenience.** A 2-hour shortcut that costs 20 hours of refactoring later is a net loss.
+   649→- **Never introduce a new dependency without justification.** Every dependency is a future maintenance liability. Justify in the PR description and link to the docs.
+   650→- **Never change architecture without explaining the impact.** Architectural changes require a written impact analysis in the PR.
+   651→
+   652→### 11.2 Documentation
+   653→- **Docs are the source of truth.** If a behavior is not in the docs, it does not exist.
+   654→- **Update docs in the same PR as the code.** Code PRs without doc updates are blocked.
+   655→- **Cross-references must be live.** Broken links are P1 bugs.
+   656→
+   657→### 11.3 Tool Development
+   658→- **Isolate every tool.** A bug in one tool must never affect another.
+   659→- **Reuse the workflow pattern.** New tools should compose existing workflows, not invent new ones.
+   660→- **Make tools discoverable.** Every tool links to related tools; internal linking is mandatory.
+   661→
+   662→### 11.4 Performance
+   663→- **Lazy-load every tool.** Tool code is code-split; only the tool being used loads.
+   664→- **Cache aggressively.** Static assets immutable, HTML revalidated, tool outputs cached in IndexedDB when sensible.
+   665→- **Measure before optimizing.** No premature optimization without a profile.
+   666→
+   667→## 12. Future Expansion
+   668→
+   669→The charter explicitly anticipates the following expansion paths. Architecture must not preclude them.
+   670→
+   671→### 12.1 Tool Expansion
+   672→- **1,000+ tools.** Folder structure (`07_FolderStructure`) and feature registry (`13_FBRD`) must scale to thousands of entries without reorganization.
+   673→- **New tool categories.** Adding a category must not require touching core modules.
+   674→
+   675→### 12.2 Platform Expansion
+   676→- **Public API.** Expose tools as APIs in Phase 3+. Schema designed in `20_APIConvention` to be API-friendly from day 1.
+   677→- **Embed widgets.** Allow third-party sites to embed [PROJECT_NAME] tools.
+   678→- **White-label.** Allow partners to skin the platform.
+   679→- **Marketplace.** Allow community-contributed tools (Phase 4).
+   680→
+   681→### 12.3 Business Expansion
+   682→- **Premium tier.** Higher usage limits, batch processing, no ads, priority AI. See `01_BRD`.
+   683→- **Enterprise tier.** SSO, audit logs, SLA. Phase 3+.
+   684→- **API monetization.** Usage-based pricing on the public API.
+   685→
+   686→### 12.4 Technical Expansion
+   687→- **Multi-region deployment.** Vercel Edge + Supabase read replicas.
+   688→- **WebAssembly tools.** Heavy compute tools (e.g., video transcoding) compile to WASM.
+   689→- **Worker offloading.** Heavy file processing offloaded to Cloudflare Workers or Vercel Edge Functions.
+   690→
+   691→## 13. Dependencies
+   692→
+   693→### 13.1 External Dependencies (Free Tier)
+   694→
+   695→| Dependency | Purpose | Free Tier Adequate Through | Upgrade Path |
+   696→|-----------|---------|---------------------------|--------------|
+   697→| Next.js 15+ | Application framework | Indefinite | N/A — open source |
+   698→| Supabase | DB, Auth, Storage | ~50k MAU | Pro tier $25/mo |
+   699→| Vercel | Hosting | ~100GB bandwidth | Pro tier $20/mo |
+   700→| Drizzle ORM | Type-safe ORM | Indefinite | N/A — open source |
+   701→| shadcn/ui | UI components | Indefinite | N/A — open source |
+   702→
+   703→Full rationale in `04_TechStack`.
+   704→
+   705→### 13.2 Internal Dependencies
+   706→
+   707→- This document (`00_Project_Charter`) is the root. All other docs depend on it.
+   708→- `01_BRD` defines business context required by `30_Roadmap` and `31_Backlog`.
+   709→- `02_SAD` defines architecture required by `05_ProjectStructure`, `07_FolderStructure`, `19_DatabaseDesign`, `20_APIConvention`.
+   710→- `06_ArchitectureDecisionRecords` records all architectural decisions from `02_SAD`, `03_DDD`, `04_TechStack`, `05_ProjectStructure`, plus governance ADRs for LOCKs, ECs, PCs, and DGAs.
+   711→- `11_ProductConstitution` expands §5 with operational details; binds every tool.
+   712→- `12_ToolManifestSpecification` defines the canonical schema that `13_FBRD`, `14_ACD`, `21_SEOSpecification`, `24_AdminSpecification`, `16_EventSchemaSpecification`, `18_SearchArchitecture` all derive from.
+   713→- `16_EventSchemaSpecification` defines the canonical event schema that `17_AnalyticsArchitecture` implements.
+   714→- `17_AnalyticsArchitecture` defines the analytics adapter pattern that all providers (GA, PostHog, Plausible) implement.
+   715→- `18_SearchArchitecture` defines the search index generation from manifests.
+   716→- `10_DesignSystem` is required by `15_UDS` and every UI implementation.
+   717→
+   718→### 13.3 Assumptions
+   719→
+   720→- Team size: 1–3 engineers through Phase 1, scaling to 5–10 by Phase 3.
+   721→- Budget: $0 through Phase 1; ≤$100/mo through Phase 2; revenue-funded thereafter.
+   722→- Domain expertise: at least one engineer comfortable with both frontend and Postgres.
+   723→
+   724→## 14. Revision History
+   725→
+   726→| Revision | Date | Author | Change |
+   727→|----------|------|--------|--------|
+   728→| 1.0.0 | 2026-06-28 | Chief Architect | Initial charter. |
+   729→| 1.1.0 | 2026-06-28 | Chief Architect | Added §2 Platform Identity and §3 Architectural Locks (12 locks: LOCK-01 through LOCK-12). Renumbered subsequent sections. Updated §5 Standards to cite lock IDs. Updated cross-references to reflect doc renumbering (04=TechStack, 05=ProjectStructure, 10=FBRD, 11=ACD, 12=UDS). |
+   730→| 1.2.0 | 2026-06-28 | Chief Architect | Added §4 Engineering Constitution (12 articles: EC-01 through EC-12). Renumbered §5-§11 to §5-§12. Inserted `06_ArchitectureDecisionRecords` into the doc index, shifting docs 06-25 to 07-26. Updated all cross-references throughout. Standards section (§7) now cites both LOCK IDs and EC IDs. |
+   731→| 1.3.0 | 2026-06-28 | Chief Architect | Added §5 Product Constitution (10 articles: PC-01 through PC-10). Renumbered §5-§12 to §6-§13. Inserted `11_ProductConstitution` and `12_ToolManifestSpecification` into the doc index, shifting docs 11-26 to 13-28. Established four-tier governance priority: Architectural Locks > Engineering Constitution > Product Constitution > Technical Documents. Updated all cross-references throughout. Added §8.7 Product Standards. |
+   732→| 1.4.0 | 2026-06-28 | Chief Architect | Added §6 Data & Growth Architecture (10 articles: DGA-01 through DGA-10). Renumbered §6-§13 to §7-§14. Inserted `16_EventSchemaSpecification`, `17_AnalyticsArchitecture`, `18_SearchArchitecture` into the doc index, shifting docs 16-28 to 19-31. Established five-tier governance priority: Architectural Locks > Engineering Constitution > Product Constitution > Data & Growth Architecture > Technical Documents. Updated all cross-references throughout. Added §9.8 Data & Growth Standards. |
+   733→
+   734→## 15. Cross References
+   735→
+   736→- `01_BRD` — Business context that shapes Phase goals (§8.1).
+   737→- `02_SAD` — Implements LOCK-02, LOCK-03, LOCK-04, LOCK-06; EC-05, EC-07; DGA-01 (architecture, Tool Engine, modularity, database-optional, progressive enhancement, performance, database as product service).
+   738→- `03_DDD` — Defines bounded contexts that align with LOCK-04, EC-02 (modularity, one source of truth).
+   739→- `04_TechStack` — Justifies each dependency listed in §13.1; operationalizes LOCK-02, EC-08, EC-12, DGA-02 (browser-first tech, security, enterprise readiness, vendor-neutral analytics adapters).
+   740→- `05_ProjectStructure` — Implements LOCK-04, LOCK-05, EC-03, EC-04, PC-10 (modularity, plugin-ready registry, component reuse, tool template, product scalability).
+   741→- `06_ArchitectureDecisionRecords` — Permanent history of all architectural decisions (LOCKs, ECs, PCs, DGAs, technical ADs); append-only.
+   742→- `10_DesignSystem` — Implements LOCK-10, EC-06, EC-10, PC-05 (developer-first minimalism, accessibility, design system governance, UX consistency).
+   743→- `11_ProductConstitution` — Expands §5 with operational details for PC-01 through PC-10.
+   744→- `12_ToolManifestSpecification` — Canonical schema for every tool (PC-02, PC-07, PC-09, PC-10, DGA-03, DGA-10); foundation for Registry, Admin, Search, SEO, Analytics, Marketplace.
+   745→- `13_FBRD` — Defines the tool-as-feature pattern and tool product contract (LOCK-05, LOCK-12, EC-04, PC-01, PC-02).
+   746→- `14_ACD` — Tool Engine component (LOCK-03, PC-03) and reusable component catalog (EC-03, EC-10).
+   747→- `15_UDS` — Implements the UX standards in §9.3 (LOCK-07, LOCK-10, EC-05, EC-06, PC-05, PC-08).
+   748→- `16_EventSchemaSpecification` — Canonical event schema implementing DGA-02, PC-07.
+   749→- `17_AnalyticsArchitecture` — Vendor-neutral analytics adapters and growth metrics implementing DGA-02, DGA-09.
+   750→- `18_SearchArchitecture` — Search index generation and multi-mode search implementing DGA-04.
+   751→- `19_DatabaseDesign` — Schema per context implementing DGA-01, DGA-05, DGA-10.
+   752→- `20_APIConvention` — Versioned APIs and deprecation policy implementing DGA-08.
+   753→- `21_SEOSpecification` — Implements LOCK-08, PC-09, DGA-03 (SEO Constitution, feature discoverability, structured-data-first SEO).
+   754→- `22_UserFlow` — Implements LOCK-07, EC-05, PC-06 (guest-first UX, progressive enhancement, monetization philosophy).
+   755→- `23_RBAC` — Implements the Security standards in §9.5 (LOCK-11, EC-08, DGA-07).
+   756→- `24_AdminSpecification` — Implements LOCK-11 (admin philosophy), LOCK-12 (feature lifecycle), PC-07 (analytics), PC-10 (admin inventory), DGA-06 (feature flags), DGA-07 (auditability).
+   757→- `25_DevelopmentGuideline` — Implements EC-01, EC-11, PC-03, PC-04 (documentation first, AI collaboration, completion standard, quality gates).
+   758→- `26_TestingStrategy` — Implements EC-09, PC-03 (testing philosophy, completion standard).
+   759→- `27_DeploymentGuide` — Implements EC-07, EC-08, EC-12 (performance monitoring, security headers, enterprise migration).
+   760→- `28_AI_Guideline` — Implements LOCK-09, EC-11 (AI Development Constitution, AI collaboration rules).
+   761→- `30_Roadmap` — Expands the Phase goals in §8.1.
+   762→- `31_Backlog` — Operationalizes the Phase 1 tool priorities.
+   763→

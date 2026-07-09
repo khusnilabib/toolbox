@@ -1,0 +1,767 @@
+     1→# 15 — UI/UX Design Specification (UDS)
+     2→
+     3→> **Status:** 🟢 Approved
+     4→> **Document Owner:** Chief Architect
+     5→> **Last Updated:** 2026-06-28
+     6→> **Revision:** 1.0.0
+     7→> **Implements:** LOCK-07 (Guest-First), LOCK-10 (Design Philosophy); EC-05 (Progressive Enhancement), EC-06 (Accessibility First); PC-05 (UX Consistency), PC-06 (Monetization), PC-08 (Error Experience)
+     8→
+     9→---
+    10→
+    11→## 1. Purpose
+    12→
+    13→This UI/UX Design Specification defines the **user flows, interaction patterns, accessibility standards, and state designs** for [PROJECT_NAME]. Where `10_DesignSystem` defines visual tokens and `14_ACD` defines component contracts, this document defines how users move through the platform, how components behave in response to user actions, and how every state (empty, loading, error, success) should feel.
+    14→
+    15→The UDS exists because consistent visual design alone doesn't guarantee consistent UX. Two tools can use the same components but have different interaction patterns — one shows results instantly, another requires a "Process" button; one validates on submit, another validates on blur; one shows errors inline, another shows them in a toast. These inconsistencies make the platform feel amateurish. The UDS prevents this by specifying interaction patterns at the platform level, so every tool behaves the same way.
+    16→
+    17→This document implements LOCK-07 (guest-first UX — no registration before value), LOCK-10 (developer-first minimalism), EC-05 (progressive enhancement — graceful degradation), EC-06 (accessibility first — WCAG AA), PC-05 (UX consistency — canonical layout), PC-06 (monetization philosophy — no interrupting task completion), and PC-08 (error experience — what/why/how).
+    18→
+    19→## 2. Scope
+    20→
+    21→### 2.1 In Scope
+    22→
+    23→- User flows: guest → registered → premium journeys.
+    24→- Tool page interaction patterns (input, validation, processing, preview, download).
+    25→- State designs: empty, loading, error, success.
+    26→- Accessibility standards (WCAG AA operationalized).
+    27→- Mobile UX patterns (360px viewport, touch targets).
+    28→- Monetization touchpoints (where ads and premium prompts appear).
+    29→- Navigation patterns (header, footer, search, breadcrumbs).
+    30→- Degraded journeys (when JS/APIs/DB fail).
+    31→
+    32→### 2.2 Out of Scope
+    33→
+    34→- Visual design tokens → `10_DesignSystem`.
+    35→- Component APIs → `14_ACD`.
+    36→- Specific tool implementations → per-tool specs.
+    37→- SEO content → `18_SEOSpecification`.
+    38→- Admin UX → `21_AdminSpecification`.
+    39→
+    40→## 3. Architectural Decisions
+    41→
+    42→### AD-01 — Tool Page Interaction Pattern
+    43→
+    44→**Context.** Without a standardized interaction pattern, each tool decides when to validate, when to process, how to show progress, how to show results. Inconsistent interactions confuse users.
+    45→
+    46→**Decision.** Every tool follows this interaction pattern:
+    47→1. **Empty state:** Tool shows input form with empty state messaging.
+    48→2. **Input:** User provides input (file, text, params). Validation on blur (not on every keystroke).
+    49→3. **Submit:** User clicks "Process" button. Full validation runs.
+    50→4. **Validation failed:** Inline errors per field. Form remains editable.
+    51→5. **Processing:** Progress indicator. Cancel button available.
+    52→6. **Preview:** Result shown with "Download" and "Process another" buttons.
+    53→7. **Download:** File downloads or text copies. Success toast appears.
+    54→8. **Registration prompt (conditional):** If user is guest AND has used 5+ tools in 7 days, show non-blocking prompt after download.
+    55→
+    56→**Implements:** PC-05 (UX Consistency), PC-06 (Monetization — prompt only after value).
+    57→
+    58→### AD-02 — Validation Strategy
+    59→
+    60→**Context.** Validating on every keystroke is annoying (errors while typing). Validating only on submit is frustrating (errors after filling entire form). A middle ground is needed.
+    61→
+    62→**Decision.** Validation strategy:
+    63→- **On blur:** Validate field when user leaves it. Show inline error if invalid.
+    64→- **On submit:** Validate all fields. If any invalid, focus first invalid field.
+    65→- **On change (after first error):** Re-validate field as user types, clearing error when valid.
+    66→
+    67→**Implements:** EC-06 (Accessibility — clear error feedback).
+    68→
+    69→### AD-03 — Empty States Are Welcoming
+    70→
+    71→**Context.** Empty states are often afterthoughts — generic "No data" messages. But empty states are the first thing users see; they set the tone.
+    72→
+    73→**Decision.** Every empty state:
+    74→- Has a clear title ("Upload an image to resize").
+    75→- Has a description explaining what will happen ("Your image stays on your device").
+    76→- Has a CTA ("Choose Image" button).
+    77→- Uses an icon or illustration (lucide-react icon, not custom SVG).
+    78→
+    79→**Implements:** PC-05 (consistent UX), LOCK-10 (minimal but welcoming).
+    80→
+    81→### AD-04 — Loading States Set Expectations
+    82→
+    83→**Context.** Generic spinners without context frustrate users ("how long will this take?").
+    84→
+    85→**Decision.** Every loading state:
+    86→- Has a title ("Resizing your image...").
+    87→- Has a description ("This usually takes less than a second").
+    88→- Shows estimated duration if known (from manifest's `loadingStates[].estimatedDuration`).
+    89→- Shows progress bar if progress is trackable; spinner otherwise.
+    90→- Has cancel button if cancellation is safe.
+    91→
+    92→**Implements:** PC-05, EC-05 (progressive enhancement — cancel allows recovery).
+    93→
+    94→### AD-05 — Error States Are Recoverable
+    95→
+    96→**Context.** PC-08 mandates errors explain what/why/how. The UX must support this three-component structure.
+    97→
+    98→**Decision.** Error display:
+    99→- Prominent error icon (AlertCircle from lucide-react).
+   100→- "What happened" in bold, plain language.
+   101→- "Why" in muted text (if known).
+   102→- "How to fix" with actionable guidance.
+   103→- Retry button if retry is possible.
+   104→- Link to related tool if applicable (e.g., "Try Image Compressor first" for file too large).
+   105→- Never shows stack traces or technical codes.
+   106→
+   107→**Implements:** PC-08 (Error Experience), EC-05 (graceful degradation).
+   108→
+   109→### AD-06 — Success States Confirm Action
+   110→
+   111→**Context.** Without success feedback, users don't know if their action worked.
+   112→
+   113→**Decision.** Success feedback:
+   114→- Toast notification in bottom-right ("Image downloaded successfully").
+   115→- Auto-dismisses after 3 seconds.
+   116→- Manual dismiss via close button.
+   117→- Optional "Process another" button to reset.
+   118→
+   119→**Implements:** PC-03 (Completion Standard — success feedback).
+   120→
+   121→### AD-07 — Mobile UX Patterns
+   122→
+   123→**Context.** Mobile users (360px viewport) have different needs than desktop. Touch targets, scroll behavior, and layout must adapt.
+   124→
+   125→**Decision.** Mobile UX patterns:
+   126→- Touch targets minimum 44x44px (WCAG recommendation).
+   127→- Forms stack vertically (no side-by-side fields).
+   128→- Buttons full-width on mobile.
+   129→- Sticky "Process" button if form is long.
+   130→- File upload via native file picker (no custom UI).
+   131→- Result preview fits viewport (no horizontal scroll).
+   132→- Modals become bottom sheets on mobile.
+   133→
+   134→**Implements:** PC-03 (Mobile Support), EC-06 (Accessibility).
+   135→
+   136→## 4. Design Principles
+   137→
+   138→### P1 — Consistency Over Creativity
+   139→Every tool behaves the same way. Users learn once, apply everywhere.
+   140→
+   141→### P2 — Feedback for Every Action
+   142→Every user action gets feedback: hover, click, processing, success, error. No silent actions.
+   143→
+   144→### P3 — Progressive Disclosure
+   145→Show essential information first. Advanced options hidden but accessible.
+   146→
+   147→### P4 — Recovery Over Prevention
+   148→Allow users to make mistakes, then help them recover. Don't block actions preemptively.
+   149→
+   150→### P5 — Mobile-First
+   151→Design for 360px first, then enhance for larger screens.
+   152→
+   153→### P6 — Accessibility Is Not Optional
+   154→WCAG AA is the baseline. Every interaction works with keyboard and screen reader.
+   155→
+   156→## 5. User Flows
+   157→
+   158→### 5.1 Guest User Flow (LOCK-07)
+   159→
+   160→```
+   161→1. User arrives at tool page (from search, link, or navigation)
+   162→   ↓
+   163→2. Page loads (Edge SSR, <500ms TTFB)
+   164→   ↓
+   165→3. Tool renders with empty state
+   166→   ↓
+   167→4. User provides input (file/text/params)
+   168→   ↓
+   169→5. User clicks "Process"
+   170→   ↓
+   171→6. Validation runs
+   172→   ├─ Invalid → inline errors, form editable
+   173→   └─ Valid → processing begins
+   174→   ↓
+   175→7. Processing (with progress indicator)
+   176→   ↓
+   177→8. Preview shown
+   178→   ↓
+   179→9. User clicks "Download"
+   180→   ↓
+   181→10. File downloads / text copies
+   182→    ↓
+   183→11. Success toast appears
+   184→    ↓
+   185→12. (Conditional) Registration prompt if 5+ tools used in 7 days
+   186→    ↓
+   187→13. User can: process another, view related tools, or leave
+   188→```
+   189→
+   190→**Key points:**
+   191→- No registration required for steps 1-11 (LOCK-07).
+   192→- Registration prompt (step 12) is non-blocking; dismissible.
+   193→- User can complete entire workflow as guest.
+   194→
+   195→### 5.2 Registered User Flow
+   196→
+   197→```
+   198→1-11. Same as guest flow
+   199→    ↓
+   200→12. History entry saved automatically (if DB available)
+   201→    ↓
+   202→13. User can access history from dashboard
+   203→    ↓
+   204→14. Premium features (if premium subscriber):
+   205→    - Batch processing
+   206→    - Cloud sync
+   207→    - Higher file size limits
+   208→    - AI features
+   209→```
+   210→
+   211→### 5.3 Premium Upsell Flow (PC-06)
+   212→
+   213→```
+   214→1. User attempts premium feature (e.g., batch download)
+   215→   ↓
+   216→2. Premium gate appears (NOT mid-workflow; only at premium feature)
+   217→   ↓
+   218→3. Gate explains: "Batch download is a premium feature"
+   219→   ↓
+   220→4. Options:
+   221→   ├─ "Upgrade to Premium" → pricing page
+   222→   ├─ "Download individually" → free alternative
+   223→   └─ "Maybe later" → dismiss
+   224→   ↓
+   225→5. If upgrade: Stripe checkout → return to tool with premium enabled
+   226→```
+   227→
+   228→**Key points:**
+   229→- Premium gate NEVER blocks core tool completion (PC-06).
+   230→- Gate only appears for value-add features.
+   231→- Free alternative always offered.
+   232→
+   233→### 5.4 Degraded Journeys (EC-05)
+   234→
+   235→#### 5.4.1 JavaScript Partially Fails
+   236→
+   237→```
+   238→- Tool form renders (SSR HTML)
+   239→- If JS fails to hydrate:
+   240→  - Form still submittable via native HTML form submission
+   241→  - Fallback to server-side processing (if available)
+   242→  - Or: show message "This tool requires JavaScript. Please enable it."
+   243→```
+   244→
+   245→#### 5.4.2 Database Offline (LOCK-06)
+   246→
+   247→```
+   248→- Tool works normally (browser-side processing)
+   249→- History save fails silently
+   250→- User sees: "History temporarily unavailable" (subtle, non-blocking)
+   251→- Favorites may not load
+   252→- Auth may fall back to guest mode
+   253→```
+   254→
+   255→#### 5.4.3 Auth Service Unavailable
+   256→
+   257→```
+   258→- User treated as guest
+   259→- Login button shows "Login temporarily unavailable"
+   260→- Tools function in guest mode
+   261→- Premium features unavailable (graceful degradation)
+   262→```
+   263→
+   264→#### 5.4.4 External AI API Down (AI Tools)
+   265→
+   266→```
+   267→- AI tool shows: "AI service temporarily unavailable. Please try again later."
+   268→- Non-AI tools unaffected
+   269→- Retry button offered
+   270→```
+   271→
+   272→## 6. Tool Page Layout (PC-05)
+   273→
+   274→Canonical layout, top to bottom:
+   275→
+   276→### 6.1 Hero Section
+   277→
+   278→```
+   279→┌─────────────────────────────────────────┐
+   280→│ Breadcrumb: Home > Image > Image Resizer│
+   281→├─────────────────────────────────────────┤
+   282→│ # Image Resizer                         │
+   283→│                                         │
+   284→│ Resize images to any dimensions         │
+   285→│ instantly in your browser.              │
+   286→│                                         │
+   287→│ [🔒 Your files stay on your device]    │
+   288→└─────────────────────────────────────────┘
+   289→```
+   290→
+   291→**Elements:**
+   292→- Breadcrumb (linked, LOCK-08)
+   293→- H1 title
+   294→- Description (1-2 sentences)
+   295→- Privacy badge (for browser tools; per LOCK-02 marketing claim)
+   296→
+   297→### 6.2 Tool Section
+   298→
+   299→```
+   300→┌─────────────────────────────────────────┐
+   301→│ [Drop zone: "Drop image here or click"] │
+   302→│                                         │
+   303→│ Width:  [____] px                       │
+   304→│ Height: [____] px                       │
+   305→│ [✓] Maintain aspect ratio              │
+   306→│                                         │
+   307→│ [    Resize Image    ]                  │
+   308→└─────────────────────────────────────────┘
+   309→```
+   310→
+   311→**Elements:**
+   312→- Input form (`ToolInputForm`)
+   313→- File dropzone if applicable (`FileDropzone`)
+   314→- Configuration fields
+   315→- Submit button (primary, prominent)
+   316→
+   317→### 6.3 Result Section
+   318→
+   319→```
+   320→┌─────────────────────────────────────────┐
+   321→│ Result Preview:                         │
+   322→│ [Image preview]                         │
+   323→│                                         │
+   324→│ Dimensions: 800 x 600 px                │
+   325→│ Format: PNG                             │
+   326→│ Size: 245 KB                            │
+   327→│                                         │
+   328→│ [  Download  ] [Share] [Process Another]│
+   329→└─────────────────────────────────────────┘
+   330→```
+   331→
+   332→**Elements:**
+   333→- Preview (`PreviewStage` component)
+   334→- Output metadata (dimensions, format, size)
+   335→- Download button (primary, prominent)
+   336→- Share button (optional)
+   337→- "Process another" link
+   338→
+   339→### 6.4 FAQ Section
+   340→
+   341→```
+   342→┌─────────────────────────────────────────┐
+   343→│ ## Frequently Asked Questions           │
+   344→│                                         │
+   345→│ ▶ Is this image resizer free?           │
+   346→│ ▶ Are my images uploaded to a server?   │
+   347→│ ▶ What image formats are supported?     │
+   348→└─────────────────────────────────────────┘
+   349→```
+   350→
+   351→**Elements:**
+   352→- Section heading (H2)
+   353→- Accordion of Q&A items (from manifest `seo.faq`)
+   354→- Min 3 Q&As per LOCK-08
+   355→
+   356→### 6.5 Related Tools Section
+   357→
+   358→```
+   359→┌─────────────────────────────────────────┐
+   360→│ ## Related Tools                        │
+   361→│                                         │
+   362→│ [Image Compressor] [Image Cropper]      │
+   363→│ [Format Converter]                      │
+   364→└─────────────────────────────────────────┘
+   365→```
+   366→
+   367→**Elements:**
+   368→- Section heading (H2)
+   369→- Grid of `ToolCard` components (from registry, PC-09)
+   370→- Min 3 related tools
+   371→
+   372→### 6.6 Documentation Section
+   373→
+   374→```
+   375→┌─────────────────────────────────────────┐
+   376→│ ## Documentation                        │
+   377→│                                         │
+   378→│ [Tool README content or link]           │
+   379→└─────────────────────────────────────────┘
+   380→```
+   381→
+   382→**Elements:**
+   383→- Section heading (H2)
+   384→- Tool-specific documentation (from README or link)
+   385→
+   386→### 6.7 Feedback Section
+   387→
+   388→```
+   389→┌─────────────────────────────────────────┐
+   390→│ Was this helpful? [👍] [👎]            │
+   391→└─────────────────────────────────────────┘
+   392→```
+   393→
+   394→**Elements:**
+   395→- "Was this helpful?" prompt
+   396→- Thumbs up / thumbs down buttons
+   397→- Optional comment field on thumbs down
+   398→
+   399→### 6.8 Footer
+   400→
+   401→Site-wide footer (same across all pages).
+   402→
+   403→## 7. State Designs
+   404→
+   405→### 7.1 Empty State
+   406→
+   407→**When:** Tool page first loads, no input provided.
+   408→
+   409→**UI:**
+   410→- Icon (lucide-react, e.g., `Upload` for file tools, `Edit` for text tools)
+   411→- Title: "Upload an image to resize" (action-oriented)
+   412→- Description: "Drag and drop an image, or click to browse. Your image stays on your device."
+   413→- CTA: "Choose Image" button
+   414→
+   415→**Accessibility:**
+   416→- `aria-live="polite"` so screen readers announce when state changes.
+   417→- Icon has `aria-hidden="true"` (decorative).
+   418→
+   419→### 7.2 Loading State
+   420→
+   421→**When:** Processing stage is running.
+   422→
+   423→**UI:**
+   424→- Spinner or progress bar (depending on whether progress is trackable)
+   425→- Title: "Resizing your image..."
+   426→- Description: "This usually takes less than a second."
+   427→- Cancel button (if cancellation is safe)
+   428→
+   429→**Accessibility:**
+   430→- `aria-busy="true"` on the processing container.
+   431→- `aria-live="polite"` announces start and completion.
+   432→- Progress bar has `role="progressbar"` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax`.
+   433→
+   434→### 7.3 Error State
+   435→
+   436→**When:** Any stage fails (validation, processing, download).
+   437→
+   438→**UI (per PC-08):**
+   439→- Error icon (`AlertCircle` from lucide-react, red color)
+   440→- **What happened:** "Your image is too large to process."
+   441→- **Why:** "The maximum file size is 10MB; your file is 25MB."
+   442→- **How to fix:** "Try the Image Compressor tool first to reduce its size, or use a smaller image."
+   443→- Retry button (if retry is possible)
+   444→- Link to related tool (if applicable)
+   445→
+   446→**Accessibility:**
+   447→- `role="alert"` for screen readers.
+   448→- `aria-live="assertive"` so error is announced immediately.
+   449→- Error icon has `aria-hidden="true"`; text conveys the meaning.
+   450→
+   451→### 7.4 Success State
+   452→
+   453→**When:** Download/copy completes.
+   454→
+   455→**UI:**
+   456→- Success toast in bottom-right corner
+   457→- Message: "Image downloaded successfully"
+   458→- Auto-dismiss after 3 seconds
+   459→- Close button for manual dismiss
+   460→
+   461→**Accessibility:**
+   462→- `role="status"`.
+   463→- `aria-live="polite"`.
+   464→
+   465→### 7.5 Validation Error State
+   466→
+   467→**When:** Input validation fails on submit.
+   468→
+   469→**UI:**
+   470→- Inline error message below the invalid field
+   471→- Red border on the invalid field
+   472→- Error summary at top of form (if multiple errors)
+   473→- Focus moves to first invalid field
+   474→
+   475→**Accessibility:**
+   476→- Error message has `id`; field has `aria-describedby` pointing to it.
+   477→- `aria-invalid="true"` on the field.
+   478→- Error summary has `role="alert"`.
+   479→
+   480→## 8. Accessibility Standards (EC-06 Operationalized)
+   481→
+   482→### 8.1 Keyboard Navigation
+   483→
+   484→- All interactive elements operable via keyboard.
+   485→- Logical tab order (follows visual order, top to bottom, left to right).
+   486→- Visible focus indicator (`focus-visible:` Tailwind classes, `outline-2 outline-offset-2 outline-primary`).
+   487→- No keyboard traps.
+   488→- Skip-to-content link at top of every page (visually hidden until focused).
+   489→- Modals trap focus within (focus cycles within modal while open).
+   490→- Escape key closes modals.
+   491→
+   492→### 8.2 Screen Reader Support
+   493→
+   494→- Semantic HTML (`<button>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<aside>`, `<header>`, `<footer>`).
+   495→- ARIA labels only when semantic HTML insufficient.
+   496→- `aria-label` on icon-only buttons (e.g., close button).
+   497→- `aria-live="polite"` on dynamic content (toasts, results, loading states).
+   498→- `aria-live="assertive"` on errors.
+   499→- `aria-busy="true"` on elements being updated.
+   500→- Hidden content via `aria-hidden="true"` (not `display: none` if it should be screen-reader accessible).
+   501→- Form labels associated via `<label for>` or wrapping.
+   502→
+   503→### 8.3 Color Contrast
+   504→
+   505→- Body text on background: ≥7:1 (WCAG AAA).
+   506→- Large text (≥24px or ≥18.66px bold): ≥4.5:1 (WCAG AA).
+   507→- UI components and graphical elements: ≥3:1.
+   508→- Verified via Lighthouse CI (≥95 accessibility score).
+   509→
+   510→### 8.4 Reduced Motion
+   511→
+   512→- All animations respect `prefers-reduced-motion: reduce`.
+   513→- When reduced motion is preferred, animations are instant or replaced with opacity changes.
+   514→
+   515→```css
+   516→@media (prefers-reduced-motion: reduce) {
+   517→  *, *::before, *::after {
+   518→    animation-duration: 0.01ms !important;
+   519→    transition-duration: 0.01ms !important;
+   520→  }
+   521→}
+   522→```
+   523→
+   524→### 8.5 Touch Targets
+   525→
+   526→- Minimum 44x44px on touch devices.
+   527→- Adequate spacing (≥8px) between interactive elements.
+   528→
+   529→### 8.6 Forms
+   530→
+   531→- Every input has associated `<label>`.
+   532→- Required fields marked with `aria-required="true"` and visible indicator (`*`).
+   533→- Error messages via `aria-describedby` linking to input.
+   534→- Validation errors announced via `aria-live`.
+   535→
+   536→## 9. Mobile UX Patterns
+   537→
+   538→### 9.1 Viewport
+   539→
+   540→- Design for 360px viewport first.
+   541→- Scale up to 768px (tablet), 1024px (laptop), 1280px (desktop).
+   542→- Use Tailwind responsive prefixes: `sm:`, `md:`, `lg:`, `xl:`.
+   543→
+   544→### 9.2 Layout
+   545→
+   546→- Single column on mobile.
+   547→- Two columns at `md:` (768px).
+   548→- Three or four columns at `lg:` (1024px).
+   549→- Forms always single column (even on desktop, for readability).
+   550→
+   551→### 9.3 Navigation
+   552→
+   553→- Hamburger menu on mobile (`< 768px`).
+   554→- Full nav bar on desktop.
+   555→- Search always visible (icon on mobile, expanded on desktop).
+   556→
+   557→### 9.4 Buttons
+   558→
+   559→- Full-width on mobile.
+   560→- Auto-width on desktop.
+   561→- Min height 44px (touch target).
+   562→
+   563→### 9.5 Modals
+   564→
+   565→- Bottom sheet on mobile (slides up from bottom).
+   566→- Centered modal on desktop.
+   567→- Full-screen on very small viewports (< 400px).
+   568→
+   569→### 9.6 File Upload
+   570→
+   571→- Use native file picker (`<input type="file">`).
+   572→- Custom dropzone only on desktop (mobile doesn't support drag-drop well).
+   573→- "Take photo" option on mobile (via `capture` attribute).
+   574→
+   575→## 10. Monetization Touchpoints (PC-06)
+   576→
+   577→### 10.1 Ad Placement
+   578→
+   579→**Where:** Below the Result section, above FAQ.
+   580→
+   581→**Format:** Single ad, responsive (leaderboard on desktop, rectangle on mobile).
+   582→
+   583→**Network:** Carbon Ads or EthicalAds (privacy-respecting, developer-friendly).
+   584→
+   585→**Constraints:**
+   586→- Max 1 ad per tool page.
+   587→- Never inside the Tool or Result sections.
+   588→- Never auto-playing audio/video.
+   589→- Clearly labeled "Advertisement" or "Sponsored".
+   590→
+   591→### 10.2 Premium Upsell
+   592→
+   593→**Where:** Only at premium-gated features (e.g., batch download, AI features, cloud sync).
+   594→
+   595→**Format:** Inline modal or banner, not a full-page interstitial.
+   596→
+   597→**Constraints:**
+   598→- Never blocks core tool completion (PC-06).
+   599→- Free alternative always offered.
+   600→- "Maybe later" dismisses without friction.
+   601→- Max 1 upsell per session (don't nag).
+   602→
+   603→### 10.3 Registration Prompt
+   604→
+   605→**Where:** After download, in a non-blocking toast.
+   606→
+   607→**Trigger:** Guest user who has used 5+ tools in 7 days.
+   608→
+   609→**Format:** Toast: "Create a free account to save your history and favorites."
+   610→
+   611→**Constraints:**
+   612→- Non-blocking; dismissible.
+   613→- Doesn't appear on first tool use.
+   614→- Doesn't reappear for 7 days after dismissal.
+   615→
+   616→## 11. Navigation Patterns
+   617→
+   618→### 11.1 Header
+   619→
+   620→```
+   621→[Logo] [Search] [Categories ▼] [Theme Toggle] [Login / Account]
+   622→```
+   623→
+   624→- Sticky on scroll.
+   625→- Mobile: hamburger menu replaces Categories dropdown.
+   626→
+   627→### 11.2 Footer
+   628→
+   629→```
+   630→[About] [Blog] [Pricing] [Privacy] [Terms] [Contact]
+   631→[© 2026 [PROJECT_NAME]]
+   632→```
+   633→
+   634→- Same across all pages.
+   635→- Contains legal links (privacy policy, terms).
+   636→
+   637→### 11.3 Search
+   638→
+   639→- Available in header (icon on mobile, expanded on desktop).
+   640→- Searches tool manifests (title, description, keywords, FAQ).
+   641→- Results in dropdown (instant) or dedicated search page.
+   642→- Powered by client-side search (Pagefind or similar) for speed.
+   643→
+   644→### 11.4 Breadcrumbs
+   645→
+   646→- Rendered in Hero section (per `14_ACD` `Breadcrumb` component).
+   647→- Format: Home > Category > Tool.
+   648→- JSON-LD BreadcrumbList structured data injected for SEO (LOCK-08).
+   649→
+   650→## 12. Standards
+   651→
+   652→### 12.1 UX Consistency Standards
+   653→- Every tool uses `ToolLayout` (PC-05).
+   654→- Every tool follows the interaction pattern in AD-01.
+   655→- Every tool uses the same state designs (§7).
+   656→- No custom interaction patterns without ADR approval.
+   657→
+   658→### 12.2 Accessibility Standards
+   659→- WCAG 2.1 AA conformance (EC-06).
+   660→- Lighthouse accessibility score ≥95.
+   661→- Keyboard navigation tested per tool.
+   662→- Screen reader tested per tool.
+   663→- Reduced motion respected.
+   664→
+   665→### 12.3 Mobile Standards
+   666→- 360px viewport supported.
+   667→- Touch targets ≥44x44px.
+   668→- Forms single column.
+   669→- Native file picker on mobile.
+   670→
+   671→### 12.4 Monetization Standards (PC-06)
+   672→- Ads only after result.
+   673→- Premium gates only at premium features.
+   674→- Free alternative always offered.
+   675→- Registration prompts non-blocking.
+   676→
+   677→## 13. Best Practices
+   678→
+   679→### 13.1 When Designing a Tool's UX
+   680→1. Use `ToolLayout` for canonical structure (PC-05).
+   681→2. Design empty state first (first impression).
+   682→3. Design loading state with estimate (set expectations).
+   683→4. Design error states with what/why/how (PC-08).
+   684→5. Design success state with feedback.
+   685→6. Test on mobile (360px viewport).
+   686→7. Test with keyboard only.
+   687→8. Test with screen reader.
+   688→
+   689→### 13.2 When Adding a New Interaction
+   690→1. Check if existing components support it (EC-03).
+   691→2. If new: document in this file via PR.
+   692→3. Ensure accessible (keyboard, screen reader).
+   693→4. Ensure mobile-friendly.
+   694→5. Ensure consistent with other tools.
+   695→
+   696→### 13.3 When Reviewing UX
+   697→- Verify PC-05 layout.
+   698→- Verify PC-08 errors.
+   699→- Verify EC-06 accessibility.
+   700→- Verify mobile support.
+   701→- Verify monetization placement (PC-06).
+   702→
+   703→## 14. Future Expansion
+   704→
+   705→### 14.1 Personalization (Phase 3+)
+   706→- Personalized tool recommendations.
+   707→- Recent tools prominent.
+   708→- Custom layouts per user (within PC-05 constraints).
+   709→
+   710→### 14.2 Internationalization (Phase 2+)
+   711→- RTL languages (Arabic, Hebrew).
+   712→- CJK fonts (Chinese, Japanese, Korean).
+   713→- Cultural adaptations (color meanings, icon familiarity).
+   714→
+   715→### 14.3 Voice Interface (Phase 4+)
+   716→- Voice-activated tool selection.
+   717→- Voice input for text tools.
+   718→
+   719→## 15. Dependencies
+   720→
+   721→### 15.1 Document Dependencies
+   722→- Depends on `00_Project_Charter` §3, §4, §5 — LOCKs, ECs, PCs implemented.
+   723→- Depends on `10_DesignSystem` — visual tokens used.
+   724→- Depends on `12_ToolManifestSpecification` — manifest fields consumed.
+   725→- Depends on `14_ACD` — components used.
+   726→- `06_ArchitectureDecisionRecords` — ADR-058 (UX Consistency), ADR-059 (Monetization), ADR-061 (Error Experience).
+   727→- `11_ProductConstitution` — PC-05, PC-06, PC-08 expanded.
+   728→- `18_SEOSpecification` — SEO elements in layout.
+   729→- `19_UserFlow` — detailed user flow diagrams.
+   730→- `22_DevelopmentGuideline` — UX review in quality gates.
+   731→- `23_TestingStrategy` — accessibility and UX testing.
+   732→
+   733→### 15.2 External Dependencies
+   734→- React, Next.js.
+   735→- shadcn/ui components.
+   736→- lucide-react icons.
+   737→- axe-core (accessibility testing).
+   738→
+   739→### 15.3 Assumptions
+   740→- UX patterns remain stable; changes require ADR.
+   741→- Team tests for accessibility and mobile per tool.
+   742→
+   743→## 16. Revision History
+   744→
+   745→| Revision | Date | Author | Change |
+   746→|----------|------|--------|--------|
+   747→| 1.0.0 | 2026-06-28 | Chief Architect | Initial UDS. Defined tool page interaction pattern, validation strategy, state designs (empty/loading/error/success/validation), accessibility standards (WCAG AA operationalized), mobile UX patterns, monetization touchpoints, navigation patterns, degraded journeys. |
+   748→
+   749→## 17. Cross References
+   750→
+   751→- `00_Project_Charter` §3 LOCK-07, LOCK-10; §4 EC-05, EC-06; §5 PC-05, PC-06, PC-08 — Implemented.
+   752→- `01_BRD` §4.2 — Onboarding standards (guest-first).
+   753→- `06_ArchitectureDecisionRecords` — ADR-058 (UX Consistency), ADR-059 (Monetization), ADR-061 (Error Experience).
+   754→- `07_FolderStructure` — Component file locations.
+   755→- `08_CodingStandards` — Accessibility coding rules.
+   756→- `10_DesignSystem` — Visual tokens and primitive components.
+   757→- `11_ProductConstitution` — PC-05, PC-06, PC-08 expanded.
+   758→- `12_ToolManifestSpecification` — Manifest fields consumed by UX.
+   759→- `13_FBRD` — Tool specs plan UX per this document.
+   760→- `14_ACD` — Components implementing these patterns.
+   761→- `18_SEOSpecification` — SEO elements in layout.
+   762→- `19_UserFlow` — Detailed user flow diagrams.
+   763→- `21_AdminSpecification` — Admin UX (separate but consistent).
+   764→- `22_DevelopmentGuideline` — UX review in quality gates.
+   765→- `23_TestingStrategy` — Accessibility and UX testing.
+   766→- `25_AI_Guideline` — AI must follow UX patterns (LOCK-09, EC-11).
+   767→

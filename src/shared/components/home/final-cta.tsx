@@ -1,7 +1,8 @@
-// src/shared/components/home/final-cta.tsx — CTA + newsletter combined (Sprint UI 3.0).
+// src/shared/components/home/final-cta.tsx — Optimized CTA + Newsletter (Sprint 16).
+// Conversion-focused copy with specific value propositions.
 
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Mail, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,6 +17,10 @@ export function FinalCta() {
           <CardContent className="grid gap-8 p-8 sm:p-12 lg:grid-cols-2 lg:items-center">
             {/* Left — CTA */}
             <div className="space-y-4">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
+                <Gift className="h-3.5 w-3.5" aria-hidden />
+                Free forever
+              </div>
               <h2 id="cta-heading" className="text-2xl font-bold tracking-tight text-balance sm:text-3xl">
                 Ready to work privately?
               </h2>
@@ -51,13 +56,31 @@ export function FinalCta() {
               </div>
             </div>
 
-            {/* Right — Newsletter */}
+            {/* Right — Newsletter with optimized copy */}
             <div className="rounded-xl border border-border bg-background/50 p-6">
-              <h3 className="text-sm font-semibold">Get notified about new tools</h3>
-              <p className="mt-1 text-xs text-muted-foreground">
-                One email per month. No spam. Unsubscribe anytime.
+              <div className="mb-3 flex items-center gap-2">
+                <Mail className="h-4 w-4 text-accent" aria-hidden />
+                <h3 className="text-sm font-semibold">Get new browser tools every month</h3>
+              </div>
+              <p className="mb-4 text-xs text-muted-foreground text-pretty">
+                Privacy-first productivity tips, early access to new features, and tool announcements.
+                One email per month. No spam, ever.
               </p>
-              <form className="mt-4 flex flex-col gap-2">
+              <ul className="mb-4 space-y-1.5 text-xs text-muted-foreground">
+                <li className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-accent" aria-hidden />
+                  New browser tools announced first
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-accent" aria-hidden />
+                  Early access to new features
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3 w-3 text-accent" aria-hidden />
+                  We never share your email
+                </li>
+              </ul>
+              <form className="flex flex-col gap-2">
                 <Input
                   type="email"
                   placeholder="you@example.com"
@@ -66,7 +89,7 @@ export function FinalCta() {
                   aria-label="Email address"
                 />
                 <Button type="submit" size="sm" className="h-10">
-                  Subscribe
+                  Get new tools →
                 </Button>
               </form>
             </div>
