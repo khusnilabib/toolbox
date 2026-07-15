@@ -1,0 +1,111 @@
+<testsuites id="" name="" tests="31" failures="0" skipped="0" errors="1" time="39.724816999999994">
+<testsuite name="tool-happy-path.spec.ts" timestamp="2026-07-15T14:46:49.490Z" hostname="chromium" tests="31" failures="0" skipped="0" time="73.194" errors="1">
+<testcase name="Tool happy path — representative tools › case-converter — page loads, accepts input, produces output" classname="tool-happy-path.spec.ts" time="5.387">
+</testcase>
+<testcase name="Tool happy path — representative tools › case-converter — passes accessibility audit" classname="tool-happy-path.spec.ts" time="5.234">
+</testcase>
+<testcase name="Tool happy path — representative tools › base64-encoder — page loads, accepts input, produces output" classname="tool-happy-path.spec.ts" time="4.172">
+</testcase>
+<testcase name="Tool happy path — representative tools › base64-encoder — passes accessibility audit" classname="tool-happy-path.spec.ts" time="3.287">
+</testcase>
+<testcase name="Tool happy path — representative tools › uuid-generator — page loads, accepts input, produces output" classname="tool-happy-path.spec.ts" time="3.386">
+</testcase>
+<testcase name="Tool happy path — representative tools › uuid-generator — passes accessibility audit" classname="tool-happy-path.spec.ts" time="2.577">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/video-1.webm]]
+
+[[ATTACHMENT|test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/video.webm]]
+
+[[ATTACHMENT|test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/error-context.md]]
+]]>
+</system-out>
+<error message="Accessibility violations found:" type="Error">
+<![CDATA[  [chromium] › tool-happy-path.spec.ts:59:9 › Tool happy path — representative tools › uuid-generator — passes accessibility audit 
+
+    Error: Accessibility violations found:
+    aria-input-field-name (serious): Ensure every ARIA input field has an accessible name
+      - .border-primary
+
+       at accessibility.ts:48
+
+      46 |         })
+      47 |         .join('\n\n');
+    > 48 |       throw new Error(`Accessibility violations found:\n${formatted}`);
+         |             ^
+      49 |     }
+      50 |     expect(violations).toHaveLength(0);
+      51 |     return;
+        at checkAccessibility (/vercel/share/v0-project/tests/e2e/accessibility.ts:48:13)
+        at /vercel/share/v0-project/tests/e2e/tool-happy-path.spec.ts:62:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Tool happy path — representative tools › hash-generator — page loads, accepts input, produces output" classname="tool-happy-path.spec.ts" time="3.655">
+</testcase>
+<testcase name="Tool happy path — representative tools › hash-generator — passes accessibility audit" classname="tool-happy-path.spec.ts" time="2.891">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › text/case-converter — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="0.862">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › text/word-counter — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.249">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › text/remove-duplicate-lines — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.605">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › text/sort-lines — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="2.03">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › text/text-diff — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="2.177">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › developer/base64-encoder — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.737">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › developer/url-encoder — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="2.495">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › developer/uuid-generator — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="2.597">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › developer/jwt-decoder — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.79">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › developer/json-formatter — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.722">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › developer/hash-generator — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.786">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › image/image-resize — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="2.08">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › image/image-compress — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.9">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › image/image-crop — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.814">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › image/image-rotate — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.857">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › image/image-format-convert — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.474">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › pdf/pdf-merge — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="2.076">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › pdf/pdf-split — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.684">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › pdf/pdf-compress — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.761">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › pdf/pdf-rotate — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.999">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › pdf/pdf-extract-pages — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="2.597">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › pdf/pdf-protect — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="2.122">
+</testcase>
+<testcase name="Tool URL routing — all 23 tools reachable › pdf/pdf-unlock — page returns 200 and renders H1" classname="tool-happy-path.spec.ts" time="1.191">
+</testcase>
+</testsuite>
+</testsuites>

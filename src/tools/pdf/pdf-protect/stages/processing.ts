@@ -1,15 +1,17 @@
 // src/tools/pdf/pdf-protect/stages/processing.ts
 
 import type { ProcessingStage } from '@packages/tool-engine';
+import { protectPdf } from '../../_shared/lib/pdf-utils';
 import type { ToolInput, ToolOutput } from '../manifest';
 
-export const processingStage: ProcessingStage<ToolInput, ToolOutput> = async () => {
-  // pdf-lib cannot encrypt or add password protection to PDFs. This tool is
-  // in development and will use a WASM-based encryption library (e.g. qpdf-wasm
-  // or pdfcpu-wasm) in a future release. Until then, processing is unavailable.
-  throw new Error(
-    'PDF protection (encryption) is not supported by pdf-lib. ' +
-      'pdf-lib cannot encrypt PDFs or add password protection. ' +
-      'This tool is in development and will use a WASM-based encryption engine in a future release.',
-  );
+export const processingStage: ProcessingStage<ToolInput, ToolOutput> = async ({ input, signal, onProgress }) => {
+  if (signal?.aborted) throw new Error('Cancelled by user');
+  onProgress?.(10, 'Loading encryption engine');
+  const blob = await protectPdf(input.file, input.password);
+  if (signal?.aborted) throw new Error('Cancelled by user');
+  onProgress?.(100, 'PDF protected');
+  return {
+    blob,
+    previewUrl: URL.createObjectURL(blob),
+  };
 };

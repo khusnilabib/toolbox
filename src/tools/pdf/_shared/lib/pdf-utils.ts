@@ -95,3 +95,28 @@ export async function mergePdfs(files: Uint8Array[]): Promise<import('pdf-lib').
   }
   return out;
 }
+
+let pdfToolkitPromise: ReturnType<typeof import('pdfstudio')['createPdfToolkit']> | null = null;
+
+async function getPdfToolkit() {
+  if (!pdfToolkitPromise) {
+    pdfToolkitPromise = import('pdfstudio').then(({ createPdfToolkit }) => createPdfToolkit());
+  }
+  return pdfToolkitPromise;
+}
+
+export async function protectPdf(file: Blob, password: string): Promise<Blob> {
+  const toolkit = await getPdfToolkit();
+  const bytes = await toolkit.lock(file, {
+    userPassword: password,
+    ownerPassword: password,
+    keyLength: 256,
+  });
+  return new Blob([bytes as BlobPart], { type: 'application/pdf' });
+}
+
+export async function unlockPdf(file: Blob, password: string): Promise<Blob> {
+  const toolkit = await getPdfToolkit();
+  const bytes = await toolkit.unlock(file, { password });
+  return new Blob([bytes as BlobPart], { type: 'application/pdf' });
+}

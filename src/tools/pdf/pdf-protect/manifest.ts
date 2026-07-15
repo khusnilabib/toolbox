@@ -50,7 +50,7 @@ const slug = 'pdf-protect';
 const category = 'pdf' as const;
 const title = 'PDF Protector';
 const description =
-  'Add password protection to a PDF — coming soon. Currently in development due to library limitations.';
+  'Add AES-256 password protection to a PDF locally in your browser.';
 
 export const manifest: ToolManifest = {
   manifestVersion: '1.0.0',
@@ -58,8 +58,8 @@ export const manifest: ToolManifest = {
   category,
   title,
   description,
-  lifecycle: 'development',
-  version: '0.1.0',
+  lifecycle: 'stable',
+  version: '1.0.0',
   purpose: 'Encrypt a PDF with a password to restrict opening and permissions.',
   userProblem: 'I need to password-protect a PDF before sharing it.',
   inputSchema,
@@ -85,7 +85,7 @@ export const manifest: ToolManifest = {
     searchIntent: 'transactional',
     title: 'PDF Protector — Password Protect PDF Online',
     description:
-      'Add password protection to a PDF. In development — pdf-lib cannot encrypt PDFs; a WASM-based engine is planned.',
+      'Add AES-256 password protection to a PDF locally in your browser. Your document is never uploaded.',
     keywords: ['pdf protector', 'password protect pdf', 'encrypt pdf', 'secure pdf', 'pdf password'],
     canonicalUrl: buildCanonical(category, slug),
     openGraph: { title, description, image: buildOgImage(category, slug), type: 'website' },
@@ -98,9 +98,9 @@ export const manifest: ToolManifest = {
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     },
     faq: makeFaq([
-      ['Is this tool available yet?', 'Not yet. It is in development due to encryption limitations in pdf-lib.'],
-      ['Is my PDF uploaded to a server?', 'No. When released, encryption will run entirely in your browser.'],
-      ['Why is encryption hard to do in-browser?', 'PDF encryption requires AES and a standards-compliant writer, which pdf-lib does not provide.'],
+      ['How is my PDF protected?', 'The tool applies standards-compliant AES-256 encryption using qpdf compiled to WebAssembly.'],
+      ['Is my PDF uploaded to a server?', 'No. Encryption runs entirely in your browser.'],
+      ['Can the password be recovered?', 'No. Keep the password safe because this tool does not store or recover it.'],
     ]),
     breadcrumb: buildToolBreadcrumb(category, slug, title),
   },
