@@ -50,7 +50,7 @@ const slug = 'pdf-unlock';
 const category = 'pdf' as const;
 const title = 'PDF Unlocker';
 const description =
-  'Remove password protection from a PDF — coming soon. Currently in development due to library limitations.';
+  'Remove password protection from your PDF locally with the correct password.';
 
 export const manifest: ToolManifest = {
   manifestVersion: '1.0.0',
@@ -58,8 +58,8 @@ export const manifest: ToolManifest = {
   category,
   title,
   description,
-  lifecycle: 'development',
-  version: '0.1.0',
+  lifecycle: 'stable',
+  version: '1.0.0',
   purpose: 'Remove password protection from an encrypted PDF using the correct password.',
   userProblem: 'I have a password-protected PDF and want to remove the restriction for my own use.',
   inputSchema,
@@ -85,7 +85,7 @@ export const manifest: ToolManifest = {
     searchIntent: 'transactional',
     title: 'PDF Unlocker — Remove PDF Password Online',
     description:
-      'Remove password protection from a PDF. In development — pdf-lib cannot decrypt PDFs; a WASM-based engine is planned.',
+      'Remove password protection from your PDF locally with the correct password. Your document is never uploaded.',
     keywords: ['pdf unlocker', 'remove pdf password', 'decrypt pdf', 'unlock pdf', 'pdf password remover'],
     canonicalUrl: buildCanonical(category, slug),
     openGraph: { title, description, image: buildOgImage(category, slug), type: 'website' },
@@ -98,9 +98,9 @@ export const manifest: ToolManifest = {
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     },
     faq: makeFaq([
-      ['Is this tool available yet?', 'Not yet. It is in development due to decryption limitations in pdf-lib.'],
-      ['Can I unlock a PDF without knowing the password?', 'No. You must provide the correct password to legally remove protection from your own document.'],
-      ['Is my PDF uploaded to a server?', 'No. When released, decryption will run entirely in your browser.'],
+      ['Can I unlock a PDF without knowing the password?', 'No. You must provide the correct user or owner password.'],
+      ['Is my PDF uploaded to a server?', 'No. Decryption runs entirely in your browser.'],
+      ['What encryption is supported?', 'The WebAssembly engine supports common qpdf-compatible PDF encryption, including AES-256.'],
     ]),
     breadcrumb: buildToolBreadcrumb(category, slug, title),
   },

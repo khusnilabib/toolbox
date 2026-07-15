@@ -195,6 +195,13 @@ export function ToolRuntime({ category, slug }: ToolRuntimeProps) {
     }
   }, [output, slug, category, trackStandard]);
 
+  const handleCancel = useCallback(() => {
+    engineRef.current?.cancel();
+    setProgress(0);
+    setStatus('input');
+    notificationService.info('Processing cancelled');
+  }, []);
+
   const handleReset = useCallback(() => {
     setOutput(null);
     setError(null);
@@ -265,6 +272,7 @@ export function ToolRuntime({ category, slug }: ToolRuntimeProps) {
           onRun={handleRun}
           loading={status === 'processing'}
           progress={progress}
+          onCancel={handleCancel}
         />
       ) : null}
 
@@ -345,7 +353,7 @@ export function ToolRuntime({ category, slug }: ToolRuntimeProps) {
             <FeedbackWidget toolSlug={slug} toolCategory={category} />
             {executionMs !== null ? (
               <span className="shrink-0 text-xs text-muted-foreground">
-                ⚡ {executionMs < 1 ? '<1ms' : `${executionMs}ms`}
+                ��� {executionMs < 1 ? '<1ms' : `${executionMs}ms`}
               </span>
             ) : null}
           </div>
@@ -360,6 +368,7 @@ export function ToolRuntime({ category, slug }: ToolRuntimeProps) {
 interface ToolInputFormProps {
   manifest: ToolManifest;
   onRun: (input: unknown) => void | Promise<void>;
+  onCancel: () => void;
   loading?: boolean;
   progress?: number;
 }
@@ -371,7 +380,7 @@ interface FieldSpec {
   kind: FieldKind;
   required: boolean;
   defaultValue?: unknown;
-  options?: { label: string; value: string }[];
+  options?: { label: string; value: string | number }[];
   min?: number;
   max?: number;
   step?: number;
@@ -382,7 +391,7 @@ interface FieldSpec {
   hint?: string;
 }
 
-function ToolInputForm({ manifest, onRun, loading, progress = 0 }: ToolInputFormProps) {
+function ToolInputForm({ manifest, onRun, onCancel, loading, progress = 0 }: ToolInputFormProps) {
   const specs = useMemo(() => buildFieldSpecs(manifest), [manifest]);
   const defaults = useMemo(() => buildDefaultValues(specs), [specs]);
 
@@ -551,6 +560,8 @@ function FieldRenderer({
           </Label>
           <Input
             id={spec.name}
+            type={spec.name.toLowerCase().includes('password') ? 'password' : 'text'}
+            autoComplete={spec.name.toLowerCase().includes('password') ? 'current-password' : undefined}
             disabled={disabled}
             placeholder={spec.hint ?? `Enter ${spec.label.toLowerCase()}`}
             aria-invalid={!!errorMessage}
@@ -577,7 +588,9 @@ function FieldRenderer({
             step={spec.step}
             placeholder={spec.hint ?? `Enter ${spec.label.toLowerCase()}`}
             aria-invalid={!!errorMessage}
-            {...form.register(spec.name, { valueAsNumber: true })}
+            {...form.register(spec.name, {
+              setValueAs: (value) => value === '' ? undefined : Number(value),
+            })}
           />
           {errorMessage ? <FieldError message={errorMessage} /> : null}
         </div>
@@ -628,8 +641,11 @@ function FieldRenderer({
             name={spec.name}
             render={({ field }) => (
               <Select
-                value={typeof field.value === 'string' ? field.value : ''}
-                onValueChange={field.onChange}
+                value={field.value === undefined || field.value === null ? '' : String(field.value)}
+                onValueChange={(value) => {
+                  const option = spec.options?.find((item) => String(item.value) === value);
+                  field.onChange(option?.value ?? value);
+                }}
                 disabled={disabled}
               >
                 <SelectTrigger id={spec.name} className="w-full">
@@ -637,7 +653,7 @@ function FieldRenderer({
                 </SelectTrigger>
                 <SelectContent>
                   {(spec.options ?? []).map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
+                    <SelectItem key={String(opt.value)} value={String(opt.value)}>
                       {opt.label}
                     </SelectItem>
                   ))}
@@ -773,22 +789,22 @@ function acceptsFile(schema: unknown): boolean {
   return false;
 }
 
-function enumOptions(schema: unknown): { label: string; value: string }[] {
+function enumOptions(schema: unknown): { label: string; value: string | number }[] {
   const def = defOf(schema);
   const entries = def['entries'];
   if (entries && typeof entries === 'object') {
-    return Object.values(entries as Record<string, unknown>).map((v) => ({
-      label: String(v),
-      value: String(v),
+    return Object.values(entries as Record<string, string | number>).map((value) => ({
+      label: String(value),
+      value,
     }));
   }
   const options = def['options'];
   if (Array.isArray(options)) {
-    return options.map((v: unknown) => ({ label: String(v), value: String(v) }));
+    return options.map((value: string | number) => ({ label: String(value), value }));
   }
   const values = def['values'];
   if (Array.isArray(values)) {
-    return values.map((v: unknown) => ({ label: String(v), value: String(v) }));
+    return values.map((value: string | number) => ({ label: String(value), value }));
   }
   return [];
 }
@@ -889,12 +905,14 @@ function buildFieldSpecs(manifest: ToolManifest): FieldSpec[] {
     const required = typeOf(fieldSchema) !== 'optional' && typeOf(fieldSchema) !== 'default';
     const label = humanize(name);
 
-    // File detection (z.instanceof(File) → "custom", or z.file() → "file").
-    if (acceptsFile(unwrapped)) {
+    // File detection supports both a single File and arrays of File objects.
+    const arrayElement = t === 'array' ? defOf(unwrapped)['element'] : undefined;
+    const isSingleFile = acceptsFile(unwrapped);
+    const isFileArray = arrayElement !== undefined && acceptsFile(unwrap(arrayElement));
+    if (isSingleFile || isFileArray) {
       const formatRule = findRule(manifest, name, 'format');
       const maxSizeRule = findRule(manifest, name, 'maxSize');
-      const element = defOf(unwrapped)['element'];
-      const multiple = typeOf(unwrapped) === 'array' || (element !== undefined && acceptsFile(element));
+      const multiple = isFileArray;
       return {
         name,
         kind: 'file',
@@ -971,11 +989,14 @@ function buildFieldSpecs(manifest: ToolManifest): FieldSpec[] {
             const ot = typeOf(o);
             if (ot === 'literal') {
               const v = defOf(o)['value'];
-              return { label: String(v), value: String(v) };
+              if (typeof v === 'string' || typeof v === 'number') {
+                return { label: String(v), value: v };
+              }
+              return null;
             }
             return null;
           })
-          .filter((x): x is { label: string; value: string } => x !== null);
+          .filter((x): x is { label: string; value: string | number } => x !== null);
         if (opts.length > 0) {
           return {
             name,
