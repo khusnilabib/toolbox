@@ -452,10 +452,21 @@ function ToolInputForm({ manifest, onRun, onCancel, loading, progress = 0 }: Too
 
       <div className="flex flex-col gap-3 border-t border-border pt-4">
         <div className="flex gap-2">
-          <Button type="submit" disabled={loading} size="lg" className="flex-1 h-12 text-base font-medium">
-            {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" aria-hidden /> : null}
-            {loading ? 'Processing…' : 'Run Tool'}
-          </Button>
+          {loading ? (
+            <Button
+              type="button"
+              variant="destructive"
+              size="lg"
+              className="h-12 flex-1 text-base font-medium"
+              onClick={onCancel}
+            >
+              Cancel processing
+            </Button>
+          ) : (
+            <Button type="submit" size="lg" className="h-12 flex-1 text-base font-medium">
+              Run Tool
+            </Button>
+          )}
           <Button
             type="button"
             variant="outline"

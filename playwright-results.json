@@ -1,0 +1,1239 @@
+{
+  "config": {
+    "argv": [
+      "/vercel/runtimes/node24/bin/node",
+      "/vercel/share/v0-project/node_modules/.bin/playwright",
+      "test",
+      "tests/e2e/tool-happy-path.spec.ts",
+      "--project=chromium"
+    ],
+    "configFile": "/vercel/share/v0-project/playwright.config.ts",
+    "rootDir": "/vercel/share/v0-project/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/vercel/share/v0-project/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/vercel/share/v0-project/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/vercel/share/v0-project/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "/vercel/share/v0-project/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/.*\\.mobile\\.e2e\\.ts/"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "playwright-results.xml"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 2,
+    "webServer": {
+      "command": "bun run dev",
+      "url": "http://localhost:3000",
+      "timeout": 120000,
+      "reuseExistingServer": true,
+      "env": {
+        "NODE_ENV": "test"
+      }
+    }
+  },
+  "suites": [
+    {
+      "title": "tool-happy-path.spec.ts",
+      "file": "tool-happy-path.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Tool happy path — representative tools",
+          "file": "tool-happy-path.spec.ts",
+          "line": 13,
+          "column": 6,
+          "specs": [
+            {
+              "title": "case-converter — page loads, accepts input, produces output",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5387,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:46:50.019Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-15972c0fc91bb26e2c98",
+              "file": "tool-happy-path.spec.ts",
+              "line": 15,
+              "column": 9
+            },
+            {
+              "title": "case-converter — passes accessibility audit",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5234,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:46:50.047Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-406b36b8a6f5efb1d2b4",
+              "file": "tool-happy-path.spec.ts",
+              "line": 59,
+              "column": 9
+            },
+            {
+              "title": "base64-encoder — page loads, accepts input, produces output",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4172,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:46:56.062Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-648077446d8ce1993398",
+              "file": "tool-happy-path.spec.ts",
+              "line": 15,
+              "column": 9
+            },
+            {
+              "title": "base64-encoder — passes accessibility audit",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3287,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:46:56.213Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-13cd1b2c5daf72da684a",
+              "file": "tool-happy-path.spec.ts",
+              "line": 59,
+              "column": 9
+            },
+            {
+              "title": "uuid-generator — page loads, accepts input, produces output",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3386,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:46:59.512Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-88c93f884448080902ef",
+              "file": "tool-happy-path.spec.ts",
+              "line": 15,
+              "column": 9
+            },
+            {
+              "title": "uuid-generator — passes accessibility audit",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 2577,
+                      "error": {
+                        "message": "Error: Accessibility violations found:\naria-input-field-name (serious): Ensure every ARIA input field has an accessible name\n  - .border-primary",
+                        "stack": "Error: Accessibility violations found:\naria-input-field-name (serious): Ensure every ARIA input field has an accessible name\n  - .border-primary\n    at checkAccessibility (/vercel/share/v0-project/tests/e2e/accessibility.ts:48:13)\n    at /vercel/share/v0-project/tests/e2e/tool-happy-path.spec.ts:62:7",
+                        "location": {
+                          "file": "/vercel/share/v0-project/tests/e2e/accessibility.ts",
+                          "column": 13,
+                          "line": 48
+                        },
+                        "snippet": "   at accessibility.ts:48\n\n  46 |         })\n  47 |         .join('\\n\\n');\n> 48 |       throw new Error(`Accessibility violations found:\\n${formatted}`);\n     |             ^\n  49 |     }\n  50 |     expect(violations).toHaveLength(0);\n  51 |     return;"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/vercel/share/v0-project/tests/e2e/accessibility.ts",
+                            "column": 13,
+                            "line": 48
+                          },
+                          "message": "Error: Accessibility violations found:\naria-input-field-name (serious): Ensure every ARIA input field has an accessible name\n  - .border-primary\n\n   at accessibility.ts:48\n\n  46 |         })\n  47 |         .join('\\n\\n');\n> 48 |       throw new Error(`Accessibility violations found:\\n${formatted}`);\n     |             ^\n  49 |     }\n  50 |     expect(violations).toHaveLength(0);\n  51 |     return;\n    at checkAccessibility (/vercel/share/v0-project/tests/e2e/accessibility.ts:48:13)\n    at /vercel/share/v0-project/tests/e2e/tool-happy-path.spec.ts:62:7"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:00.248Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/vercel/share/v0-project/test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/vercel/share/v0-project/test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/video-1.webm"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/vercel/share/v0-project/test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/vercel/share/v0-project/test-results/tool-happy-path-Tool-happy-6d89f--passes-accessibility-audit-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/vercel/share/v0-project/tests/e2e/accessibility.ts",
+                        "column": 13,
+                        "line": 48
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-5592b385b9b8e1068f71",
+              "file": "tool-happy-path.spec.ts",
+              "line": 59,
+              "column": 9
+            },
+            {
+              "title": "hash-generator — page loads, accepts input, produces output",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 3655,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:03.565Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-c4e2de37e049402cad43",
+              "file": "tool-happy-path.spec.ts",
+              "line": 15,
+              "column": 9
+            },
+            {
+              "title": "hash-generator — passes accessibility audit",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2891,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:02.910Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-ad4ae9cc1d067a063ca6",
+              "file": "tool-happy-path.spec.ts",
+              "line": 59,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Tool URL routing — all 23 tools reachable",
+          "file": "tool-happy-path.spec.ts",
+          "line": 67,
+          "column": 6,
+          "specs": [
+            {
+              "title": "text/case-converter — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 862,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:05.811Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-523bb85749dbb501586a",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "text/word-counter — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1249,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:06.685Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-3408a86e7bea3c1e061f",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "text/remove-duplicate-lines — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1605,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:07.435Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-51515ce8e22bf6c8fbf1",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "text/sort-lines — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2030,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:07.959Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-7ec2f22435eb0047bea5",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "text/text-diff — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2177,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:09.057Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-ae09de32045ac9496da2",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "developer/base64-encoder — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1737,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:10.017Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-855ccc81eb36d53911e5",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "developer/url-encoder — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2495,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:11.260Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-5e719451612fb840590c",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "developer/uuid-generator — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2597,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:11.772Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-d20234d66b2368a17d60",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "developer/jwt-decoder — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1790,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:13.780Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-7169ddf8a1b38d8ef60d",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "developer/json-formatter — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1722,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:14.393Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-480f8f294e6e2d002805",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "developer/hash-generator — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1786,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:15.590Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-90ba2d248aa8f4c16dda",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "image/image-resize — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2080,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:16.156Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-029b250ffa5c7070d40f",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "image/image-compress — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1900,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:17.391Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-eea881b17159279dba2f",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "image/image-crop — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1814,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:18.245Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-2851d44b0c5604ea09f6",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "image/image-rotate — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1857,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:19.308Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-832f3ab47517831d475a",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "image/image-format-convert — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1474,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:20.075Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-85af989ae38479575110",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "pdf/pdf-merge — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2076,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:21.177Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-2bcdb3beb15dd3313735",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "pdf/pdf-split — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1684,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:21.560Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-89c665c250efa540b4ee",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "pdf/pdf-compress — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1761,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:23.258Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-5dd39488f379faa79b65",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "pdf/pdf-rotate — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1999,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:23.317Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-7bf085b72cc87dbd6c7e",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "pdf/pdf-extract-pages — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2597,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:25.040Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-0f731004e42460180023",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "pdf/pdf-protect — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 2122,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:25.330Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-1fdf0e68b6511873786b",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            },
+            {
+              "title": "pdf/pdf-unlock — page returns 200 and renders H1",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 1191,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-07-15T14:47:27.471Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "4ccc02f27b5dcfd56d64-27726a935aba8afc20a7",
+              "file": "tool-happy-path.spec.ts",
+              "line": 95,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-07-15T14:46:49.012Z",
+    "duration": 39724.816999999995,
+    "expected": 30,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

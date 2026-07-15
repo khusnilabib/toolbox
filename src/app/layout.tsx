@@ -96,14 +96,9 @@ export const viewport: Viewport = {
   colorScheme: 'light dark',
 };
 
-const noFoucScript = `(function(){try{var t=localStorage.getItem('theme');var m=window.matchMedia('(prefers-color-scheme: dark)').matches;if(t==='dark'||(!t&&m)){document.documentElement.classList.add('dark')}}catch(e){}})();`;
-
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: noFoucScript }} />
-      </head>
+    <html lang="en" suppressHydrationWarning className={`bg-background ${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
         <a
           href="#main-content"
