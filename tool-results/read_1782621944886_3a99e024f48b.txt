@@ -1,0 +1,543 @@
+     1→     1→# 03 — Domain-Driven Design (DDD)
+     2→     2→
+     3→     3→> **Status:** 🟢 Approved
+     4→     4→> **Document Owner:** Chief Architect
+     5→     5→> **Last Updated:** 2026-06-28
+     6→     6→> **Revision:** 1.1.0
+     7→     7→> **Implements:** LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-02 (One Source of Truth)
+     8→     8→
+     9→     9→---
+    10→    10→
+    11→    11→## 1. Purpose
+    12→    12→
+    13→    13→This Domain-Driven Design document defines the conceptual model of [PROJECT_NAME]. It identifies the **bounded contexts** that partition the system, the **ubiquitous language** that ensures engineers and domain experts mean the same thing by the same word, the **aggregates** that enforce consistency boundaries, and the **context map** that defines how contexts relate to one another.
+    14→    14→
+    15→    15→DDD is the conceptual counterpart to `02_SAD`. Where the SAD defines physical layers and runtime topology, DDD defines semantic boundaries — what belongs together conceptually, what must stay separate, and why. Without DDD, modular architecture (LOCK-04) degrades into "folders that happen to be separate" with no enforcement of conceptual boundaries. Engineers start reaching across contexts for convenience, and within 18 months the codebase is a tangled web of cross-references that resists change.
+    16→    16→
+    17→    17→This document is the authoritative source for: what counts as a Tool, what counts as a User, what counts as Content, what counts as an Admin action, and how these concepts interact without violating each other's invariants. Every code module, every database table, every API endpoint must belong to exactly one bounded context, and that context's rules apply.
+    18→    18→
+    19→    19→## 2. Scope
+    20→    20→
+    21→    21→### 2.1 In Scope
+    22→    22→
+    23→    23→- Definition of bounded contexts and their responsibilities.
+    24→    24→- Ubiquitous language glossary (terms with precise, context-bound meanings).
+    25→    25→- Aggregate boundaries and consistency rules.
+    26→    26→- Context map (relationships, integration patterns).
+    27→    27→- Domain events (cross-context communication).
+    28→    28→- Mapping from bounded contexts to code modules and DB schemas.
+    29→    29→
+    30→    30→### 2.2 Out of Scope
+    31→    31→
+    32→    32→- Physical architecture (layers, runtimes) → `02_SAD`.
+    33→    33→- Folder layout → `05_ProjectStructure`, `06_FolderStructure`.
+    34→    34→- Database table schemas → `13_DatabaseDesign`.
+    35→    35→- API endpoint definitions → `14_APIConvention`.
+    36→    36→- UI flows between contexts → `16_UserFlow`.
+    37→    37→
+    38→    38→## 3. Architectural Decisions
+    39→    39→
+    40→    40→### AD-01 — Six Bounded Contexts
+    41→    41→
+    42→    42→**Context.** The platform serves distinct concerns: executing tools, managing users, publishing content, operating the platform (admin), processing payments, and observing behavior. Mixing these concerns in a single domain model leads to ambiguity (e.g., does "User" mean the same thing in auth, in analytics, and in billing?) and to tangled schemas (a User table with 80 columns covering auth, profile, billing, analytics).
+    43→    43→
+    44→    44→**Decision.** Partition the system into six bounded contexts:
+    45→    45→
+    46→    46→1. **Tools Context** — the core domain. Tool definitions, manifests, execution lifecycle, tool categories, tool registry.
+    47→    47→2. **Identity Context** — users, authentication, sessions, profiles, RBAC role assignment.
+    48→    48→3. **Content Context** — articles, guides, SEO landing pages, media library, editorial workflow.
+    49→    49→4. **Platform Operations Context** (Admin) — admin actions, feature flags, experiments, audit trail, system health.
+    50→    50→5. **Billing Context** — subscriptions, plans, invoices, usage limits, payment provider integration.
+    51→    51→6. **Analytics Context** — tool usage events, page views, funnels, aggregated metrics.
+    52→    52→
+    53→    53→**Consequences.**
+    54→    54→- ✅ Each context has its own ubiquitous language; "User" in Identity means auth identity, while in Billing it means "customer", while in Analytics it means "actor".
+    55→    55→- ✅ Each context owns its own schema; no shared mega-table.
+    56→    56→- ✅ Teams can specialize by context in Phase 3+.
+    57→    57→- ⚠️ Cross-context features require explicit integration (domain events, published interfaces).
+    58→    58→
+    59→    59→**Implements:** LOCK-04 (Modular Architecture at the conceptual level), EC-02 (One Source of Truth — each concept lives in exactly one context).
+    60→    60→
+    61→    61→### AD-02 — Tools Context is the Core Domain
+    62→    62→
+    63→    63→**Context.** The platform's identity (LOCK-01) is "browser-first productivity ecosystem." The Tools Context is what makes this true — without tools, there is no ecosystem. Other contexts exist to support tools (Identity: who can use them; Content: SEO that funnels to them; Billing: premium tool features; Analytics: how they're used; Platform Ops: operating them).
+    64→    64→
+    65→    65→**Decision.** Tools Context is designated the **core domain**. It receives the most architectural attention, the strictest invariants, and the most investment in design. All other contexts are **supporting** or **generic** subdomains.
+    66→    66→
+    67→    67→| Context | Domain Type | Investment Level |
+    68→    68→|---------|------------|------------------|
+    69→    69→| Tools | Core | High — competitive advantage lives here |
+    70→    70→| Identity | Generic | Low — use Supabase Auth; minimal customization |
+    71→    71→| Content | Supporting | Medium — SEO differentiator but well-understood patterns |
+    72→    72→| Platform Ops | Supporting | Medium — admin is operationally critical |
+    73→    73→| Billing | Generic | Low — use Stripe-standard patterns |
+    74→    74→| Analytics | Generic | Low — use standard event-tracking patterns |
+    75→    75→
+    76→    76→**Consequences.**
+    77→    77→- ✅ Architectural effort concentrated where it matters.
+    78→    78→- ✅ Generic contexts can use off-the-shelf solutions (Supabase Auth, Stripe, Posthog).
+    79→    79→- ⚠️ Core domain must be hand-built; no shortcuts.
+    80→    80→
+    81→    81→**Implements:** LOCK-01 (Platform Identity), LOCK-03 (Tool Engine).
+    82→    82→
+    83→    83→### AD-03 — Database-Optional Requires Stateless Tools Context
+    84→    84→
+    85→    85→**Context.** LOCK-06 mandates that core tools function without the database. The Tools Context must therefore be inherently stateless — its aggregates must not require persistence to function.
+    86→    86→
+    87→    87→**Decision.** The Tools Context's primary aggregate, **Tool**, is a stateless concept. A Tool is defined by its manifest (code) and its inputs (provided by user). Execution produces outputs that are ephemeral unless explicitly persisted by the Identity Context (history) or Billing Context (cloud storage).
+    88→    88→
+    89→    89→```
+    90→    90→Tools Context (stateless)
+    91→    91→├── Tool aggregate (manifest + lifecycle stages)
+    92→    92→├── ToolCategory (taxonomy)
+    93→    93→├── ToolExecution (ephemeral; not persisted)
+    94→    94→└── ToolRegistry (build-time; not runtime DB)
+    95→    95→
+    96→    96→Identity Context (stateful, DB-backed)
+    97→    97→└── HistoryEntry (references Tool by slug, persists outputs)
+    98→    98→```
+    99→    99→
+   100→   100→**Consequences.**
+   101→   101→- ✅ Tools Context has zero DB dependency; LOCK-06 satisfied structurally.
+   102→   102→- ✅ Tools can be developed and tested without DB setup.
+   103→   103→- ⚠️ History/favorites belong to Identity Context, not Tools — keeps boundaries clean.
+   104→   104→
+   105→   105→**Implements:** LOCK-06 (Database Optional).
+   106→   106→
+   107→   107→### AD-04 — Plugin-Ready via Manifest Aggregate
+   108→   108→
+   109→   109→**Context.** LOCK-05 mandates plugin-ready architecture. The Tools Context must expose a stable, versioned contract that third-party plugins can implement.
+   110→   110→
+   111→   111→**Decision.** The **ToolManifest** is the aggregate root of the Tools Context. It is a self-contained, serializable description of a tool. Any code that produces a valid ToolManifest can be registered as a tool — first-party or third-party.
+   112→   112→
+   113→   113→```
+   114→   114→ToolManifest (aggregate root)
+   115→   115→├── Identity: slug, category, lifecycle status
+   116→   116→├── Description: title, description, FAQ, related tools
+   117→   117→├── Execution: 'browser' | 'server', stage implementations
+   118→   118→├── Schemas: input ZodSchema, output ZodSchema
+   119→   119→├── SEO: per-tool SEO config (LOCK-08)
+   120→   120→└── Versioning: manifest_version, tool_version
+   121→   121→```
+   122→   122→
+   123→   123→The manifest schema is public (documented in `10_FBRD`) and versioned. Breaking changes require a manifest_version bump and a migration path for existing tools.
+   124→   124→
+   125→   125→**Consequences.**
+   126→   126→- ✅ Phase 4 plugin marketplace requires no architectural change — just a signing/sandboxing layer on top.
+   127→   127→- ✅ First-party and third-party tools are structurally identical.
+   128→   128→- ⚠️ Manifest schema evolution requires discipline; breaking changes are expensive.
+   129→   129→
+   130→   130→**Implements:** LOCK-05 (Plugin-Ready), LOCK-12 (Feature Lifecycle — status lives in manifest).
+   131→   131→
+   132→   132→### AD-05 — Context Integration via Domain Events
+   133→   133→
+   134→   134→**Context.** Bounded contexts must communicate (e.g., when a user completes a tool, Analytics needs to know; when a user upgrades, Billing needs to notify Identity). Direct context-to-context calls create coupling.
+   135→   135→
+   136→   136→**Decision.** Contexts integrate via **domain events**. A context publishes an event when something notable happens; other contexts subscribe. Events are typed, versioned, and asynchronous.
+   137→   137→
+   138→   138→```
+   139→   139→Tools Context publishes:
+   140→   140→- ToolExecutionStarted { toolSlug, userId?, inputSummary, timestamp }
+   141→   141→- ToolExecutionCompleted { toolSlug, userId?, outputSummary, durationMs }
+   142→   142→- ToolExecutionFailed { toolSlug, userId?, errorKind, timestamp }
+   143→   143→
+   144→   144→Identity Context publishes:
+   145→   145→- UserRegistered { userId, email, source }
+   146→   146→- UserLoggedIn { userId, method }
+   147→   147→- HistoryEntrySaved { userId, toolSlug, entryId }
+   148→   148→
+   149→   149→Billing Context publishes:
+   150→   150→- SubscriptionStarted { userId, planId, startDate }
+   151→   151→- SubscriptionCancelled { userId, planId, endDate }
+   152→   152→- UsageLimitExceeded { userId, limitType, currentValue }
+   153→   153→
+   154→   154→Content Context publishes:
+   155→   155→- ArticlePublished { articleId, slug, category }
+   156→   156→- ArticleUpdated { articleId, slug }
+   157→   157→
+   158→   158→Platform Ops Context publishes:
+   159→   159→- FeatureFlagToggled { flagKey, newValue, changedBy }
+   160→   160→- ToolStatusChanged { toolSlug, oldStatus, newStatus, changedBy }
+   161→   161→```
+   162→   162→
+   163→   163→**Consequences.**
+   164→   164→- ✅ Contexts remain decoupled; subscribers can be added/removed without publishers changing.
+   165→   165→- ✅ Async by default; no context blocks another.
+   166→   166→- ⚠️ Eventual consistency between contexts; UI must account for this.
+   167→   167→- ⚠️ Event schema evolution requires versioning strategy.
+   168→   168→
+   169→   169→**Implements:** LOCK-04 (modularity at integration level).
+   170→   170→
+   171→   171→## 4. Design Principles
+   172→   172→
+   173→   173→### P1 — One Concept, One Context
+   174→   174→Every domain concept belongs to exactly one bounded context. "User" exists in Identity; Billing has "Customer" (a role played by a User); Analytics has "Actor" (an anonymous or identified event source). This prevents the "god table" anti-pattern. *Implements EC-02 (One Source of Truth).*
+   175→   175→
+   176→   176→### P2 — Contexts Don't Share Tables
+   177→   177→Each context owns its own database tables (or Supabase schema). Cross-context data access is via published API or domain event, never via direct table join. This enforces context boundaries at the data layer.
+   178→   178→
+   179→   179→### P3 — Aggregates Enforce Invariants
+   180→   180→Every aggregate has invariants that the aggregate root enforces on every mutation. External code cannot bypass these invariants by directly modifying fields. This keeps the domain model honest.
+   181→   181→
+   182→   182→### P4 — Ubiquitous Language is Binding
+   183→   183→Terms defined in the glossary (§6) have one meaning in their context. Code MUST use these terms; PRs that introduce synonyms are rejected. This prevents the "synonym drift" that makes large codebases incomprehensible.
+   184→   184→
+   185→   185→### P5 — Tools Context is Stateless
+   186→   186→The Tools Context MUST NOT depend on persistence to function. This is structural enforcement of LOCK-06, not a runtime check.
+   187→   187→
+   188→   188→### P6 — Manifest is the Contract
+   189→   189→The ToolManifest is the only contract between a tool and the platform. Anything not in the manifest is not part of the platform's understanding of the tool.
+   190→   190→
+   191→   191→## 5. Bounded Contexts (Detailed)
+   192→   192→
+   193→   193→### 5.1 Tools Context (Core Domain)
+   194→   194→
+   195→   195→**Responsibility.** Define, register, and execute tools.
+   196→   196→
+   197→   197→**Aggregates:**
+   198→   198→- **Tool** (aggregate root) — defined by ToolManifest; stateless.
+   199→   199→- **ToolCategory** — taxonomy node; categories can have subcategories.
+   200→   200→- **ToolExecution** — ephemeral record of one run; not persisted by Tools Context (Identity may persist a reference).
+   201→   201→
+   202→   202→**Invariants:**
+   203→   203→- A Tool MUST have a unique slug within its category.
+   204→   204→- A Tool MUST declare exactly one execution mode ('browser' | 'server').
+   205→   205→- A Tool MUST implement all required Tool Engine stages (LOCK-03).
+   206→   206→- A Tool's lifecycle status transitions follow LOCK-12 (Concept → Planned → ... → Archived).
+   207→   207→
+   208→   208→**Owns:** `tools` (registry, not runtime table), `tool_categories`.
+   209→   209→
+   210→   210→### 5.2 Identity Context
+   211→   211→
+   212→   212→**Responsibility.** Authenticate users, manage profiles, assign roles, persist user-owned data (history, favorites).
+   213→   213→
+   214→   214→**Aggregates:**
+   215→   215→- **User** (aggregate root) — auth identity, profile, role assignments.
+   216→   216→- **Session** — active auth session; scoped to device.
+   217→   217→- **HistoryEntry** — record of a tool execution saved by a user; references Tool by slug (not FK to Tools Context).
+   218→   218→- **Favorite** — bookmarked tool by user.
+   219→   219→
+   220→   220→**Invariants:**
+   221→   221→- A User has exactly one role at a time (per `17_RBAC`).
+   222→   222→- HistoryEntries are immutable once created; deleted via soft-delete.
+   223→   223→- Favorites are unique per (userId, toolSlug).
+   224→   224→
+   225→   225→**Owns:** `users`, `sessions`, `history_entries`, `favorites`.
+   226→   226→
+   227→   227→**Note:** Identity Context gracefully degrades per LOCK-06 — if its DB is unavailable, Tools Context still functions; users are treated as guests.
+   228→   228→
+   229→   229→### 5.3 Content Context
+   230→   230→
+   231→   231→**Responsibility.** Author, edit, publish, and serve articles, guides, and SEO landing pages.
+   232→   232→
+   233→   233→**Aggregates:**
+   234→   234→- **Article** (aggregate root) — title, body, slug, category, SEO metadata, publish status.
+   235→   235→- **MediaAsset** — image, video, or document used in articles or tool pages.
+   236→   236→- **TaxonomyTerm** — tag or category applied to articles for navigation/SEO.
+   237→   237→
+   238→   238→**Invariants:**
+   239→   239→- Article slugs are unique globally.
+   240→   240→- Articles cannot be published without SEO metadata (LOCK-08).
+   241→   241→- MediaAssets are referenced by URL; deletion is soft with orphan check.
+   242→   242→
+   243→   243→**Owns:** `articles`, `media_assets`, `taxonomy_terms`, `article_taxonomy`.
+   244→   244→
+   245→   245→### 5.4 Platform Operations Context (Admin)
+   246→   246→
+   247→   247→**Responsibility.** Operate the platform: feature flags, experiments, audit trail, system health, ad management.
+   248→   248→
+   249→   249→**Aggregates:**
+   250→   250→- **FeatureFlag** (aggregate root) — key, enabled state, targeting rules, rollout percentage.
+   251→   251→- **Experiment** — A/B test definition with variants and traffic allocation.
+   252→   252→- **AuditEntry** — immutable record of an admin action.
+   253→   253→- **SystemHealthCheck** — latest status of each infrastructure component.
+   254→   254→- **Advertisement** — ad placement definition with targeting.
+   255→   255→
+   256→   256→**Invariants:**
+   257→   257→- AuditEntries are append-only; never edited or deleted.
+   258→   258→- FeatureFlag changes are audited.
+   259→   259→- Experiments cannot overlap on the same audience segment without explicit conflict resolution.
+   260→   260→
+   261→   261→**Owns:** `feature_flags`, `experiments`, `audit_entries`, `system_health_checks`, `advertisements`.
+   262→   262→
+   263→   263→### 5.5 Billing Context
+   264→   264→
+   265→   265→**Responsibility.** Manage subscriptions, plans, invoices, usage tracking against limits.
+   266→   266→
+   267→   267→**Aggregates:**
+   268→   268→- **Subscription** (aggregate root) — userId, planId, status, current period, renewal date.
+   269→   269→- **Plan** — defined tier (free, premium, enterprise) with limits and price.
+   270→   270→- **Invoice** — billing record from payment provider.
+   271→   271→- **UsageRecord** — monthly counter per user per limit type (tool_uses, ai_calls, storage_bytes).
+   272→   272→
+   273→   273→**Invariants:**
+   274→   274→- A User has at most one active Subscription.
+   275→   275→- UsageRecords reset monthly; rollover not supported in Phase 1.
+   276→   276→- Plan changes are pro-rated per Stripe-standard logic.
+   277→   277→
+   278→   278→**Owns:** `subscriptions`, `plans`, `invoices`, `usage_records`.
+   279→   279→
+   280→   280→**Note:** Billing Context is Phase 2+. Phase 1 has a single implicit "free" plan; no billing tables needed.
+   281→   281→
+   282→   282→### 5.6 Analytics Context
+   283→   283→
+   284→   284→**Responsibility.** Capture, aggregate, and report on user behavior and tool performance.
+   285→   285→
+   286→   286→**Aggregates:**
+   287→   287→- **Event** (aggregate root) — raw event record (page_view, tool_started, tool_completed, etc.).
+   288→   288→- **DailyAggregate** — pre-aggregated metric per (date, toolSlug, eventType).
+   289→   289→- **Funnel** — defined sequence of events for conversion tracking.
+   290→   290→
+   291→   291→**Invariants:**
+   292→   292→- Events are immutable once ingested.
+   293→   293→- Aggregates are computed nightly from raw events; raw events retained for 90 days, aggregates indefinitely.
+   294→   294→- Personally identifiable information in events is minimized (user ID only, no email/IP).
+   295→   295→
+   296→   296→**Owns:** `events`, `daily_aggregates`, `funnels`.
+   297→   297→
+   298→   298→**Note:** Analytics Context is the consumer of domain events from all other contexts. It does not publish events; it only subscribes.
+   299→   299→
+   300→   300→## 6. Ubiquitous Language Glossary
+   301→   301→
+   302→   302→Terms below have ONE meaning within their context. When a term is used in a different context, it is a different concept and SHOULD have a different name. Where the same word is unavoidable (e.g., "user"), the context qualifier makes the meaning unambiguous.
+   303→   303→
+   304→   304→### Tools Context
+   305→   305→
+   306→   306→| Term | Definition |
+   307→   307→|------|------------|
+   308→   308→| **Tool** | A discrete utility that follows the Tool Engine lifecycle (LOCK-03). Identified by slug within a category. Stateless. |
+   309→   309→| **ToolManifest** | The aggregate root describing a Tool. Self-contained, serializable. Defined in `10_FBRD`. |
+   310→   310→| **ToolCategory** | A taxonomy node grouping related Tools (e.g., "image", "pdf"). |
+   311→   311→| **ToolExecution** | One run of a Tool from Input to Download. Ephemeral; not persisted by Tools Context. |
+   312→   312→| **ToolRegistry** | The build-time-generated map of all ToolManifests. Not a runtime DB table. |
+   313→   313→| **Stage** | One step in the Tool Engine lifecycle (Input, Validation, Processing, Preview, Download, History, Share). |
+   314→   314→| **Browser Tool** | A Tool whose Processing stage runs in the user's browser (LOCK-02). |
+   315→   315→| **Server Tool** | A Tool whose Processing stage runs on the server. Requires explicit user consent. |
+   316→   316→
+   317→   317→### Identity Context
+   318→   318→
+   319→   319→| Term | Definition |
+   320→   320→|------|------------|
+   321→   321→| **User** | An authenticated identity. Has exactly one role. May be guest (null User). |
+   322→   322→| **Session** | An active authentication token scoped to a device. Expires or is revoked. |
+   323→   323→| **Role** | A label (guest, user, premium, editor, admin, super_admin) granting permissions per `17_RBAC`. |
+   324→   324→| **HistoryEntry** | A record of a ToolExecution saved by a User. References Tool by slug. |
+   325→   325→| **Favorite** | A User's bookmark of a Tool. |
+   326→   326→| **Guest** | An unauthenticated visitor. Treated as null User; tools still function (LOCK-06, LOCK-07). |
+   327→   327→
+   328→   328→### Content Context
+   329→   329→
+   330→   330→| Term | Definition |
+   331→   331→|------|------------|
+   332→   332→| **Article** | An editorial piece (guide, list, comparison) published for SEO and user education. |
+   333→   333→| **MediaAsset** | An image, video, or document used in Articles or Tool pages. Stored in Supabase Storage. |
+   334→   334→| **TaxonomyTerm** | A tag or category applied to Articles for navigation and SEO. |
+   335→   335→| **PublishStatus** | One of: draft, in_review, scheduled, published, archived. |
+   336→   336→
+   337→   337→### Platform Operations Context
+   338→   338→
+   339→   339→| Term | Definition |
+   340→   340→|------|------------|
+   341→   341→| **FeatureFlag** | A toggle controlling availability of a feature for a segment of users. |
+   342→   342→| **Experiment** | An A/B test with variants and traffic allocation. |
+   343→   343→| **AuditEntry** | An immutable record of an admin action (who, what, when, before, after). |
+   344→   344→| **SystemHealthCheck** | Latest status of an infrastructure component (up, degraded, down). |
+   345→   345→| **Advertisement** | A defined ad placement with targeting rules and active/inactive state. |
+   346→   346→| **FeatureLifecycle** | The status of a Tool or feature: Concept → Planned → Design → Development → Testing → Beta → Stable → Deprecated → Archived (LOCK-12). |
+   347→   347→
+   348→   348→### Billing Context
+   349→   349→
+   350→   350→| Term | Definition |
+   351→   351→|------|------------|
+   352→   352→| **Customer** | A User in their billing capacity. Same person, different aggregate. |
+   353→   353→| **Subscription** | A User's active plan with start/end dates and renewal terms. |
+   354→   354→| **Plan** | A defined tier (free, premium, enterprise) with limits and price. |
+   355→   355→| **Invoice** | A billing record from the payment provider (Stripe). |
+   356→   356→| **UsageRecord** | A monthly counter tracking a User's consumption against Plan limits. |
+   357→   357→
+   358→   358→### Analytics Context
+   359→   359→
+   360→   360→| Term | Definition |
+   361→   361→|------|------------|
+   362→   362→| **Actor** | The source of an event. May be a User (if authenticated) or an anonymous visitor. |
+   363→   363→| **Event** | A raw record of user behavior (page_view, tool_started, tool_completed, etc.). |
+   364→   364→| **DailyAggregate** | A pre-computed metric per (date, toolSlug, eventType). |
+   365→   365→| **Funnel** | A defined sequence of Events for conversion analysis. |
+   366→   366→| **Session** (Analytics) | A browsing session, distinct from Identity Context's Session. Identified by cookie, not auth token. |
+   367→   367→
+   368→   368→## 7. Context Map
+   369→   369→
+   370→   370→The context map defines how contexts relate. Relationships follow standard DDD patterns (Konvers, Vernon).
+   371→   371→
+   372→   372→```
+   373→   373→                      ┌─────────────────┐
+   374→   374→                      │  Tools (Core)   │
+   375→   375→                      │  [stateless]    │
+   376→   376→                      └────────┬────────┘
+   377→   377→                               │
+   378→   378→              ┌────────────────┼────────────────┐
+   379→   379→              │                │                │
+   380→   380→              ▼                ▼                ▼
+   381→   381→   ┌─────────────────┐ ┌──────────────┐ ┌──────────────┐
+   382→   382→   │    Identity     │ │   Content    │ │   Billing    │
+   383→   383→   │  [customer-sup.]│ │ [supporting] │ │  [generic]   │
+   384→   384→   └────────┬────────┘ └──────┬───────┘ └──────┬───────┘
+   385→   385→            │                 │                │
+   386→   386→            │    ┌────────────┘                │
+   387→   387→            │    │                             │
+   388→   388→            ▼    ▼                             ▼
+   389→   389→        ┌─────────────────┐         ┌──────────────────┐
+   390→   390→        │   Analytics     │         │  Platform Ops    │
+   391→   391→        │   [generic]     │         │  [supporting]    │
+   392→   392→        │  (event sink)   │         │  [admin, audit]  │
+   393→   393→        └─────────────────┘         └──────────────────┘
+   394→   394→```
+   395→   395→
+   396→   396→### Relationship Patterns
+   397→   397→
+   398→   398→| From → To | Pattern | Description |
+   399→   399→|-----------|---------|-------------|
+   400→   400→| Identity → Tools | Customer/Supplier | Identity supplies User context to Tools; Tools defines what it needs (userId or null). |
+   401→   401→| Billing → Identity | Conformist | Billing conforms to Identity's User concept; doesn't redefine. |
+   402→   402→| Content → Tools | Customer/Supplier | Content articles reference Tools by slug; Tools publishes slug list. |
+   403→   403→| Analytics → All | Conformist (event subscriber) | Analytics conforms to event schemas published by other contexts. |
+   404→   404→| Platform Ops → All | Shared Kernel (via feature flags) | Feature flags affect all contexts; flag definitions owned by Platform Ops. |
+   405→   405→| Platform Ops → Tools | Customer/Supplier | Platform Ops can change Tool lifecycle status; Tools publishes status change events. |
+   406→   406→| Billing → Tools | Customer/Supplier | Billing checks Tool execution limits; Tools publishes execution events. |
+   407→   407→
+   408→   408→### Anti-Corruption Layers
+   409→   409→
+   410→   410→Where a context integrates with an external system, an Anti-Corruption Layer (ACL) translates external concepts to internal ones:
+   411→   411→
+   412→   412→- **Identity ACL:** Wraps Supabase Auth; translates Supabase user records to Identity Context's User aggregate.
+   413→   413→- **Billing ACL:** Wraps Stripe; translates Stripe customer/subscription to Billing Context aggregates.
+   414→   414→- **Analytics ACL:** Wraps external analytics provider (if used in Phase 2+); translates provider events to Analytics Context Events.
+   415→   415→
+   416→   416→ACLs prevent external schema changes from corrupting internal domain models.
+   417→   417→
+   418→   418→## 8. Aggregate Consistency Rules
+   419→   419→
+   420→   420→### 8.1 Transaction Boundaries
+   421→   421→- A single transaction modifies exactly ONE aggregate.
+   422→   422→- Cross-aggregate consistency is achieved via domain events, eventually.
+   423→   423→- No transaction spans multiple bounded contexts.
+   424→   424→
+   425→   425→### 8.2 Aggregate Size
+   426→   426→- Aggregates are kept small. A Tool is its manifest. A User is its profile + role. A HistoryEntry is a single record.
+   427→   427→- Large nested structures (e.g., User with all their HistoryEntries) are modeled as separate aggregates with references, not as one big aggregate.
+   428→   428→
+   429→   429→### 8.3 Reference Patterns
+   430→   430→- Aggregates reference other aggregates by ID (slug, userId, articleId), never by direct object reference.
+   431→   431→- Cross-context references use the foreign context's public identifier (e.g., HistoryEntry references `toolSlug`, not a Tools Context internal ID).
+   432→   432→
+   433→   433→## 9. Standards
+   434→   434→
+   435→   435→### 9.1 Context Ownership Standards
+   436→   436→- Every code module MUST belong to exactly one bounded context (declared in module header comment).
+   437→   437→- Every database table MUST belong to exactly one context (declared in migration header).
+   438→   438→- Cross-context imports are flagged in code review and require explicit justification.
+   439→   439→
+   440→   440→### 9.2 Domain Event Standards
+   441→   441→- Every domain event MUST be typed (TypeScript interface) and versioned (`event_version: 1`).
+   442→   442→- Events MUST be idempotent (subscribers can safely receive duplicates).
+   443→   443→- Events MUST NOT contain PII beyond userId (no emails, no file contents).
+   444→   444→- Event payloads MUST be small (<10KB); large data referenced by ID.
+   445→   445→
+   446→   446→### 9.3 Schema Ownership Standards
+   447→   447→- Each context owns a Postgres schema (e.g., `tools`, `identity`, `content`, `ops`, `billing`, `analytics`).
+   448→   448→- No cross-schema foreign keys. References are by string ID.
+   449→   449→- Migrations are scoped per context; no migration touches another context's schema.
+   450→   450→
+   451→   451→## 10. Best Practices
+   452→   452→
+   453→   453→### 10.1 When Adding a New Concept
+   454→   454→1. Identify which bounded context it belongs to. If it doesn't fit any, you may need a new context (rare; requires Chief Architect approval).
+   455→   455→2. Add the term to the ubiquitous language glossary (§6).
+   456→   456→3. Define the aggregate it belongs to and the invariants it must enforce.
+   457→   457→4. Document any domain events it publishes or subscribes to.
+   458→   458→
+   459→   459→### 10.2 When Two Contexts Need to Share Data
+   460→   460→- **Default:** publish a domain event from the owner; subscriber reacts.
+   461→   461→- **Synchronous read needed:** owner exposes a published read API; subscriber calls it. Never read owner's tables directly.
+   462→   462→- **Synchronous write needed:** this is a smell. Re-architect so writes are local to the owning context, triggered by event.
+   463→   463→
+   464→   464→### 10.3 When Renaming a Domain Concept
+   465→   465→- Update the glossary first.
+   466→   466→- Update all code that uses the term.
+   467→   467→- Reject PRs that introduce synonyms for the renamed concept.
+   468→   468→- Add a deprecation note in the old term's location pointing to the new term.
+   469→   469→
+   470→   470→### 10.4 When Modeling a New Tool
+   471→   471→- The tool's domain concept is always a **Tool** (an aggregate in Tools Context).
+   472→   472→- The tool's execution logic belongs in the Tool's Processing stage, not in a separate domain.
+   473→   473→- The tool does NOT own user data; history of tool use belongs to Identity Context.
+   474→   474→
+   475→   475→## 11. Future Scalability
+   476→   476→
+   477→   477→### 11.1 Adding New Bounded Contexts
+   478→   478→Phase 3+ may introduce:
+   479→   479→- **Collaboration Context** — shared workspaces, team folders.
+   480→   480→- **Marketplace Context** — third-party plugin catalog, reviews, transactions.
+   481→   481→- **API Context** — public API keys, rate limits, usage billing for external API consumers.
+   482→   482→
+   483→   483→Adding a context requires: (a) Chief Architect approval, (b) DDD amendment, (c) schema namespace allocation, (d) context map update.
+   484→   484→
+   485→   485→### 11.2 Context Splitting
+   486→   486→If a context grows too large (e.g., Identity grows to include team management, organization management), split it. Split criteria: >15 aggregates, >20 tables, or team ownership boundary.
+   487→   487→
+   488→   488→### 11.3 Event Schema Evolution
+   489→   489→- Events are versioned (`event_version` field).
+   490→   490→- Subscribers handle all versions they care about; unknown versions are logged and skipped (not crashed).
+   491→   491→- Breaking changes (field removal, semantic change) require a new event name (e.g., `ToolExecutionStarted` → `ToolExecutionStartedV2`).
+   492→   492→
+   493→   493→### 11.4 Multi-Tenancy (Phase 3+)
+   494→   494→- Each context's schema gains a `tenant_id` column.
+   495→   495→- Aggregate roots enforce tenant isolation in queries.
+   496→   496→- Platform Ops Context manages tenant administration.
+   497→   497→
+   498→   498→## 12. Dependencies
+   499→   499→
+   500→   500→### 12.1 Document Dependencies
+   501→   501→- Depends on `00_Project_Charter` §3 (Architectural Locks) and §4 (Engineering Constitution) — LOCK-04, LOCK-05, LOCK-06 shape context boundaries; EC-02 enforces one source of truth.
+   502→   502→- Depends on `02_SAD` — physical architecture that hosts the bounded contexts.
+   503→   503→- `05_ProjectStructure` — maps bounded contexts to folder structure.
+   504→   504→- `06_ArchitectureDecisionRecords` — records AD-01 through AD-05 as ADRs.
+   505→   505→- `11_FBRD` — defines ToolManifest aggregate (Tools Context root).
+   506→   506→- `14_DatabaseDesign` — implements each context's schema.
+   507→   507→- `15_APIConvention` — defines how contexts expose published APIs.
+   508→   508→- `18_RBAC` — defines Role aggregate in Identity Context.
+   509→   509→- `19_AdminSpecification` — operates Platform Ops Context.
+   510→   510→
+   511→   511→### 12.2 External Dependencies
+   512→   512→- Supabase Postgres — provides schema isolation per context.
+   513→   513→- No external DDD framework; patterns implemented in plain TypeScript.
+   514→   514→
+   515→   515→### 12.3 Assumptions
+   516→   516→- Six contexts remain stable through Phase 2. Phase 3+ may add 1-3 more.
+   517→   517→- Context boundaries align with team boundaries as team grows (Conway's Law applied intentionally).
+   518→   518→
+   519→   519→## 13. Revision History
+   520→   520→
+   521→   521→| Revision | Date | Author | Change |
+   522→   522→|----------|------|--------|--------|
+   523→   523→| 1.0.0 | 2026-06-28 | Chief Architect | Initial DDD. Defined 6 bounded contexts, ubiquitous language glossary, context map, aggregate consistency rules. |
+   524→   524→| 1.1.0 | 2026-06-28 | Chief Architect | Linked bounded context design to EC-02 (One Source of Truth). Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords` (docs 06-25 shifted to 07-26). |
+   525→   525→
+   526→   526→## 14. Cross References
+   527→   527→
+   528→   528→- `00_Project_Charter` §3, §4 — Source of LOCKs and ECs implemented by this document.
+   529→   529→- `02_SAD` — Physical architecture hosting the bounded contexts.
+   530→   530→- `04_TechStack` — Technologies used to implement domain events and ACLs.
+   531→   531→- `05_ProjectStructure` — Folder layout mapping to bounded contexts.
+   532→   532→- `06_ArchitectureDecisionRecords` — Permanent record of DDD architectural decisions.
+   533→   533→- `07_FolderStructure` — Granular file conventions per context.
+   534→   534→- `11_FBRD` — ToolManifest aggregate (Tools Context root).
+   535→   535→- `12_ACD` — Tool Engine component (implementation of Tools Context aggregate).
+   536→   536→- `14_DatabaseDesign` — Schema per context.
+   537→   537→- `15_APIConvention` — Published APIs between contexts.
+   538→   538→- `16_SEOSpecification` — How Content Context supports SEO.
+   539→   539→- `17_UserFlow` — How user journeys cross context boundaries.
+   540→   540→- `18_RBAC` — Role aggregate in Identity Context.
+   541→   541→- `19_AdminSpecification` — Platform Ops Context operation.
+   542→   542→- `23_AI_Guideline` — Constrains AI's modification of domain model (LOCK-09, EC-11).
+   543→   543→

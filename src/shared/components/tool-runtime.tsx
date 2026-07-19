@@ -628,19 +628,29 @@ function FieldRenderer({
             name={spec.name}
             render={({ field }) => (
               <Select
-                value={typeof field.value === 'string' ? field.value : ''}
-                onValueChange={field.onChange}
+                value={typeof field.value === 'string' ? field.value : String(field.value ?? '')}
+                onValueChange={(v) => {
+                  // If the value is numeric, convert to number for Zod literal/number schemas
+                  const numVal = Number(v);
+                  field.onChange(!Number.isNaN(numVal) && v !== '' ? numVal : v);
+                }}
                 disabled={disabled}
               >
                 <SelectTrigger id={spec.name} className="w-full">
                   <SelectValue placeholder={`Select ${spec.label.toLowerCase()}`} />
                 </SelectTrigger>
                 <SelectContent>
-                  {(spec.options ?? []).map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
+                  {(spec.options ?? []).map((opt) => {
+                    // Clean up option labels: show "PNG" instead of "image/png"
+                    const displayLabel = opt.label.includes('/')
+                      ? opt.label.split('/').pop()?.toUpperCase() ?? opt.label
+                      : opt.label;
+                    return (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {displayLabel}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             )}
@@ -764,8 +774,49 @@ function acceptsFile(schema: unknown): boolean {
   if (t === 'custom' || t === 'any' || t === 'unknown') {
     try {
       const s = schema as ZodLike;
-      const probe = s.safeParse?.(new File([], 'probe'));
-      return probe?.success === true;
+
+      // Try with a valid PNG file first
+      try {
+        const pngProbe = s.safeParse?.(
+          new File([new Uint8Array([0x89, 0x50, 0x4e, 0x47])], 'test.png', { type: 'image/png' })
+        );
+        if (pngProbe?.success === true) return true;
+      } catch {
+        // ignore
+      }
+
+      // Try with a plain File — even if refine fails, instanceof may pass
+      try {
+        const plainProbe = s.safeParse?.(new File([], 'test')) as
+          | { success: boolean; error?: { issues?: Array<{ code: string }> } }
+          | undefined;
+        if (plainProbe?.success === true) return true;
+        // If the error is a "custom" check (from .refine()), the instanceof passed
+        if (plainProbe?.error) {
+          const issues = plainProbe.error.issues;
+          if (issues && issues.length > 0 && issues.every((i) => i.code === 'custom')) {
+            return true;
+          }
+        }
+      } catch {
+        // ignore
+      }
+
+      // Also check the _zod.def for instanceof checks
+      const def = (s as { _zod?: { def: { fn?: unknown; check?: unknown } } })?._zod?.def;
+      const fn = def?.fn;
+      if (typeof fn === 'function') {
+        // Test if the fn checks instanceof File
+        try {
+          const testResult = fn({ input: new File([], 'test'), payload: {} });
+          // If fn returns without throwing, it accepts File
+          if (testResult !== false) return true;
+        } catch {
+          // fn threw — doesn't accept File
+        }
+      }
+
+      return false;
     } catch {
       return false;
     }
@@ -889,12 +940,19 @@ function buildFieldSpecs(manifest: ToolManifest): FieldSpec[] {
     const required = typeOf(fieldSchema) !== 'optional' && typeOf(fieldSchema) !== 'default';
     const label = humanize(name);
 
-    // File detection (z.instanceof(File) → "custom", or z.file() → "file").
-    if (acceptsFile(unwrapped)) {
+    // File detection: z.instanceof(File) → "custom", z.array(z.instanceof(File)) → "array"
+    // Check both direct file and array-of-files
+    const element = defOf(unwrapped)['element'];
+    const isFileField = acceptsFile(unwrapped) || (t === 'array' && element !== undefined && acceptsFile(element));
+
+    // Debug logging for field type detection
+    if (typeof window !== 'undefined') {
+    }
+
+    if (isFileField) {
       const formatRule = findRule(manifest, name, 'format');
       const maxSizeRule = findRule(manifest, name, 'maxSize');
-      const element = defOf(unwrapped)['element'];
-      const multiple = typeOf(unwrapped) === 'array' || (element !== undefined && acceptsFile(element));
+      const multiple = t === 'array' || (element !== undefined && acceptsFile(element));
       return {
         name,
         kind: 'file',
@@ -965,25 +1023,49 @@ function buildFieldSpecs(manifest: ToolManifest): FieldSpec[] {
     // Union of literals → select.
     if (t === 'union') {
       const options = defOf(unwrapped)['options'];
+      if (typeof window !== 'undefined') {
+      }
       if (Array.isArray(options)) {
-        const opts = options
-          .map((o: unknown) => {
-            const ot = typeOf(o);
-            if (ot === 'literal') {
-              const v = defOf(o)['value'];
-              return { label: String(v), value: String(v) };
+        const opts: { label: string; value: string }[] = [];
+        for (const o of options) {
+          const ot = typeOf(o);
+          if (typeof window !== 'undefined') {
+          }
+          if (ot === 'literal') {
+            // Zod 4: literal uses 'values' — can be Set or Array depending on environment
+            const vals = defOf(o)['values'];
+            if (vals instanceof Set && vals.size > 0) {
+              const v = Array.from(vals)[0];
+              opts.push({ label: String(v), value: String(v) });
+              continue;
             }
-            return null;
-          })
-          .filter((x): x is { label: string; value: string } => x !== null);
+            if (Array.isArray(vals) && vals.length > 0) {
+              const v = vals[0];
+              opts.push({ label: String(v), value: String(v) });
+              continue;
+            }
+            // Fallback: Zod 3 style
+            const v = defOf(o)['value'];
+            if (v !== undefined) {
+              opts.push({ label: String(v), value: String(v) });
+              continue;
+            }
+          }
+        }
+        if (typeof window !== 'undefined') {
+        }
         if (opts.length > 0) {
+          // Convert numeric default to number for Zod literal schemas
+          const dv = rawDefault ?? opts[0]?.value;
+          const numDv = dv !== undefined && dv !== null ? Number(dv) : undefined;
+          const finalDv = !Number.isNaN(numDv) && dv !== '' ? numDv : dv;
           return {
             name,
             kind: 'select',
             required,
             label,
             options: opts,
-            defaultValue: rawDefault ?? opts[0]?.value,
+            defaultValue: finalDv,
           };
         }
       }

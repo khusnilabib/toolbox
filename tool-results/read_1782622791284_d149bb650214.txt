@@ -1,0 +1,548 @@
+     1→# 04 — Tech Stack
+     2→
+     3→> **Status:** 🟢 Approved
+     4→> **Document Owner:** Chief Architect
+     5→> **Last Updated:** 2026-06-28
+     6→> **Revision:** 1.2.0
+     7→> **Implements:** LOCK-02 (Browser-First), LOCK-04 (Modular), LOCK-06 (Database Optional), LOCK-09 (AI Discipline); EC-08 (Security by Default), EC-12 (Enterprise Readiness); PC-10 (Product Scalability via metadata-first dependencies)
+     8→
+     9→---
+    10→
+    11→## 1. Purpose
+    12→
+    13→This Tech Stack document defines every technology choice in [PROJECT_NAME] and the rationale behind it. It operationalizes the Architectural Locks in `00_Project_Charter` §3 with concrete tools, libraries, and services. It also defines the **Dependency Policy** that governs future technology additions and the **Upgrade Path** for each choice as the platform scales from Phase 1 ($0 budget) to Phase 4 (revenue-funded).
+    14→
+    15→This document is the authoritative reference for "what technology do we use and why." Engineers consulting this doc should never need to ask "why did we choose X over Y?" — the rationale is recorded here. New dependencies cannot be introduced without amending this document and getting Chief Architect approval (LOCK-09).
+    16→
+    17→The stack is deliberately conservative. We favor mature, well-maintained, free-tier-friendly technologies over novelty. Every choice must satisfy three filters: (1) does it serve an Architectural Lock? (2) does it have a viable free tier through Phase 1? (3) does it have a credible upgrade path should we outgrow the free tier? Technologies failing any filter are rejected.
+    18→
+    19→## 2. Scope
+    20→
+    21→### 2.1 In Scope
+    22→
+    23→- All programming languages, frameworks, libraries, and services used in the platform.
+    24→- Browser-side technologies enabling LOCK-02 (Canvas, Web Workers, WASM, etc.).
+    25→- Server-side technologies for Identity, Billing, Analytics, Platform Ops contexts.
+    26→- Build tooling, package management, testing frameworks.
+    27→- Free-tier analysis and upgrade triggers for each external service.
+    28→- Dependency policy: how new dependencies are proposed, evaluated, and adopted.
+    29→
+    30→### 2.2 Out of Scope
+    31→
+    32→- Specific code patterns and conventions → `08_CodingStandards`.
+    33→- Folder and file organization → `05_ProjectStructure`, `07_FolderStructure`.
+    34→- Deployment pipeline configuration → `24_DeploymentGuide`.
+    35→- Specific tool implementations (e.g., which image processing library a particular tool uses) → `13_FBRD` per-tool specs; this doc lists approved libraries.
+    36→
+    37→## 3. Architectural Decisions
+    38→
+    39→### AD-01 — Next.js 15+ App Router as the Unified Framework
+    40→
+    41→**Context.** The platform needs SSR/SSG for SEO (LOCK-08), Edge runtime for performance, API routes for server-side tools, and a component model for the Tool Engine UI. Using separate frameworks (e.g., Vite for SPA + Express for API) fragments the codebase and complicates deployment.
+    42→
+    43→**Decision.** Adopt Next.js 15+ with App Router as the single application framework. It provides:
+    44→- **Edge Runtime** for tool landing pages and middleware (LOCK-02 performance).
+    45→- **Node.js Runtime** for server-side tools and admin actions.
+    46→- **Server Components** for SEO-friendly initial render.
+    47→- **API Routes** for server-side tool endpoints.
+    48→- **File-based routing** that maps naturally to the tool registry (LOCK-05).
+    49→
+    50→**Consequences.**
+    51→- ✅ One framework to learn; one deployment target.
+    52→- ✅ Edge + Node runtimes available without separate config.
+    53→- ✅ Built-in code splitting supports lazy tool loading (LOCK-04).
+    54→- ⚠️ Next.js version upgrades require care; major versions can break patterns.
+    55→- ⚠️ Some libraries are incompatible with Edge Runtime; documented per-tool.
+    56→
+    57→**Implements:** LOCK-02 (Edge Runtime for browser-first page delivery), LOCK-05 (file-based routing aligns with registry).
+    58→
+    59→### AD-02 — TypeScript Strict Mode End-to-End
+    60→
+    61→**Context.** The platform will scale to 1,000+ tools, each with its own manifest and stages. Without strict typing, runtime type errors will scale linearly with tool count, becoming unmaintainable.
+    62→
+    63→**Decision.** TypeScript 5+ with `strict: true` enabled. No `any` types allowed (ESLint-enforced). Every IO boundary (request, response, manifest, stage input/output) validated with Zod schemas that produce typed outputs.
+    64→
+    65→**Consequences.**
+    66→- ✅ Type errors caught at compile time, not runtime.
+    67→- ✅ Tool manifests are statically verifiable before registry codegen.
+    68→- ✅ Refactoring across 1,000+ tools is feasible with type-checked find/replace.
+    69→- ⚠️ Slightly more verbose code; justified by maintainability.
+    70→
+    71→**Implements:** Type safety end-to-end standard (`00_Project_Charter` §6.1).
+    72→
+    73→### AD-03 — Supabase for Identity, Database, and Storage
+    74→
+    75→**Context.** The platform needs Postgres (relational integrity for users, history, content), auth (OAuth + email), and file storage (server-side tool uploads, media assets). Three separate services would triple integration cost.
+    76→
+    77→**Decision.** Adopt Supabase (free tier) as the unified backend for:
+    78→- **Postgres database** — all persistent data across bounded contexts (`03_DDD`).
+    79→- **Auth** — email/password, OAuth (Google, GitHub), JWT-based sessions.
+    80→- **Storage** — server-side tool file uploads (temporary bucket, 1h TTL), media assets for Content Context.
+    81→
+    82→**Consequences.**
+    83→- ✅ One integration; one set of credentials; one dashboard.
+    84→- ✅ Row-Level Security (RLS) enforced at DB layer for defense-in-depth.
+    85→- ✅ Free tier covers Phase 1 (50k MAU, 500MB DB, 1GB storage).
+    86→- ⚠️ Vendor lock-in for auth; mitigated by Supabase's JWT standard (can migrate to Auth0/Clerk if needed).
+    87→- ⚠️ Free tier DB pauses after 1 week of inactivity; mitigated by scheduled pings.
+    88→
+    89→**Implements:** LOCK-06 (database optional — Tools Context doesn't use Supabase, only Identity/Content/Platform Ops/Billing/Analytics do).
+    90→
+    91→### AD-04 — Drizzle ORM for Type-Safe Database Access
+    92→
+    93→**Context.** Raw SQL loses type safety. Heavy ORMs (Prisma, TypeORM) add runtime overhead and complex migration workflows. The platform needs type-safe DB access that works in Edge Runtime (limited Node APIs).
+    94→
+    95→**Decision.** Adopt Drizzle ORM for all database access in the Infrastructure Layer. Drizzle provides:
+    96→- Type-safe schema definitions that match TypeScript types.
+    97→- SQL-like query builder (no magic; predictable SQL).
+    98→- Works in Edge Runtime (unlike Prisma's query engine).
+    99→- Migration files are plain SQL, reviewable in PRs.
+   100→
+   101→**Consequences.**
+   102→- ✅ Type safety from schema to query to result.
+   103→- ✅ Edge Runtime compatible.
+   104→- ✅ Migrations are version-controlled SQL, not auto-generated black boxes.
+   105→- ⚠️ More verbose than Prisma; explicit query writing required.
+   106→- ⚠️ Smaller community than Prisma; mitigated by excellent docs.
+   107→
+   108→**Implements:** LOCK-04 (modularity — Drizzle schemas defined per bounded context).
+   109→
+   110→### AD-05 — shadcn/ui for UI Components
+   111→
+   112→**Context.** Component libraries like MUI or Ant Design are heavy and opinionated. The platform needs a lightweight, accessible, customizable component system that aligns with the developer-first minimalism design (LOCK-10).
+   113→
+   114→**Decision.** Adopt shadcn/ui — a collection of copy-into-your-codebase components built on Radix UI primitives and Tailwind CSS. Components are owned (not depended upon), enabling full customization.
+   115→
+   116→**Consequences.**
+   117→- ✅ No version lock-in; components live in our codebase.
+   118→- ✅ Built on Radix UI (accessibility-first, WCAG compliant — supports `12_UDS`).
+   119→- ✅ Tailwind-based (aligns with `10_DesignSystem` token approach).
+   120→- ✅ Tree-shakeable — only used components are bundled.
+   121→- ⚠️ Updates require manual re-sync; mitigated by CLI tool.
+   122→
+   123→**Implements:** LOCK-10 (developer-first minimalism — clean, accessible, customizable).
+   124→
+   125→### AD-06 — Tailwind CSS for Styling
+   126→
+   127→**Context.** CSS-in-JS adds runtime overhead. Plain CSS lacks utility-first productivity. The platform needs a styling system that supports design tokens (LOCK-10) without runtime cost.
+   128→
+   129→**Decision.** Adopt Tailwind CSS 4+ for all styling. Design tokens (colors, spacing, typography) defined as CSS custom properties at the root, mapped to Tailwind theme extensions.
+   130→
+   131→**Consequences.**
+   132→- ✅ Zero runtime CSS-in-JS overhead.
+   133→- ✅ Token-driven theming enables light/dark mode (LOCK-10).
+   134→- ✅ Utility-first approach keeps styles colocated with components.
+   135→- ⚠️ Class names can get long; mitigated by component extraction.
+   136→
+   137→**Implements:** LOCK-10 (token-driven, dark/light ready).
+   138→
+   139→### AD-07 — Zod for Runtime Validation
+   140→
+   141→**Context.** TypeScript types exist only at compile time. Runtime data (user input, API responses, file metadata) needs validation. Without it, type mismatches cause runtime errors.
+   142→
+   143→**Decision.** Adopt Zod for all runtime validation. Every IO boundary (tool input, API request, manifest fields, form submissions) is validated with a Zod schema. Zod schemas are the single source of truth; TypeScript types are inferred from them.
+   144→
+   145→**Consequences.**
+   146→- ✅ Single source of truth — no drift between types and validators.
+   147→- ✅ Tool manifests are runtime-verifiable.
+   148→- ✅ Form validation integrates via react-hook-form's Zod resolver.
+   149→- ⚠️ Small runtime cost; negligible for validation-heavy use cases.
+   150→
+   151→**Implements:** Type safety end-to-end standard.
+   152→
+   153→### AD-08 — React Hook Form + Zod for Forms
+   154→
+   155→**Context.** Tool configuration forms (e.g., image resize dimensions, PDF merge order) need performant, type-safe form management. Controlled React state is too slow for complex forms.
+   156→
+   157→**Decision.** Adopt React Hook Form for all form state, integrated with Zod via `@hookform/resolvers/zod`. Uncontrolled by default; re-renders minimized.
+   158→
+   159→**Consequences.**
+   160→- ✅ Performant forms with minimal re-renders.
+   161→- ✅ Type-safe form values via Zod schema inference.
+   162→- ✅ Works with shadcn/ui form components.
+   163→
+   164→**Implements:** LOCK-03 (Tool Engine input stage uses forms for configuration).
+   165→
+   166→### AD-09 — Zustand for Client State
+   167→
+   168→**Context.** Some client state (theme, recent tools, in-progress tool state) doesn't belong in URL or server. Redux is overkill; React Context causes re-render storms.
+   169→
+   170→**Decision.** Adopt Zustand for global client state. Stores are small, typed, and composable. Server state (history, favorites) handled separately by TanStack Query (Phase 2+).
+   171→
+   172→**Consequences.**
+   173→- ✅ Minimal API; small bundle.
+   174→- ✅ No provider wrapper needed.
+   175→- ✅ Selectors prevent unnecessary re-renders.
+   176→
+   177→**Implements:** LOCK-04 (state management is local to modules where possible).
+   178→
+   179→### AD-10 — Vercel for Hosting and Edge Delivery
+   180→
+   181→**Context.** The platform needs global CDN, Edge functions, serverless functions, and seamless Next.js integration. Separate providers for each would be operationally complex.
+   182→
+   183→**Decision.** Adopt Vercel as the unified hosting platform. Free tier covers Phase 1 (100GB bandwidth, unlimited Edge requests, 100GB-hours serverless).
+   184→
+   185→**Consequences.**
+   186→- ✅ Zero-config Next.js deployment.
+   187→- ✅ Edge Network included.
+   188→- ✅ Preview deployments per PR (improves review workflow).
+   189→- ⚠️ Vendor lock-in for hosting config; mitigated by Next.js being portable to Netlify/self-host if needed.
+   190→
+   191→**Implements:** AD-06 in `02_SAD` (Edge-first deployment topology).
+   192→
+   193→### AD-11 — pnpm as Package Manager
+   194→
+   195→**Context.** npm and yarn have inefficiencies in monorepo and large dependency trees. The platform will have many shared packages and tool modules.
+   196→
+   197→**Decision.** Adopt pnpm as the package manager. Uses a content-addressable store, saving disk space and install time. Strict about peer dependencies (prevents phantom deps).
+   198→
+   199→**Consequences.**
+   200→- ✅ Faster installs, less disk usage.
+   201→- ✅ Strict peer dep enforcement prevents subtle bugs.
+   202→- ✅ First-class monorepo support via workspaces.
+   203→- ⚠️ Slightly different node_modules layout; rare compatibility issues.
+   204→
+   205→**Implements:** LOCK-04 (modularity — pnpm workspaces enable clean package boundaries).
+   206→
+   207→## 4. Design Principles
+   208→
+   209→### P1 — Free-Tier-First
+   210→Every external service MUST have a viable free tier that covers Phase 1 (10k MAU, 30 tools). Paid services are introduced only when free tier is provably inadequate, documented in `01_BRD` §8.1.
+   211→
+   212→### P2 — Minimal Dependencies
+   213→Every dependency is a future maintenance liability. Reject dependencies that can be replaced with <100 lines of code. Prefer standard Web APIs over libraries where possible.
+   214→
+   215→### P3 — Type Safety End-to-End
+   216→TypeScript strict + Zod runtime validation at every IO boundary. No `any`. No untyped API responses.
+   217→
+   218→### P4 — Edge-Compatible Where Possible
+   219→Code that runs in Edge Runtime (auth middleware, page rendering) MUST avoid Node-only APIs. This constraint is documented per-module.
+   220→
+   221→### P5 — Browser-Native First
+   222→For browser-side tools (LOCK-02), prefer native Web APIs (Canvas, Web Crypto, File System Access) over libraries. Use libraries only when native APIs are insufficient (e.g., pdf-lib for PDF manipulation).
+   223→
+   224→### P6 — Upgrade Path Documented
+   225→Every external service dependency MUST have a documented upgrade path. "We'll figure it out when we hit the limit" is not acceptable. *Implements EC-12 (Enterprise Readiness).*
+   226→
+   227→## 5. Technology Stack (Detailed)
+   228→
+   229→### 5.1 Frontend
+   230→
+   231→| Layer | Technology | Version | Purpose | Free Tier Adequate Through |
+   232→|-------|-----------|---------|---------|---------------------------|
+   233→| Framework | Next.js | 15+ | App Router, SSR/SSG, Edge Runtime | Indefinite (open source) |
+   234→| Language | TypeScript | 5+ | Type safety | Indefinite |
+   235→| Styling | Tailwind CSS | 4+ | Utility-first styling, token theming | Indefinite |
+   236→| Components | shadcn/ui | latest | Accessible component library | Indefinite (copy-in) |
+   237→| Forms | React Hook Form | 7+ | Performant form state | Indefinite |
+   238→| Validation | Zod | 3+ | Runtime schema validation | Indefinite |
+   239→| State | Zustand | 4+ | Client global state | Indefinite |
+   240→| Icons | lucide-react | latest | Icon set (consistent with shadcn/ui) | Indefinite |
+   241→
+   242→### 5.2 Backend
+   243→
+   244→| Layer | Technology | Version | Purpose | Free Tier Adequate Through |
+   245→|-------|-----------|---------|---------|---------------------------|
+   246→| Database | Supabase Postgres | latest | Persistent storage across contexts | ~50k MAU / 500MB |
+   247→| Auth | Supabase Auth | latest | Email + OAuth, JWT sessions | ~50k MAU |
+   248→| Storage | Supabase Storage | latest | Server-side tool uploads, media | 1GB |
+   249→| ORM | Drizzle ORM | latest | Type-safe DB access | Indefinite |
+   250→| Hosting | Vercel | latest | Edge + Serverless deployment | ~100GB bandwidth |
+   251→| Package Mgr | pnpm | 9+ | Dependency management | Indefinite |
+   252→
+   253→### 5.3 Browser-Side Tool Libraries (LOCK-02)
+   254→
+   255→These libraries enable browser-first processing. Each is evaluated for: bundle size, maintenance activity, and Edge/WASM compatibility.
+   256→
+   257→| Library | Purpose | Bundle Size | Used By |
+   258→|---------|---------|-------------|---------|
+   259→| browser-image-compression | Image compression | ~30KB | Image Compress tool |
+   260→| canvas-image-resize | Image resize via Canvas | native (0KB) | Image Resize tool |
+   261→| pdf-lib | PDF merge/split/watermark | ~300KB | PDF tools |
+   262→| qrcode | QR code generation | ~50KB | QR Generator tool |
+   263→| tesseract.js | OCR (browser fallback) | ~2MB + WASM | OCR tool (small files) |
+   264→| crypto-js (or native Web Crypto) | Hashing | native (0KB) | Hash Generator tool |
+   265→| marked | Markdown rendering | ~30KB | Markdown Preview tool |
+   266→| json5 / native JSON | JSON parsing/formatting | native (0KB) | JSON Formatter tool |
+   267→| MediaPipe Face Detection | Face detection for passport photo | WASM, lazy-loaded | Passport Photo tool |
+   268→
+   269→**Library selection criteria:**
+   270→1. Must work in browser without server.
+   271→2. Must be tree-shakeable (or lazy-loaded if large).
+   272→3. Must have TypeScript types.
+   273→4. Must be actively maintained (commit within last 6 months).
+   274→5. Must have permissive license (MIT, Apache, BSD).
+   275→
+   276→### 5.4 Server-Side Libraries (Phase 1+)
+   277→
+   278→| Library | Purpose | Used By |
+   279→|---------|---------|---------|
+   280→| stripe | Payment processing | Billing Context (Phase 2+) |
+   281→| resend | Transactional email | Identity Context (email verification, password reset) |
+   282→| posthog | Analytics (optional; alternative to custom) | Analytics Context (Phase 2+) |
+   283→| sharp | Server-side image processing | Server-side image tools (Phase 2+) |
+   284→| tesseract | Server-side OCR (native, faster than tesseract.js) | OCR tool (server-side fallback) |
+   285→
+   286→### 5.5 Development Tooling
+   287→
+   288→| Tool | Purpose |
+   289→|------|---------|
+   290→| ESLint | Linting, including custom rules for boundary enforcement (LOCK-04) |
+   291→| Prettier | Code formatting |
+   292→| Husky | Git hooks (pre-commit lint, pre-push test) |
+   293→| lint-staged | Run linters only on staged files |
+   294→| Vitest | Unit testing (fast, ESM-native) |
+   295→| Playwright | E2E testing |
+   296→| Testing Library | Component testing |
+   297→| Storybook | Component development (optional, Phase 2+) |
+   298→| GitHub Actions | CI/CD |
+   299→| Renovate | Dependency update automation |
+   300→
+   301→### 5.6 Observability (Phase 1: Minimal)
+   302→
+   303→| Tool | Purpose | Free Tier |
+   304→|------|---------|-----------|
+   305→| Vercel Analytics | Web Vitals + page views | Generous free tier |
+   306→| Vercel Logs | Serverless function logs | Free tier (limited retention) |
+   307→| Sentry | Error tracking | 5k errors/month free |
+   308→| Axiom (optional) | Structured log aggregation | 1GB/month free |
+   309→
+   310→Phase 2+: OpenTelemetry for distributed tracing; Posthog or Plausible for product analytics.
+   311→
+   312→## 6. Dependency Policy
+   313→
+   314→### 6.1 Adding a New Dependency
+   315→
+   316→Any new dependency (npm package or external service) requires:
+   317→
+   318→1. **Justification written in PR description** answering:
+   319→   - What problem does this solve?
+   320→   - Why can't it be solved with existing deps or <100 lines of code?
+   321→   - What is the bundle size / cost impact?
+   322→   - What is the free-tier adequacy?
+   323→   - What is the upgrade path?
+   324→
+   325→2. **Approval from Chief Architect.** LOCK-09 mandates no unapproved dependencies.
+   326→
+   327→3. **Update to this document** (`04_TechStack` §5) recording the addition.
+   328→
+   329→4. **Update to `04_TechStack` revision history** noting the addition.
+   330→
+   331→### 6.2 Removing a Dependency
+   332→
+   333→Removing a dependency is encouraged when:
+   334→- It's used by only one tool and can be inlined.
+   335→- It's unmaintained (no commits in 12+ months).
+   336→- A native Web API now covers its functionality.
+   337→- It's been replaced by a more capable existing dependency.
+   338→
+   339→Removal PRs are fast-tracked; no Chief Architect approval needed.
+   340→
+   341→### 6.3 Versioning Strategy
+   342→
+   343→- **Patch updates** (e.g., 1.2.3 → 1.2.4): auto-merged by Renovate.
+   344→- **Minor updates** (e.g., 1.2.3 → 1.3.0): auto-merged if tests pass.
+   345→- **Major updates** (e.g., 1.2.3 → 2.0.0): manual review required; migration plan documented in PR.
+   346→- **Next.js major updates**: dedicated upgrade PR with full regression test.
+   347→
+   348→### 6.4 Security Vulnerabilities
+   349→
+   350→- `pnpm audit` runs in CI on every PR.
+   351→- Critical vulnerabilities block merge.
+   352→- High vulnerabilities must be addressed within 7 days.
+   353→- Medium/Low vulnerabilities tracked in backlog.
+   354→
+   355→## 7. Free-Tier Analysis & Upgrade Triggers
+   356→
+   357→| Service | Free Tier Limit | Trigger to Upgrade | Upgrade Cost | Phase |
+   358→|---------|----------------|-------------------|--------------|-------|
+   359→| Vercel Hobby | 100GB bandwidth/mo | Sustained >80GB for 2 months | $20/mo (Pro) | Phase 2 |
+   360→| Vercel Serverless | 100GB-hours/mo | Sustained >80GB-hrs for 2 months | included in Pro | Phase 2 |
+   361→| Supabase Free | 500MB DB, 50k MAU, 1GB storage | DB >400MB or MAU >40k | $25/mo (Pro) | Phase 2 |
+   362→| Sentry Free | 5k events/mo | >4k events/mo sustained | $26/mo (Team) | Phase 2 |
+   363→| GitHub Actions | 2000 min/mo private repos | >1800 min/mo sustained | $4/user/mo | Phase 3 |
+   364→| Stripe | No monthly fee; ~3% per transaction | N/A (pay-per-use) | per-transaction | Phase 2 |
+   365→
+   366→### Monitoring Usage
+   367→
+   368→- Vercel dashboard checked weekly during Phase 1.
+   369→- Supabase dashboard checked weekly; DB size especially.
+   370→- Sentry event volume checked monthly.
+   371→- Alerts configured at 80% of any free tier limit.
+   372→
+   373→### Contingency: Hitting Free Tier Limits
+   374→
+   375→If a free tier limit is hit before revenue justifies upgrade:
+   376→1. **Optimize first.** Identify waste (large images, unnecessary API calls, redundant queries).
+   377→2. **Cache more aggressively.** Move more to Edge cache, lengthen TTLs.
+   378→3. **If still over:** Chief Architect approves paid tier; cost tracked in `01_BRD` §8.1.
+   379→
+   380→## 8. Browser-First Technology Choices (LOCK-02)
+   381→
+   382→This section details the Web APIs and patterns that make browser-first processing possible. Tool authors consult this section when choosing how to implement a tool's Processing stage.
+   383→
+   384→### 8.1 Image Processing
+   385→
+   386→- **Canvas API** — resize, crop, format convert (PNG/JPEG/WebP). Native, zero bundle.
+   387→- **OffscreenCanvas** — image processing in Web Worker, doesn't block UI.
+   388→- **createImageBitmap** — fast image decoding from Blob/File.
+   389→- **browser-image-compression** — library for compression with quality control.
+   390→
+   391→### 8.2 PDF Processing
+   392→
+   393→- **pdf-lib** — pure JS PDF creation, modification, merge, split, watermark. ~300KB but lazy-loaded only on PDF tool routes.
+   394→
+   395→### 8.3 Cryptography
+   396→
+   397→- **Web Crypto API** — SHA-1, SHA-256, SHA-384, SHA-512, AES, HMAC. Native, zero bundle.
+   398→- **crypto-js** — fallback for algorithms not in Web Crypto (MD5, RIPEMD). Only if needed.
+   399→
+   400→### 8.4 File System Access
+   401→
+   402→- **File System Access API** — direct file read/write on supported browsers (Chrome, Edge). Falls back to download prompt on Safari/Firefox.
+   403→- **IndexedDB** — store tool history client-side; persists across sessions.
+   404→- **Blob URLs** — preview generated files without server round-trip.
+   405→
+   406→### 8.5 Concurrency
+   407→
+   408→- **Web Workers** — offload heavy processing (image manipulation, PDF rendering) from main thread.
+   409→- **OffscreenCanvas** — Canvas operations in Worker.
+   410→- **Comlink** — thin wrapper simplifying Worker message passing.
+   411→
+   412→### 8.6 WASM (Phase 2+)
+   413→
+   414→- **Tesseract.js** — OCR via WASM. Lazy-loaded only when OCR tool is used.
+   415→- **pdfium** — PDF rendering via WASM (alternative to pdf-lib for some operations).
+   416→- **FFmpeg.wasm** — video transcoding (Phase 3+).
+   417→
+   418→## 9. Standards
+   419→
+   420→### 9.1 TypeScript Configuration
+   421→
+   422→- `strict: true`
+   423→- `noUncheckedIndexedAccess: true`
+   424→- `noImplicitOverride: true`
+   425→- `exactOptionalPropertyTypes: true`
+   426→- `noFallthroughCasesInSwitch: true`
+   427→- Path aliases: `@/*` → `src/*`, `@tools/*` → `src/tools/*`, `@shared/*` → `src/shared/*`
+   428→
+   429→### 9.2 ESLint Configuration
+   430→
+   431→- `next/core-web-vitals` baseline.
+   432→- `eslint-plugin-drizzle` for DB query linting.
+   433→- Custom rule: `no-restricted-imports` enforces layer boundaries (LOCK-04).
+   434→- Custom rule: `no-any` rejects `any` type usage.
+   435→- Custom rule: `no-console` in production code (use structured logger).
+   436→
+   437→### 9.3 Prettier Configuration
+   438→
+   439→- Print width: 100
+   440→- Semi: true
+   441→- Single quote: true
+   442→- Trailing comma: all
+   443→- Tab width: 2
+   444→
+   445→### 9.4 Package Version Pinning
+   446→
+   447→- `package.json` uses caret ranges (`^1.2.3`) for non-major updates.
+   448→- `pnpm-lock.yaml` committed to repo for reproducible installs.
+   449→- Renovate keeps ranges up to date; humans review major bumps.
+   450→
+   451→## 10. Best Practices
+   452→
+   453→### 10.1 When Choosing a Library for a Tool
+   454→1. Check if a native Web API solves it (§8).
+   455→2. If not, search npm for maintained libraries with TypeScript types.
+   456→3. Evaluate bundle size; prefer <100KB. Lazy-load anything >200KB.
+   457→4. Verify license is permissive (MIT/Apache/BSD).
+   458→5. Add to §5.3 table in this document via PR.
+   459→
+   460→### 10.2 When Hitting Edge Runtime Limitations
+   461→- Edge Runtime doesn't support: Node `fs`, `crypto` (use Web Crypto), `Buffer` (use Uint8Array), some `process` APIs.
+   462→- If a tool needs Node APIs, declare `execution: 'server'` (LOCK-02 decision matrix in `02_SAD` §AD-04).
+   463→- Never silently fall back to Node runtime; explicit declaration required.
+   464→
+   465→### 10.3 When Upgrading Next.js
+   466→- Read the upgrade guide before starting.
+   467→- Create a dedicated branch; run full test suite.
+   468→- Manually test: every tool landing page, every tool workflow, admin panel, auth flows.
+   469→- Document any breaking changes in `19_DevelopmentGuideline`.
+   470→
+   471→### 10.4 When a Library Becomes Unmaintained
+   472→- Add to "deprecated" list in this doc.
+   473→- Open issue in backlog to find replacement.
+   474→- If critical, prioritize replacement in next sprint.
+   475→- Never remove without a replacement ready.
+   476→
+   477→## 11. Future Scalability
+   478→
+   479→### 11.1 Scaling the Stack
+   480→- **Phase 2:** Add Stripe (billing), Resend (email), Posthog (analytics).
+   481→- **Phase 3:** Add OpenTelemetry, Axiom (logs), Cloudflare Workers (heavy compute offload).
+   482→- **Phase 4:** Add multi-region Supabase read replicas; consider dedicated DB for Analytics Context.
+   483→
+   484→### 11.2 Replacing Components
+   485→The architecture allows swapping individual stack components without restructuring:
+   486→- **Supabase → Neon/PlanetScale:** Drizzle schemas portable; only connection config changes.
+   487→- **Vercel → self-host:** Next.js is portable; Dockerfile + Node server.
+   488→- **shadcn/ui → custom:** Components are owned; gradual replacement possible.
+   489→
+   490→### 11.3 Adding WASM-Heavy Tools (Phase 3+)
+   491→- Video transcoding, 3D model processing, audio manipulation.
+   492→- WASM modules lazy-loaded; never bundled into main chunk.
+   493→- Each WASM tool documents its memory requirements and browser support.
+   494→
+   495→### 11.4 Mobile App (Phase 3+)
+   496→- If pursued: React Native + Expo, sharing TypeScript types and Zod schemas with web.
+   497→- Reuses Identity Context (Supabase Auth) and Content Context API.
+   498→- Tool Engine lifecycle portable; UI rebuilt natively.
+   499→
+   500→## 12. Dependencies
+   501→
+   502→### 12.1 Document Dependencies
+   503→- Depends on `00_Project_Charter` §3, §4 — LOCKs and ECs that mandate technology choices.
+   504→- Depends on `02_SAD` — architectural decisions (AD-01 through AD-06) that this stack implements.
+   505→- Depends on `03_DDD` — bounded contexts that own schemas (Drizzle schemas per context).
+   506→- `05_ProjectStructure` — folder layout that hosts these technologies.
+   507→- `06_ArchitectureDecisionRecords` — records AD-01 through AD-11 as ADRs.
+   508→- `08_CodingStandards` — coding rules enforced via ESLint configured here.
+   509→- `16_DatabaseDesign` — Drizzle schema definitions per context.
+   510→- `24_DeploymentGuide` — Vercel deployment configuration.
+   511→
+   512→### 12.2 External Dependencies
+   513→- All technologies listed in §5.
+   514→- Free-tier relationships with Vercel, Supabase, Sentry, GitHub.
+   515→
+   516→### 12.3 Assumptions
+   517→- Vercel and Supabase free tiers remain available and generous through Phase 1.
+   518→- Next.js 15+ remains actively maintained and backwards-compatible at minor version.
+   519→- TypeScript 5+ remains the standard for type-safe JS development.
+   520→- Web APIs (Canvas, Web Crypto, OffscreenCanvas) remain stable and broadly supported.
+   521→
+   522→## 13. Revision History
+   523→
+   524→| Revision | Date | Author | Change |
+   525→|----------|------|--------|--------|
+   526→| 1.0.0 | 2026-06-28 | Chief Architect | Initial Tech Stack. Defined Next.js 15+, TypeScript strict, Supabase, Drizzle, shadcn/ui, Tailwind, Zod, RHF, Zustand, Vercel, pnpm. Documented browser-first libraries, dependency policy, free-tier analysis. |
+   527→| 1.1.0 | 2026-06-28 | Chief Architect | Linked stack choices to EC-08 (Security by Default) and EC-12 (Enterprise Readiness). Added explicit upgrade path documentation principle. Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords`. |
+   528→| 1.2.0 | 2026-06-28 | Chief Architect | Linked tech stack to PC-10 (Product Scalability — metadata-first dependencies). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
+   529→
+   530→## 14. Cross References
+   531→
+   532→- `00_Project_Charter` §3, §4, §5 — LOCKs, ECs, and PCs implemented by this stack.
+   533→- `02_SAD` §3 — Architectural decisions this stack operationalizes.
+   534→- `03_DDD` §5 — Bounded contexts whose schemas use Drizzle.
+   535→- `05_ProjectStructure` — Folder layout for these technologies.
+   536→- `06_ArchitectureDecisionRecords` — Permanent record of all tech stack ADs.
+   537→- `11_ProductConstitution` — Expands PC-10 which this stack supports.
+   538→- `12_ToolManifestSpecification` — Schema validated via Zod (AD-07).
+   539→- `07_FolderStructure` — Granular file conventions.
+   540→- `08_CodingStandards` — Coding rules enforced via ESLint here.
+   541→- `10_DesignSystem` — Design tokens implemented via Tailwind.
+   542→- `13_FBRD` — Tool manifest schema validated via Zod.
+   543→- `14_ACD` — Reusable components built on shadcn/ui.
+   544→- `16_DatabaseDesign` — Drizzle schemas per context.
+   545→- `17_APIConvention` — API routes implemented via Next.js API handlers.
+   546→- `24_DeploymentGuide` — Vercel deployment configuration.
+   547→- `25_AI_Guideline` — Constrains AI's modification of this stack (LOCK-09, EC-11).
+   548→

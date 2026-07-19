@@ -1,0 +1,592 @@
+     1→# 02 — Software Architecture Document (SAD)
+     2→
+     3→> **Status:** 🟢 Approved
+     4→> **Document Owner:** Chief Architect
+     5→> **Last Updated:** 2026-06-28
+     6→> **Revision:** 1.2.0
+     7→> **Implements:** LOCK-02 (Browser-First), LOCK-03 (Tool Engine), LOCK-04 (Modular Architecture), LOCK-05 (Plugin-Ready), LOCK-06 (Database Optional); EC-05 (Progressive Enhancement), EC-07 (Performance Budget), EC-08 (Security by Default); PC-02 (Product Contract), PC-03 (Completion Standard), PC-05 (UX Consistency), PC-10 (Product Scalability)
+     8→
+     9→---
+    10→
+    11→## 1. Purpose
+    12→
+    13→This Software Architecture Document defines the technical architecture of [PROJECT_NAME] — a browser-first productivity ecosystem. It translates the Architectural Locks in `00_Project_Charter` §3 into concrete system structure: layers, components, data flow, deployment topology, and the cross-cutting mechanisms (Tool Engine, Registry, Graceful Degradation) that make the platform scalable from 30 tools to 1,000+ tools without major restructuring.
+    14→
+    15→This document is the authoritative technical reference. Every implementation choice — folder layout, file boundaries, server vs. client decisions, dependency choices — must trace back to a decision recorded here or in its companion documents (`03_DDD`, `04_TechStack`, `05_ProjectStructure`). When a future engineer asks "why is it built this way?", the answer lives in this SAD or in the Architectural Locks it implements.
+    16→
+    17→The SAD is deliberately technology-agnostic at the architectural level. Specific technology choices (Next.js, Supabase, Drizzle, etc.) are justified in `04_TechStack`. The SAD defines *the shape*; `04_TechStack` defines *the materials*; `05_ProjectStructure` defines *the floor plan*.
+    18→
+    19→## 2. Scope
+    20→
+    21→### 2.1 In Scope
+    22→
+    23→- Layered architecture definition (Presentation, Application, Domain, Infrastructure).
+    24→- The **Tool Engine** — the standardized lifecycle every tool follows (LOCK-03).
+    25→- The **Tool Registry** — the manifest-driven discovery system (LOCK-05).
+    26→- Browser-first vs. server-side decision matrix (LOCK-02).
+    27→- Graceful degradation strategy when database/services are unavailable (LOCK-06).
+    28→- Deployment topology (Vercel Edge + Supabase + browser).
+    29→- Cross-cutting concerns: authentication, RBAC, observability, error handling.
+    30→- Scalability strategy from 30 to 1,000+ tools.
+    31→
+    32→### 2.2 Out of Scope
+    33→
+    34→- Specific database schema and table definitions → `13_DatabaseDesign`.
+    35→- Specific API endpoint definitions and request/response shapes → `14_APIConvention`.
+    36→- Specific folder and file naming conventions → `06_FolderStructure`.
+    37→- Specific UI component library and design tokens → `09_DesignSystem`, `11_ACD`.
+    38→- Specific deployment CI/CD pipeline → `21_DeploymentGuide`.
+    39→- Specific testing strategy and tooling → `20_TestingStrategy`.
+    40→
+    41→## 3. Architectural Decisions
+    42→
+    43→This section records the architectural decisions (ADs) that shape the system. Each decision includes context, decision, consequences, and the lock(s) it implements.
+    44→
+    45→### AD-01 — Layered Architecture with Strict Boundary Enforcement
+    46→
+    47→**Context.** The platform must support hundreds to thousands of tools, each independently developed, while sharing common infrastructure (auth, routing, SEO, admin). Without strict layering, tools tend to reach into infrastructure directly, creating coupling that makes future changes expensive.
+    48→
+    49→**Decision.** The system is organized into four layers with strict dependency rules:
+    50→
+    51→```
+    52→┌─────────────────────────────────────────────────────────┐
+    53→│  Presentation Layer  (React components, pages, layouts)  │
+    54→│  ↓ depends on                                             │
+    55→├─────────────────────────────────────────────────────────┤
+    56→│  Application Layer    (Tool Engine, hooks, server actions)│
+    57→│  ↓ depends on                                             │
+    58→├─────────────────────────────────────────────────────────┤
+    59→│  Domain Layer         (Bounded contexts, entities, schemas)│
+    60→│  ↓ depends on                                             │
+    61→├─────────────────────────────────────────────────────────┤
+    62→│  Infrastructure Layer (DB, Auth, Storage, External APIs) │
+    63→└─────────────────────────────────────────────────────────┘
+    64→```
+    65→
+    66→**Dependency rules:**
+    67→- Presentation → Application → Domain → Infrastructure (one-way).
+    68→- A tool's Presentation Layer MUST NOT import from Infrastructure directly.
+    69→- A tool's Domain Layer MUST NOT import React or Next.js.
+    70→- Infrastructure Layer is the ONLY layer allowed to talk to databases, external APIs, and file systems.
+    71→
+    72→**Consequences.**
+    73→- ✅ Tools remain isolated; infrastructure changes don't ripple into tool code.
+    74→- ✅ Domain logic is unit-testable without React/Next.js.
+    75→- ⚠️ Slightly more files per feature (Presentation + Application + Domain split).
+    76→- ⚠️ Requires discipline in code review to enforce boundaries.
+    77→
+    78→**Implements:** LOCK-04 (Modular Architecture), EC-02 (One Source of Truth — each layer owns its concerns).
+    79→
+    80→### AD-02 — Tool Engine as Standardized Lifecycle Pipeline
+    81→
+    82→**Context.** LOCK-03 mandates that every tool follows the lifecycle: Input → Validation → Processing → Preview → Download → History → Share. Without a typed, reusable engine, each tool reimplements this lifecycle inconsistently, leading to divergent UX and duplicated logic (violating LOCK-09).
+    83→
+    84→**Decision.** Define a `ToolEngine<TInput, TOutput>` abstraction in the Application Layer that orchestrates the lifecycle. Every tool implements a manifest describing its lifecycle stages; the engine executes them.
+    85→
+    86→```
+    87→ToolEngine<TInput, TOutput>
+    88→├── InputStage      — accepts raw input (file, text, params)
+    89→├── ValidationStage — runs Zod schema validation
+    90→├── ProcessingStage — runs the tool's core logic (browser-side or server-side)
+    91→├── PreviewStage    — renders result for user inspection
+    92→├── DownloadStage   — packages result for download (may trigger registration gate)
+    93→├── HistoryStage    — optional; persists to user history if authenticated
+    94→└── ShareStage      — optional; generates shareable link/QR
+    95→```
+    96→
+    97→Each stage is a typed function `(input, context) => output | error`. Stages are composable: a tool can omit History and Share, but MUST implement Input, Validation, Processing, Preview, and Download.
+    98→
+    99→**Consequences.**
+   100→- ✅ Consistent UX across all tools.
+   101→- ✅ Adding a new tool = defining a manifest + stage implementations; no infrastructure code.
+   102→- ✅ Cross-cutting features (analytics, error reporting, history) added once at engine level.
+   103→- ⚠️ Some tools with exotic workflows may need escape hatches; the engine provides extension points.
+   104→
+   105→**Implements:** LOCK-03 (Tool Engine Philosophy), EC-04 (Tool Template Standard), EC-09 (Testing — each stage is unit-testable).
+   106→
+   107→### AD-03 — Tool Registry for Auto-Discovery
+   108→
+   109→**Context.** LOCK-05 mandates plugin-ready architecture with auto-discovery. With 1,000+ tools, manually wiring routes, nav entries, SEO metadata, and admin references per tool does not scale.
+   110→
+   111→**Decision.** Each tool exports a `ToolManifest` object. A build-time registry harvests all manifests and generates:
+   112→- Route entries (`/tools/[category]/[slug]`)
+   113→- Navigation entries (category lists, search index)
+   114→- SEO metadata map
+   115→- Admin tool inventory
+   116→- Sitemap entries
+   117→
+   118→```
+   119→ToolManifest {
+   120→  slug: string                      // URL-safe identifier
+   121→  category: ToolCategory            // image | pdf | developer | text | ...
+   122→  title: string                     // "Image Resizer"
+   123→  description: string               // SEO meta description
+   124→  lifecycle: FeatureLifecycle       // Concept | Planned | ... | Archived (LOCK-12)
+   125→  execution: 'browser' | 'server'   // LOCK-02 classification
+   126→  inputSchema: ZodSchema            // Validation stage input
+   127→  outputSchema: ZodSchema           // Preview/download output
+   128→  stages: ToolStages                // Implementations of each lifecycle stage
+   129→  seo: ToolSEOConfig                // Per LOCK-08
+   130→  relatedTools: string[]            // Slugs of related tools (internal linking)
+   131→  faq: FAQItem[]                    // Per LOCK-08
+   132→}
+   133→```
+   134→
+   135→**Consequences.**
+   136→- ✅ Adding a tool = creating a folder with `manifest.ts` + stage files; registry handles the rest.
+   137→- ✅ Navigation, sitemap, SEO, and admin inventory never go stale.
+   138→- ✅ Foundation for Phase 4 plugin marketplace: third-party manifests follow the same schema.
+   139→- ⚠️ Requires TypeScript build-time codegen; documented in `05_ProjectStructure` §Registry Pattern.
+   140→
+   141→**Implements:** LOCK-05 (Plugin-Ready Architecture), LOCK-08 (SEO Constitution), LOCK-12 (Feature Lifecycle), EC-01 (Documentation — manifest is the documented contract).
+   142→
+   143→### AD-04 — Browser-First by Default, Server-Side by Exception
+   144→
+   145→**Context.** LOCK-02 mandates browser-side processing wherever technically feasible. The architecture must make the browser the default execution target and require explicit justification for server-side processing.
+   146→
+   147→**Decision.** Every tool manifest declares `execution: 'browser' | 'server'`. The Tool Engine routes accordingly. The decision matrix below is the authoritative classification:
+   148→
+   149→| Tool Type | Default Execution | Rationale |
+   150→|-----------|------------------|-----------|
+   151→| Image resize / compress / crop / format convert | Browser | Canvas API + OffscreenCanvas; large files fit in memory |
+   152→| Passport photo / background removal | Browser | Canvas + MediaPipe FaceDetection WASM |
+   153→| PDF merge / split / rotate / watermark | Browser | pdf-lib (pure JS) |
+   154→| PDF compress | Browser (small files) / Server (large) | pdf-lib for restructuring; server-side for aggressive compression |
+   155→| PDF OCR | Server | Tesseract WASM is slow on large PDFs; server uses sharp + tesseract |
+   156→| Text tools (formatter, word counter, case converter) | Browser | Pure string operations |
+   157→| JSON / Base64 / hash / UUID / password generator | Browser | Crypto API + pure JS |
+   158→| QR code generator | Browser | qrcode library, pure JS |
+   159→| Regex tester | Browser | Native RegExp |
+   160→| Calculators (loan, BMI, percentage, scientific) | Browser | Pure arithmetic |
+   161→| Unit / color / number-base converters | Browser | Pure conversion logic |
+   162→| Currency converter | Browser (rates cached from server) | Rates fetched periodically; conversion is pure math |
+   163→| AI summarizer / translator / captioner | Server | Requires LLM inference; never browser |
+   164→| Heavy video transcoding | Server (Phase 3+) or WASM | Browser cannot transcode 1GB video performantly today |
+   165→
+   166→**Consequences.**
+   167→- ✅ ~90% of Phase 1 tools run without server compute cost.
+   168→- ✅ Privacy is a structural property, not a marketing claim.
+   169→- ✅ Server infrastructure stays small through Phase 2.
+   170→- ⚠️ Server-side tools require explicit consent UI ("Your file will be uploaded. Deleted within 1 hour.").
+   171→
+   172→**Implements:** LOCK-02 (Browser-First Philosophy), EC-07 (Performance Budget — browser-first reduces server load), EC-08 (Security — files stay on user's device).
+   173→
+   174→### AD-05 — Database Optional via Strict Layer Separation
+   175→
+   176→**Context.** LOCK-06 mandates that core tools function even if the database is down. This is non-trivial in a Next.js + Supabase architecture where auth, storage, and DB are typically deeply intertwined.
+   177→
+   178→**Decision.** The Tool Engine (Application Layer) has ZERO direct dependency on Infrastructure. Tools interact with infrastructure only through optional side-channels:
+   179→- History persistence: best-effort, fails silently if DB unavailable.
+   180→- Auth checks: tools run in guest mode if auth service is unreachable.
+   181→- Analytics: queued in IndexedDB, flushed when backend recovers.
+   182→
+   183→```
+   184→Tool Execution Flow:
+   185→1. User opens /tools/image-resize
+   186→2. Page renders (no DB call required for tool itself)
+   187→3. User uploads file → Tool Engine runs entirely in browser
+   188→4. Preview rendered → user can download WITHOUT any server call
+   189→5. If user is authenticated AND DB is up → history entry saved (best-effort)
+   190→6. If DB is down → history save fails silently, tool still completes
+   191→```
+   192→
+   193→**Consequences.**
+   194→- ✅ Tools always work; platform degrades gracefully.
+   195→- ✅ Database maintenance windows don't break user workflows.
+   196→- ✅ Clear ownership: infrastructure team owns DB uptime; tool team owns tool correctness.
+   197→- ⚠️ History/favorites may temporarily appear stale during outages; UI must communicate this honestly.
+   198→
+   199→**Implements:** LOCK-06 (Database Optional Philosophy), EC-05 (Progressive Enhancement — tools degrade gracefully when DB is down).
+   200→
+   201→### AD-06 — Edge-First Deployment with Regional Database
+   202→
+   203→**Context.** The platform serves a global audience. Vercel Edge Network provides low-latency static delivery; Supabase provides regional Postgres. The architecture must exploit Edge for content delivery without forcing all logic to edge runtime (which lacks many Node APIs).
+   204→
+   205→**Decision.** Three execution runtimes, each used where appropriate:
+   206→
+   207→| Runtime | Used For | Constraints |
+   208→|---------|----------|-------------|
+   209→| **Edge Runtime** | Static pages, tool landing pages, middleware (auth checks, locale routing), SEO metadata | No Node APIs; limited bundle size; no direct DB connections (use REST/PG-lite) |
+   210→| **Node.js Runtime** (Serverless Functions) | Server-side tools (OCR, AI), webhooks, admin actions, scheduled tasks | Full Node API; cold starts ~500ms; 60s execution limit on Vercel free tier |
+   211→| **Browser Runtime** | All browser-first tools, UI interactivity, client-side state | Full Web APIs; cannot access secrets; subject to user device capability |
+   212→
+   213→**Consequences.**
+   214→- ✅ Tool landing pages load in <500ms globally via Edge.
+   215→- ✅ Server-side tools have full Node capability when needed.
+   216→- ✅ Browser tools never touch server compute.
+   217→- ⚠️ Edge/Node boundary requires care; some libraries only work in one runtime.
+   218→
+   219→**Implements:** LOCK-02 (browser-first), performance goals in `00_Project_Charter` §6.2, EC-07 (Performance Budget — Edge for fast initial render).
+   220→
+   221→## 4. Design Principles
+   222→
+   223→The architecture is governed by six design principles. Every architectural decision must align with these principles; conflicts are resolved by precedence order (P1 > P2 > ... > P6).
+   224→
+   225→### P1 — Browser-First (LOCK-02)
+   226→The browser is the default execution target. Server-side processing is an exception requiring justification. *Why P1:* this is the platform's identity (LOCK-01) and primary differentiator.
+   227→
+   228→### P2 — Modularity (LOCK-04)
+   229→Every tool is an independent module with explicit boundaries. Modules communicate only through published contracts (manifests, interfaces), never through internal implementation. *Why P2:* 1,000+ tools cannot be maintained without strict isolation.
+   230→
+   231→### P3 — Type Safety End-to-End
+   232→TypeScript strict mode; Zod schemas at every IO boundary (request → handler → response, manifest → engine → UI). *Why P3:* type errors at runtime scale linearly with tool count; prevention is cheaper than debugging.
+   233→
+   234→### P4 — Free-Tier-First (LOCK implied via `01_BRD` §4.1)
+   235→Architecture must run on $0 of infrastructure cost through Phase 1. Every design choice must be viable on Vercel + Supabase free tiers. *Why P4:* the project has no initial budget; paid services are introduced only when revenue justifies.
+   236→
+   237→### P5 — Documentation-Driven
+   238→No architectural element exists without a doc reference. Code without doc precedent is a violation. *Why P5:* this is EC-01; AI-assisted development (LOCK-09) requires explicit context; undocumented decisions get duplicated or contradicted.
+   239→
+   240→### P6 — Performance as a Feature
+   241→Sub-second first interaction is a non-negotiable goal. Performance budgets are enforced in CI. *Why P6:* speed is a brand value (`00_Project_Charter` §2) and a SEO ranking factor (LOCK-08).
+   242→
+   243→## 5. System Architecture
+   244→
+   245→### 5.1 High-Level Topology
+   246→
+   247→```
+   248→                          ┌──────────────────────┐
+   249→                          │   User's Browser     │
+   250→                          │  (the primary runtime │
+   251→                          │   for ~90% of tools)  │
+   252→                          └──────────┬───────────┘
+   253→                                     │ HTTPS
+   254→                                     ▼
+   255→                  ┌──────────────────────────────────────┐
+   256→                  │       Vercel Edge Network            │
+   257→                  │  (CDN + Edge Middleware + Edge SSR)  │
+   258→                  └──────────┬──────────────┬────────────┘
+   259→                             │              │
+   260→              ┌──────────────▼──┐     ┌─────▼───────────────┐
+   261→              │  Static Assets  │     │  Next.js Serverless  │
+   262→              │  (immutable)    │     │  (Node runtime)      │
+   263→              │  Tool code JS   │     │  - Server-side tools │
+   264→              │  Fonts, images  │     │  - Webhooks          │
+   265→              └─────────────────┘     │  - Admin actions     │
+   266→                                      │  - Scheduled tasks   │
+   267→                                      └──────────┬───────────┘
+   268→                                                 │
+   269→                              ┌──────────────────┴──────────────┐
+   270→                              │                                  │
+   271→                       ┌──────▼──────┐                  ┌────────▼────────┐
+   272→                       │  Supabase   │                  │  External APIs  │
+   273→                       │  Postgres   │                  │  (AI, OCR, etc.)│
+   274→                       │  Auth       │                  └─────────────────┘
+   275→                       │  Storage    │
+   276→                       └─────────────┘
+   277→```
+   278→
+   279→### 5.2 Request Lifecycle (Tool Page Load)
+   280→
+   281→```
+   282→1. User requests /tools/image-resize
+   283→2. Vercel Edge receives request
+   284→3. Edge Middleware runs:
+   285→   - Locale detection
+   286→   - Auth cookie check (no DB call; JWT verified at edge)
+   287→   - A/B test assignment (if any)
+   288→4. Edge SSR renders page shell with:
+   289→   - Tool metadata (from build-time registry)
+   290→   - SEO tags (from manifest)
+   291→   - Tool code chunk URL (lazy-loaded)
+   292→5. HTML streamed to browser (<500ms TTFB)
+   293→6. Browser hydrates, lazy-loads tool code
+   294→7. Tool mounts; Tool Engine initializes in browser
+   295→8. User interacts; all processing happens client-side (LOCK-02)
+   296→9. If user triggers Download:
+   297→   - Guest: download proceeds (LOCK-07)
+   298→   - Authenticated: history entry saved (best-effort, LOCK-06)
+   299→10. Page view analytics queued in IndexedDB; flushed async
+   300→```
+   301→
+   302→### 5.3 Request Lifecycle (Server-Side Tool)
+   303→
+   304→```
+   305→1. User opens /tools/ocr-pdf (declared execution: 'server')
+   306→2. Page load same as 5.2 (browser-first for the page itself)
+   307→3. User uploads PDF
+   308→4. Tool Engine detects execution='server', shows consent UI:
+   309→   "This tool processes your file on our server. Files deleted within 1 hour."
+   310→5. User consents → file uploaded to Vercel Serverless Function
+   311→6. Function streams file to Supabase Storage (temporary bucket, 1h TTL)
+   312→7. Function invokes OCR pipeline (Tesseract on server, or external API)
+   313→8. Result returned to browser
+   314→9. Preview rendered
+   315→10. File deleted from temp storage (or TTL handles it)
+   316→11. History entry saved if authenticated (best-effort)
+   317→```
+   318→
+   319→## 6. Tool Engine (Detailed)
+   320→
+   321→The Tool Engine is the heart of the platform. It implements LOCK-03.
+   322→
+   323→### 6.1 Engine Contract
+   324→
+   325→```typescript
+   326→// Application Layer — packages/tool-engine/types.ts
+   327→
+   328→interface ToolEngine<TInput, TOutput> {
+   329→  manifest: ToolManifest;
+   330→  stages: {
+   331→    input: InputStage<TInput>;
+   332→    validation: ValidationStage<TInput>;
+   333→    processing: ProcessingStage<TInput, TOutput>;
+   334→    preview: PreviewStage<TOutput>;
+   335→    download: DownloadStage<TOutput>;
+   336→    history?: HistoryStage<TOutput>;
+   337→    share?: ShareStage<TOutput>;
+   338→  };
+   339→}
+   340→
+   341→interface StageContext {
+   342→  signal: AbortSignal;          // For cancellation
+   343→  locale: Locale;
+   344→  user: User | null;            // null = guest
+   345→  trackEvent: (event: string, payload?: Record<string, unknown>) => void;
+   346→}
+   347→```
+   348→
+   349→### 6.2 Stage Definitions
+   350→
+   351→| Stage | Responsibility | Required | Side Effects Allowed |
+   352→|-------|---------------|----------|---------------------|
+   353→| Input | Accept raw user input (file, text, params) | ✅ | None |
+   354→| Validation | Run Zod schema; reject invalid input | ✅ | None |
+   355→| Processing | Execute tool logic; produce output | ✅ | Browser: none. Server: temp storage only |
+   356→| Preview | Render output for user inspection | ✅ | None (pure render) |
+   357→| Download | Package output for download | ✅ | Trigger download; gate registration per LOCK-07 |
+   358→| History | Persist entry to user history | ❌ Optional | DB write (best-effort) |
+   359→| Share | Generate shareable link/QR | ❌ Optional | None (pure generation) |
+   360→
+   361→### 6.3 Error Handling
+   362→
+   363→Errors flow through a typed `ToolError` hierarchy:
+   364→
+   365→```typescript
+   366→type ToolError =
+   367→  | { kind: 'validation'; field: string; message: string }
+   368→  | { kind: 'processing'; cause: Error; recoverable: boolean }
+   369→  | { kind: 'quota_exceeded'; limit: string; upgradeUrl: string }
+   370→  | { kind: 'auth_required'; feature: string; loginUrl: string }
+   371→  | { kind: 'server_unavailable'; retryAfter: number };
+   372→```
+   373→
+   374→The Engine catches errors at stage boundaries, maps them to user-facing UI states, and logs them to analytics. Tool developers never write `try/catch` boilerplate.
+   375→
+   376→## 7. Tool Registry (Detailed)
+   377→
+   378→The Registry implements LOCK-05. It is a build-time codegen system, not a runtime service.
+   379→
+   380→### 7.1 Manifest Schema
+   381→
+   382→Defined in `10_FBRD` §Tool Manifest. The SAD references it; the FBRD owns the schema.
+   383→
+   384→### 7.2 Build-Time Codegen
+   385→
+   386→A build script (`scripts/generate-registry.ts`) walks `src/tools/**/manifest.ts`, imports each manifest, and emits:
+   387→- `src/generated/registry.ts` — typed map of all tools
+   388→- `src/generated/sitemap.ts` — sitemap entries
+   389→- `src/generated/navigation.ts` — category → tool list for nav
+   390→- `src/generated/seo-meta.ts` — per-route SEO metadata
+   391→- `src/generated/admin-inventory.ts` — admin tool list
+   392→
+   393→Build-time generation (not runtime) ensures:
+   394→- No cold-start penalty for registry lookups.
+   395→- Type safety: registry changes fail the build if manifests are malformed.
+   396→- SEO metadata is statically analyzable.
+   397→
+   398→### 7.3 Runtime Access
+   399→
+   400→```typescript
+   401→// Any tool or page can access the registry:
+   402→import { registry } from '@/generated/registry';
+   403→
+   404→const imageTools = registry.byCategory('image');
+   405→const tool = registry.bySlug('image-resizer');
+   406→const related = registry.relatedTo('image-resizer');
+   407→```
+   408→
+   409→## 8. Graceful Degradation
+   410→
+   411→Implements LOCK-06. Every infrastructure dependency has a documented degradation path.
+   412→
+   413→| Service Down | User Impact | Tool Impact | Admin Visibility |
+   414→|-------------|-------------|-------------|------------------|
+   415→| Supabase Auth | User treated as guest; cannot log in | None — tools run in guest mode | Status page shows auth outage |
+   416→| Supabase DB | History/favorites unavailable | None — tools run; history save fails silently | Status page shows DB outage; admin actions blocked |
+   417→| Supabase Storage | Server-side tool uploads fail | Browser tools unaffected; server tools show "temporarily unavailable" | Status page shows storage outage |
+   418→| External AI API | AI tools return "service unavailable" | Non-AI tools unaffected | Admin analytics show AI tool failure rate |
+   419→| Vercel Edge | Entire platform unreachable | N/A | Status page (external monitor) |
+   420→
+   421→The platform NEVER shows a generic "something went wrong" page. Every error has a specific, human-readable explanation tied to the degraded service.
+   422→
+   423→## 9. Cross-Cutting Concerns
+   424→
+   425→### 9.1 Authentication
+   426→- Supabase Auth with JWT verified at Edge Middleware.
+   427→- No DB call per request for auth check (JWT contains user ID, role).
+   428→- Session refresh handled automatically by Supabase client.
+   429→
+   430→### 9.2 Authorization (RBAC)
+   431→- Per `17_RBAC`. Roles: guest, user, premium, editor, admin, super_admin.
+   432→- Enforcement points: Edge Middleware (route-level), Server Actions (action-level), Tool Engine stages (feature-level).
+   433→- Every enforcement point logs denials to audit trail.
+   434→
+   435→### 9.3 Observability
+   436→- **Logs:** Structured JSON logs from serverless functions; shipped to Vercel logs (free) and/or Axiom (free tier).
+   437→- **Metrics:** Web Vitals (LCP, FID, CLS) collected in browser; tool completion rate, TTFR per tool.
+   438→- **Traces:** Optional in Phase 2+ (OpenTelemetry); Phase 1 uses lightweight custom spans.
+   439→- **Errors:** Client errors captured with stack trace and tool slug; server errors with request ID.
+   440→
+   441→### 9.4 Internationalization
+   442→- Locale detected at Edge Middleware (URL prefix or Accept-Language).
+   443→- Tool manifests support multiple locales for title, description, FAQ.
+   444→- Phase 1: English only. Phase 2: ES, PT, FR, DE.
+   445→
+   446→### 9.5 Caching Strategy
+   447→| Layer | Strategy | TTL |
+   448→|-------|----------|-----|
+   449→| Browser | Tool code: immutable (content-hashed) | 1 year |
+   450→| Browser | Tool results: IndexedDB (per-user) | Until cleared |
+   451→| Edge | Static HTML: revalidate | 1 hour |
+   452→| Edge | Sitemap: revalidate | 24 hours |
+   453→| Server | AI/OCR results: not cached (privacy) | N/A |
+   454→| DB | Read-heavy queries: Postgres materialized views | 5 minutes (Phase 2+) |
+   455→
+   456→## 10. Standards
+   457→
+   458→### 10.1 Architectural Standards
+   459→- Every tool MUST implement the Tool Engine lifecycle (LOCK-03).
+   460→- Every tool MUST declare a manifest conforming to `10_FBRD` schema (LOCK-05).
+   461→- Every tool MUST declare `execution: 'browser' | 'server'` (LOCK-02).
+   462→- No tool MAY import directly from another tool's internal modules (LOCK-04).
+   463→- No tool MAY make synchronous DB calls during processing (LOCK-06).
+   464→
+   465→### 10.2 Boundary Enforcement Standards
+   466→- ESLint rule: `no-restricted-imports` prevents Presentation → Infrastructure imports.
+   467→- ESLint rule: `no-restricted-imports` prevents Domain → React imports.
+   468→- Code review checklist includes boundary verification.
+   469→
+   470→### 10.3 Performance Standards
+   471→- Tool landing page TTFB: <500ms at Edge (P95).
+   472→- Tool first interaction: <1s on 4G mid-tier device.
+   473→- Tool code chunk: <200KB gzipped (excluding shared vendor chunk).
+   474→- Server-side tool cold start: <2s.
+   475→
+   476→## 11. Best Practices
+   477→
+   478→### 11.1 When Adding a New Tool
+   479→1. Read `10_FBRD` §Tool Manifest schema.
+   480→2. Create `src/tools/[category]/[slug]/` folder.
+   481→3. Add `manifest.ts` declaring execution mode, schemas, stages.
+   482→4. Implement stages; reuse shared components from `11_ACD`.
+   483→5. Run `pnpm gen:registry` to update generated files.
+   484→6. Verify SEO output via `15_SEOSpecification` checklist.
+   485→7. PR must include the manifest, stage implementations, and at least one test per stage.
+   486→
+   487→### 11.2 When Modifying the Tool Engine
+   488→- The Tool Engine is shared infrastructure. Changes affect every tool.
+   489→- Any change requires: (a) updated tests, (b) updated `11_ACD` documentation, (c) migration path for existing tools, (d) approval from Chief Architect.
+   490→- Follow LOCK-09: extend, don't rewrite.
+   491→
+   492→### 11.3 When Adding Server-Side Processing
+   493→- Justify in PR description: why can't this run in browser?
+   494→- Implement explicit consent UI.
+   495→- Ensure file deletion within 1 hour (enforced by storage TTL + cleanup cron).
+   496→- Add to `02_SAD` §AD-04 decision matrix as an update.
+   497→
+   498→### 11.4 When Introducing a New External Dependency
+   499→- Justify per `04_TechStack` §Dependency Policy.
+   500→- Verify free tier adequacy.
+   501→- Add to `04_TechStack` dependency table.
+   502→- Get Chief Architect approval (LOCK-09).
+   503→
+   504→## 12. Future Scalability
+   505→
+   506→### 12.1 Scaling to 1,000+ Tools
+   507→The architecture scales linearly:
+   508→- Each tool is an isolated folder; no global state to coordinate.
+   509→- Registry codegen handles thousands of entries without runtime cost.
+   510→- Build time scales linearly; mitigations: incremental builds, parallel codegen.
+   511→- Navigation/search index moved to client-side search (e.g., Pagefind) when exceeds 500 entries.
+   512→
+   513→### 12.2 Scaling to Millions of MAU
+   514→- Vercel Edge auto-scales; no action needed.
+   515→- Supabase: add read replicas in Phase 3.
+   516→- Server-side tools: extract to dedicated worker pool (Cloudflare Workers or Vercel Edge Functions) when serverless cold starts become problematic.
+   517→- Database: shard by user_id in Phase 4 if single Postgres cannot keep up.
+   518→
+   519→### 12.3 Scaling the Team
+   520→- Phase 1: 1-3 engineers; everyone touches every layer.
+   521→- Phase 2: 3-5 engineers; begin specializing (frontend, backend, tool author).
+   522→- Phase 3: 5-10 engineers; team structure aligns with bounded contexts (`03_DDD`).
+   523→- Phase 4: 10+ engineers; tool authoring becomes a separate role; platform team owns infrastructure.
+   524→
+   525→### 12.4 Scaling to New Tool Categories
+   526→Adding a new category (e.g., "Video Tools" in Phase 3):
+   527→1. Add category to `ToolCategory` type in Domain Layer.
+   528→2. Update navigation taxonomies.
+   529→3. Tools in the new category follow the same manifest schema.
+   530→4. No changes to Tool Engine, Registry, or Infrastructure.
+   531→
+   532→### 12.5 Preparing for Plugin Marketplace (Phase 4)
+   533→- Manifest schema is already public (defined in `10_FBRD`).
+   534→- Phase 4 adds: signed manifests, sandboxed execution, versioning, marketplace UI.
+   535→- The architecture does NOT need restructuring; the Registry already supports third-party manifests with minor extension.
+   536→
+   537→## 13. Dependencies
+   538→
+   539→### 13.1 Document Dependencies
+   540→- Depends on `00_Project_Charter` (Architectural Locks §3, Engineering Constitution §4, Product Constitution §5) — source of authority.
+   541→- Depends on `01_BRD` — business context for monetization and KPIs.
+   542→- `03_DDD` depends on this SAD for bounded context boundaries.
+   543→- `04_TechStack` operationalizes AD-01 through AD-06 with specific technologies.
+   544→- `05_ProjectStructure` implements the layer and module boundaries defined here.
+   545→- `06_ArchitectureDecisionRecords` records AD-01 through AD-06 as ADRs (append-only history).
+   546→- `11_ProductConstitution` expands PC-02, PC-03, PC-05, PC-10 which this SAD implements.
+   547→- `12_ToolManifestSpecification` defines the manifest schema referenced in AD-03.
+   548→- `14_ACD` defines the Tool Engine component referenced in AD-02.
+   549→- `16_DatabaseDesign` implements the Infrastructure Layer for persistence.
+   550→- `17_APIConvention` implements the Infrastructure Layer for external APIs.
+   551→- `20_RBAC` implements the authorization cross-cutting concern.
+   552→- `24_DeploymentGuide` implements AD-06 deployment topology.
+   553→
+   554→### 13.2 External Dependencies
+   555→- Vercel (Edge + Serverless) — deployment topology (AD-06).
+   556→- Supabase (Postgres + Auth + Storage) — Infrastructure Layer.
+   557→- See `04_TechStack` for full list with free-tier analysis.
+   558→
+   559→### 13.3 Assumptions
+   560→- Vercel Edge runtime supports the middleware features we use (true as of 2026).
+   561→- Supabase free tier remains adequate through Phase 1 (10k MAU).
+   562→- Browser APIs (Canvas, OffscreenCanvas, File System Access, Web Crypto) remain stable and broadly supported.
+   563→
+   564→## 14. Revision History
+   565→
+   566→| Revision | Date | Author | Change |
+   567→|----------|------|--------|--------|
+   568→| 1.0.0 | 2026-06-28 | Chief Architect | Initial SAD. Defined layered architecture (AD-01), Tool Engine (AD-02), Tool Registry (AD-03), browser-first decision matrix (AD-04), database-optional strategy (AD-05), deployment topology (AD-06). |
+   569→| 1.1.0 | 2026-06-28 | Chief Architect | Mapped each AD to the Engineering Constitution articles it implements (EC-02, EC-04, EC-05, EC-07, EC-08, EC-09, EC-01). Renumbered cross-references to reflect insertion of `06_ArchitectureDecisionRecords` (docs 06-25 shifted to 07-26). |
+   570→| 1.2.0 | 2026-06-28 | Chief Architect | Mapped AD-02 to PC-02 (Product Contract), PC-03 (Completion Standard); AD-03 to PC-10 (Product Scalability); deployment topology to PC-05 (UX Consistency). Renumbered cross-references to reflect insertion of `11_ProductConstitution` and `12_ToolManifestSpecification` (docs 11-26 shifted to 13-28). |
+   571→
+   572→## 15. Cross References
+   573→
+   574→- `00_Project_Charter` §3, §4, §5 — Source of LOCKs, ECs, and PCs implemented by this document.
+   575→- `01_BRD` §4.1, §4.4 — Monetization and privacy standards that constrain architecture.
+   576→- `03_DDD` — Bounded context boundaries that align with AD-01 layering.
+   577→- `04_TechStack` — Specific technologies implementing AD-01 through AD-06.
+   578→- `05_ProjectStructure` — Folder layout implementing AD-01 and AD-03.
+   579→- `06_ArchitectureDecisionRecords` — Permanent record of AD-01 through AD-06 as ADRs.
+   580→- `07_FolderStructure` — Granular file conventions for the layers defined here.
+   581→- `11_ProductConstitution` — Expands PC-02, PC-03, PC-05, PC-10.
+   582→- `12_ToolManifestSpecification` — Schema referenced by AD-03.
+   583→- `14_ACD` §Tool Engine Component — Implementation of AD-02.
+   584→- `16_DatabaseDesign` — Infrastructure Layer persistence implementation.
+   585→- `17_APIConvention` — Infrastructure Layer external API implementation.
+   586→- `18_SEOSpecification` — How AD-03 registry satisfies LOCK-08.
+   587→- `19_UserFlow` — How AD-05 graceful degradation affects user journeys.
+   588→- `20_RBAC` — Authorization enforcement points referenced in §9.2.
+   589→- `21_AdminSpecification` — How admin interacts with Registry and Infrastructure.
+   590→- `24_DeploymentGuide` — Operationalizes AD-06.
+   591→- `25_AI_Guideline` — Constrains AI's interaction with this architecture (LOCK-09, EC-11).
+   592→
